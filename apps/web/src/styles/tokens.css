@@ -1,0 +1,54 @@
+@import "@fontsource-variable/public-sans";
+@import "@fontsource-variable/source-serif-4";
+@import "@fontsource-variable/source-code-pro";
+
+:root {
+  /* surfaces */
+  --paper: #fbfcfd;
+  --surface: #ffffff;
+  --surface-2: #f3f6f7;
+  --surface-3: #eaf0f2;
+
+  /* ink */
+  --ink-900: #0e141a;
+  --ink-700: #2e3a44;
+  --ink-600: #45525e;
+  --ink-400: #8192a0;
+
+  /* lines */
+  --line: #e2e8ec;
+  --line-strong: #c6d1d9;
+
+  /* single accent: pine */
+  --accent-700: #0a4a38;
+  --accent-600: #0c5a45;
+  --accent-100: #ddeee7;
+
+  /* status */
+  --ok-600: #2e7d46;
+  --ok-100: #e3f2e8;
+  --warn-700: #7a5200;
+  --warn-100: #f6ebd0;
+  --danger-600: #a03030;
+  --danger-050: #faeded;
+  --info-600: #3a5b8c;
+  --info-100: #e8eef7;
+
+  /* type */
+  --font-ui: "Public Sans Variable", "Public Sans", system-ui, sans-serif;
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+  --font-mono: "Source Code Pro Variable", "SFMono-Regular", Consolas, monospace;
+
+  /* shape + elevation */
+  --r1: 2px;
+  --r2: 4px;
+  --shadow-overlay:
+    0 1px 2px rgb(14 20 26 / 0.07),
+    0 10px 28px rgb(14 20 26 / 0.13);
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent-600);
+
+  /* layout */
+  --sidebar-w: 244px;
+  --topbar-h: 52px;
+  --content-max: 1440px;
+}

@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: edubot-db
+    environment:
+      POSTGRES_USER: edubot
+      POSTGRES_PASSWORD: edubot
+    ports:
+      - "5433:5432"
+    volumes:
+      - edubot-pgdata:/var/lib/postgresql/data
+      - ./scripts/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edubot"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  edubot-pgdata:

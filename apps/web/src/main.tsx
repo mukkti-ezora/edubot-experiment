@@ -1,0 +1,84 @@
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "./styles/tokens.css";
+import "./styles/app.css";
+
+import { AuthProvider, useAuth } from "./lib/auth";
+import { ToastProvider } from "./lib/toast";
+import { Shell } from "./components/Shell";
+import { Landing } from "./pages/Landing";
+import { Login } from "./pages/Login";
+import { Dashboard } from "./pages/Dashboard";
+import { Institutions } from "./pages/Institutions";
+import { InstitutionDetail } from "./pages/InstitutionDetail";
+import { Users } from "./pages/Users";
+import { UserDetail } from "./pages/UserDetail";
+import { Administrators } from "./pages/Administrators";
+import { AdministratorDetail } from "./pages/AdministratorDetail";
+import { Roles } from "./pages/Roles";
+import { RoleDetail } from "./pages/RoleDetail";
+import { Activity } from "./pages/Activity";
+import { SettingsPage } from "./pages/Settings";
+import { Profile } from "./pages/Profile";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: 1, refetchOnWindowFocus: false },
+  },
+});
+
+function RequireAuth() {
+  const { me, loading } = useAuth();
+  const location = useLocation();
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--paper)" }}>
+        <div className="skeleton" style={{ width: 120, height: 16 }} />
+      </div>
+    );
+  }
+  if (!me) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  return <Outlet />;
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route element={<RequireAuth />}>
+        <Route element={<Shell />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/institutions" element={<Institutions />} />
+          <Route path="/institutions/:id" element={<InstitutionDetail />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/administrators" element={<Administrators />} />
+          <Route path="/administrators/:id" element={<AdministratorDetail />} />
+          <Route path="/roles" element={<Roles />} />
+          <Route path="/roles/:id" element={<RoleDetail />} />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ToastProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </StrictMode>,
+);
