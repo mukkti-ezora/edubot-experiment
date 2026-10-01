@@ -15,8 +15,12 @@ import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { Institutions } from "./pages/Institutions";
 import { InstitutionDetail } from "./pages/InstitutionDetail";
-import { Users } from "./pages/Users";
-import { UserDetail } from "./pages/UserDetail";
+import { Students } from "./pages/Students";
+import { StudentDetail } from "./pages/StudentDetail";
+import { Teachers } from "./pages/Teachers";
+import { TeacherDetail } from "./pages/TeacherDetail";
+import { Parents } from "./pages/Parents";
+import { ParentDetail } from "./pages/ParentDetail";
 import { Administrators } from "./pages/Administrators";
 import { AdministratorDetail } from "./pages/AdministratorDetail";
 import { Roles } from "./pages/Roles";
@@ -36,7 +40,7 @@ function RequireAuth() {
   const location = useLocation();
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--paper)" }}>
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--surface-1)" }}>
         <div className="skeleton" style={{ width: 120, height: 16 }} />
       </div>
     );
@@ -55,8 +59,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/institutions" element={<Institutions />} />
           <Route path="/institutions/:id" element={<InstitutionDetail />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/students" element={<Students />} />
+          <Route path="/students/:id" element={<StudentDetail />} />
+          <Route path="/teachers" element={<Teachers />} />
+          <Route path="/teachers/:id" element={<TeacherDetail />} />
+          <Route path="/parents" element={<Parents />} />
+          <Route path="/parents/:id" element={<ParentDetail />} />
           <Route path="/administrators" element={<Administrators />} />
           <Route path="/administrators/:id" element={<AdministratorDetail />} />
           <Route path="/roles" element={<Roles />} />

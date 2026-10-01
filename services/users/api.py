@@ -89,6 +89,12 @@ VALUE_OF = {
 
 async def _institution_names(request: Request, ctx: RequestContext, users: list[User]) -> dict[str, str]:
     ids = sorted({str(u.institution_id) for u in users if u.institution_id is not None})
+    return await _institution_names_for_ids(request, ctx, ids)
+
+
+async def _institution_names_for_ids(
+    request: Request, ctx: RequestContext, ids: list[str]
+) -> dict[str, str]:
     if not ids:
         return {}
     tenancy: ServiceClient = request.app.state.tenancy
@@ -479,6 +485,76 @@ async def activate_administrator(
     return await _set_user_status(
         user_id, "active", request, session, ctx,
         permission="admin.update", action="admin.activate",
+    )
+
+
+# ---- people aggregates ----
+
+class TypeStats(CamelModel):
+    total: int
+    by_status: dict[str, int]
+
+
+class InstitutionCount(CamelModel):
+    institution_id: uuid.UUID
+    institution_name: str | None = None
+    count: int
+
+
+class PeopleStats(CamelModel):
+    generated_at: datetime
+    by_type: dict[str, TypeStats]
+    by_institution: dict[str, list[InstitutionCount]]
+
+
+@router.get("/people/stats", response_model=PeopleStats)
+async def people_stats(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    ctx: Annotated[RequestContext, Depends(get_context)],
+) -> PeopleStats:
+    """Platform-wide aggregate over the people registry (category overviews).
+
+    Platform administrators carry institution_id NULL: they count toward byType
+    totals but belong to no institution, so they never appear in byInstitution.
+    """
+    require_perm(ctx, "user.read")
+
+    totals: dict[str, int] = {t: 0 for t in USER_TYPES}
+    by_status: dict[str, dict[str, int]] = {t: {s: 0 for s in USER_STATUSES} for t in USER_TYPES}
+    status_rows = await session.execute(
+        select(User.type, User.status, func.count()).group_by(User.type, User.status)
+    )
+    for type_, status_, count in status_rows.all():
+        totals[type_] = totals.get(type_, 0) + int(count)
+        statuses = by_status.setdefault(type_, {s: 0 for s in USER_STATUSES})
+        statuses[status_] = statuses.get(status_, 0) + int(count)
+
+    grouped: dict[str, list[tuple[uuid.UUID, int]]] = {t: [] for t in USER_TYPES}
+    inst_rows = await session.execute(
+        select(User.institution_id, User.type, func.count())
+        .where(User.institution_id.is_not(None))
+        .group_by(User.institution_id, User.type)
+    )
+    for inst_id, type_, count in inst_rows.all():
+        grouped.setdefault(type_, []).append((inst_id, int(count)))
+
+    names = await _institution_names_for_ids(
+        request, ctx, sorted({str(inst_id) for entries in grouped.values() for inst_id, _ in entries})
+    )
+
+    by_institution: dict[str, list[InstitutionCount]] = {}
+    for type_ in totals:
+        top = sorted(grouped.get(type_, []), key=lambda pair: (-pair[1], str(pair[0])))[:10]
+        by_institution[type_] = [
+            InstitutionCount(institution_id=inst_id, institution_name=names.get(str(inst_id)), count=count)
+            for inst_id, count in top
+        ]
+
+    return PeopleStats(
+        generated_at=datetime.now(UTC),
+        by_type={t: TypeStats(total=totals[t], by_status=by_status[t]) for t in totals},
+        by_institution=by_institution,
     )
 
 

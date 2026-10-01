@@ -170,3 +170,29 @@ export const IconBook = (p: SVGProps<SVGSVGElement>) => (
 export const IconCopy = (p: SVGProps<SVGSVGElement>) => (
   <Svg {...p}><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></Svg>
 );
+
+/* ===== New Category Icons ===== */
+
+export const IconGraduationCap = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="M21.42 10.922a1.143 1.143 0 0 0-.163-1.438L12.038 1.251a1.14 1.14 0 0 0-1.603 0L2.744 9.484a1.143 1.143 0 0 0-.163 1.438c0 .352.14.685.39.925l10.902 7.897a.72.72 0 0 0 1.09 0l10.902-7.897c.25-.24.39-.573.39-.925Z" /><path d="M22 17a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V10.7" /><path d="m14 17 4 4 4-4" /></Svg>
+);
+
+export const IconBookOpen = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></Svg>
+);
+
+export const IconHeart = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></Svg>
+);
+
+export const IconSparkles = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="M5.5 3 6.41 5.1" /><path d="m4.5 16.5 1.45-3.5" /><path d="M17.5 3 16.6 5" /><path d="m16.5 16.5-.9 3.5" /><path d="M8.5 19 10 21" /><path d="m14 21 2-1.5" /><path d="M21 8.5 23 10" /><path d="m21 14 1.5 2" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="M2 12h2" /><path d="M20 12h2" /></Svg>
+);
+
+export const IconSchool = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="M22 10v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10" /><path d="M6 8a2 2 0 0 0-2-2H2" /><path d="M22 8a2 2 0 0 1 2-2h2" /><path d="M12 22V4" /></Svg>
+);
+
+export const IconTrendingUp = (p: SVGProps<SVGSVGElement>) => (
+  <Svg {...p}><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /><path d="M9.88 16 16 8.1" /></Svg>
+);

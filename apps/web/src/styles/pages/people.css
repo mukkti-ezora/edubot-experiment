@@ -1,0 +1,209 @@
+/* ==========================================================================
+   People Pages — Students, Teachers, Parents
+   Shared styles for category-specific people management
+   ========================================================================== */
+
+.page-students,
+.page-teachers,
+.page-parents {
+  /* Category-specific filterbar accent */
+  .filterbar {
+    border-color: var(--border-subtle);
+  }
+
+  /* Category-specific metric tiles in filterbar */
+  .fchip[data-active="true"] {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+  }
+
+  /* Category-specific table row hover */
+  .table-shell tbody tr:hover {
+    background: var(--surface-1);
+  }
+
+  /* Category-specific status pill alignment */
+  .badge {
+    font-size: var(--text-xs);
+  }
+}
+
+/* Students page specific */
+.page-students .filterbar .fchip[data-active="true"] {
+  background: var(--student-600);
+  border-color: var(--student-600);
+}
+
+.page-students .table-shell tbody tr:hover td:first-child .ident .avatar {
+  box-shadow: var(--shadow-student);
+}
+
+/* Teachers page specific */
+.page-teachers .filterbar .fchip[data-active="true"] {
+  background: var(--teacher-600);
+  border-color: var(--teacher-600);
+}
+
+.page-teachers .table-shell tbody tr:hover td:first-child .ident .avatar {
+  box-shadow: var(--shadow-teacher);
+}
+
+/* Parents page specific */
+.page-parents .filterbar .fchip[data-active="true"] {
+  background: var(--parent-600);
+  border-color: var(--parent-600);
+}
+
+.page-parents .table-shell tbody tr:hover td:first-child .ident .avatar {
+  box-shadow: var(--shadow-parent);
+}
+
+/* Detail pages */
+.page-student-detail,
+.page-teacher-detail,
+.page-parent-detail {
+  .detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 24px;
+    background: var(--surface-0);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .detail-avatar {
+    flex-shrink: 0;
+  }
+
+  .detail-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .detail-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+  }
+
+  .detail-meta .mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .detail-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .detail-section {
+    background: var(--surface-0);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .detail-section h3 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--neutral-900);
+  }
+
+  .detail-kv {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px 24px;
+    font-size: var(--text-sm);
+  }
+
+  .detail-kv dt {
+    color: var(--neutral-500);
+    font-weight: 500;
+  }
+
+  .detail-kv dd {
+    margin: 0;
+    color: var(--neutral-900);
+    font-weight: 500;
+  }
+}
+
+/* Category-specific detail page accents */
+.page-student-detail .detail-header {
+  border-left: 4px solid var(--student-600);
+}
+
+.page-student-detail .detail-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-student);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.page-teacher-detail .detail-header {
+  border-left: 4px solid var(--teacher-600);
+}
+
+.page-teacher-detail .detail-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-teacher);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.page-parent-detail .detail-header {
+  border-left: 4px solid var(--parent-600);
+}
+
+.page-parent-detail .detail-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-parent);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Role badges in detail */
+.detail-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.detail-roles .badge {
+  font-size: var(--text-xs);
+}

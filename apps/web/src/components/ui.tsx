@@ -1,6 +1,6 @@
 /**
- * UI primitives — the contract every page builds from.
- * Visual grammar lives in styles/primitives.css; these components own behavior.
+ * UI primitives — category-aware component library for EduBot v2.
+ * Visual grammar in styles/primitives.css; these own behavior.
  */
 import {
   createContext,
@@ -17,9 +17,10 @@ import {
   IconInfo,
 } from "./icons";
 
-/* ---------- buttons ---------- */
+/* ---------- Buttons ---------- */
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "danger-ghost";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "danger-ghost"
+  | "student" | "teacher" | "parent" | "admin" | "institution";
 type ButtonSize = "md" | "sm" | "xs";
 
 export function Button({
@@ -64,9 +65,9 @@ export function IconButton({
   );
 }
 
-/* ---------- badges / status ---------- */
+/* ---------- Badges / Status ---------- */
 
-export type Tone = "ok" | "warn" | "danger" | "info" | "neutral" | "violet";
+export type Tone = "ok" | "warn" | "danger" | "info" | "neutral" | "student" | "teacher" | "parent" | "admin" | "institution" | "brand" | "violet";
 
 export function Badge({ tone = "neutral", children }: { tone?: Tone; children: React.ReactNode }) {
   return (
@@ -77,18 +78,12 @@ export function Badge({ tone = "neutral", children }: { tone?: Tone; children: R
   );
 }
 
-export function statusTone(status: string): Tone {
+export function statusTone(status: string): "ok" | "warn" | "danger" | "info" | "neutral" {
   switch (status) {
-    case "active":
-      return "ok";
-    case "pending":
-    case "invited":
-      return "warn";
-    case "suspended":
-    case "deactivated":
-      return "danger";
-    default:
-      return "neutral";
+    case "active": return "ok";
+    case "pending": case "invited": return "warn";
+    case "suspended": case "deactivated": return "danger";
+    default: return "neutral";
   }
 }
 
@@ -96,23 +91,50 @@ export function StatusPill({ status, label }: { status: string; label?: string }
   return <Badge tone={statusTone(status)}>{label ?? status}</Badge>;
 }
 
-/* ---------- avatar / identity ---------- */
+/* ---------- Avatar (category-aware) ---------- */
+
+export type Category = "student" | "teacher" | "parent" | "admin" | "institution" | "brand";
 
 export function Avatar({
   name,
   size = "md",
-  dark = false,
+  category,
 }: {
   name: string;
-  size?: "sm" | "md" | "lg";
-  dark?: boolean;
+  size?: "sm" | "md" | "lg" | "xl";
+  category?: Category;
 }) {
   const parts = name.trim().split(/\s+/);
   const initials = ((parts[0]?.[0] ?? "") + (parts.length > 1 ? parts[parts.length - 1][0] : "")) || "·";
+  const catClass = category ? `avatar-${category}` : "";
   return (
-    <span className={`avatar${size === "sm" ? " avatar-sm" : ""}${size === "lg" ? " avatar-lg" : ""}${dark ? " avatar-dark" : ""}`} aria-hidden="true">
+    <span
+      className={`avatar${size !== "md" ? ` avatar-${size}` : ""} ${catClass}`.trim()}
+      aria-hidden="true"
+    >
       {initials}
     </span>
+  );
+}
+
+export function AvatarGroup({ avatars, max = 4 }: { avatars: { name: string; category?: Category }[]; max?: number }) {
+  const visible = avatars.slice(0, max);
+  const extra = avatars.length - max;
+  return (
+    <div className="avatar-group" aria-label={`${avatars.length} people`}>
+      {visible.map((a, i) => (
+        <Avatar key={i} name={a.name} size="sm" category={a.category} />
+      ))}
+      {extra > 0 && (
+        <span
+          className={`avatar avatar-sm ${extra > 0 ? '' : ''}`}
+          style={{ background: "var(--neutral-200)", color: "var(--neutral-600)" }}
+          aria-hidden="true"
+        >
+          +{extra}
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -120,14 +142,16 @@ export function Ident({
   name,
   sub,
   size = "md",
+  category,
 }: {
   name: React.ReactNode;
   sub?: React.ReactNode;
   size?: "sm" | "md" | "lg";
+  category?: Category;
 }) {
   return (
     <div className="ident">
-      {typeof name === "string" ? <Avatar name={name} size={size} /> : null}
+      {typeof name === "string" ? <Avatar name={name} size={size} category={category} /> : null}
       <div>
         <div className="ident-main truncate">{name}</div>
         {sub ? <div className="ident-sub truncate">{sub}</div> : null}
@@ -136,7 +160,7 @@ export function Ident({
   );
 }
 
-/* ---------- forms ---------- */
+/* ---------- Forms ---------- */
 
 export function Field({
   label,
@@ -167,7 +191,7 @@ export function Field({
   );
 }
 
-/* ---------- tabs ---------- */
+/* ---------- Tabs ---------- */
 
 export function Tabs({
   tabs,
@@ -196,11 +220,9 @@ export function Tabs({
   );
 }
 
-/* ---------- dropdown menu ---------- */
+/* ---------- Dropdown Menu ---------- */
 
-interface MenuCtx {
-  close: () => void;
-}
+interface MenuCtx { close: () => void; }
 const MenuContext = createContext<MenuCtx>({ close: () => {} });
 
 export function Menu({
@@ -226,31 +248,19 @@ export function Menu({
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) close();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        close();
-        triggerRef.current?.focus();
-      }
+      if (e.key === "Escape") { close(); triggerRef.current?.focus(); }
     };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => { document.removeEventListener("mousedown", onClick); document.removeEventListener("keydown", onKey); };
   }, [open, close]);
 
   const triggerEl = (
     <span
-      ref={(node) => {
-        (triggerRef as React.MutableRefObject<HTMLElement | null>).current =
-          node?.firstElementChild as HTMLElement | null;
-      }}
+      ref={(node) => { (triggerRef as React.MutableRefObject<HTMLElement | null>).current = node?.firstElementChild as HTMLElement | null; }}
       style={{ display: "inline-flex" }}
       onClick={() => setOpen((o) => !o)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") setOpen((o) => !o);
-        if (e.key === "ArrowDown" && !open) setOpen(true);
-      }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setOpen((o) => !o); if (e.key === "ArrowDown" && !open) setOpen(true); }}
     >
       {trigger}
     </span>
@@ -291,10 +301,7 @@ export function MenuItem({
     <button
       role="menuitem"
       className={`menu-item${danger ? " danger" : ""}`}
-      onClick={() => {
-        close();
-        onSelect?.();
-      }}
+      onClick={() => { close(); onSelect?.(); }}
     >
       {icon}
       <span>{children}</span>
@@ -303,15 +310,7 @@ export function MenuItem({
   );
 }
 
-export function MenuLink({
-  icon,
-  children,
-  to,
-}: {
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-  to: string;
-}) {
+export function MenuLink({ icon, children, to }: { icon?: React.ReactNode; children: React.ReactNode; to: string }) {
   const { close } = useContext(MenuContext);
   return (
     <a role="menuitem" className="menu-item" href={to} onClick={close}>
@@ -321,15 +320,13 @@ export function MenuLink({
   );
 }
 
-export function MenuSep() {
-  return <div className="menu-sep" role="separator" />;
-}
+export function MenuSep() { return <div className="menu-sep" role="separator" />; }
 
 export function MenuLabel({ children }: { children: React.ReactNode }) {
   return <div className="menu-label">{children}</div>;
 }
 
-/* ---------- drawer ---------- */
+/* ---------- Drawer ---------- */
 
 export function Drawer({
   title,
@@ -350,10 +347,7 @@ export function Drawer({
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   }, [onClose]);
 
   return (
@@ -376,21 +370,21 @@ export function Drawer({
   );
 }
 
-/* ---------- loading / empty / error ---------- */
+/* ---------- Loading / Empty / Error ---------- */
 
 export function SkeletonRows({ rows = 8 }: { rows?: number }) {
   return (
     <div role="status" aria-label="Loading">
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="skel-row" style={{ opacity: 1 - i * 0.06 }}>
-          <div className="skeleton" style={{ height: 13, width: `${70 - i * 5}%` }} />
+          <div className="skeleton" style={{ height: 14, width: `${70 - i * 5}%` }} />
         </div>
       ))}
     </div>
   );
 }
 
-export function Skeleton({ w, h = 13 }: { w: number | string; h?: number }) {
+export function Skeleton({ w, h = 14 }: { w: number | string; h?: number }) {
   return <div className="skeleton" style={{ width: w, height: h }} />;
 }
 
@@ -426,33 +420,22 @@ export function ErrorState({
 }) {
   return (
     <div className="errorbox" role="alert">
-      <div className="empty-icon">
-        <IconAlertCircle />
-      </div>
+      <div className="empty-icon"><IconAlertCircle /></div>
       <h3>{title}</h3>
       <p>{body}</p>
-      {onRetry && (
-        <Button variant="secondary" size="sm" onClick={onRetry}>
-          Retry
-        </Button>
-      )}
+      {onRetry && <Button variant="secondary" size="sm" onClick={onRetry}>Retry</Button>}
     </div>
   );
 }
 
-/* ---------- alerts ---------- */
+/* ---------- Alerts ---------- */
 
-export function Alert({
-  tone = "info",
-  title,
-  children,
-}: {
+export function Alert({ tone = "info", title, children }: {
   tone?: "info" | "warn" | "danger" | "ok";
   title?: string;
   children: React.ReactNode;
 }) {
-  const icon =
-    tone === "danger" ? <IconAlertCircle /> : tone === "ok" ? <IconCheckCircle /> : tone === "warn" ? <IconAlertCircle /> : <IconInfo />;
+  const icon = tone === "danger" ? <IconAlertCircle /> : tone === "ok" ? <IconCheckCircle /> : tone === "warn" ? <IconAlertCircle /> : <IconInfo />;
   return (
     <div className={`alert alert-${tone}`} role={tone === "danger" ? "alert" : "status"}>
       {icon}
@@ -464,7 +447,7 @@ export function Alert({
   );
 }
 
-/* ---------- confirm dialog (destructive pattern) ---------- */
+/* ---------- Confirm Dialog ---------- */
 
 export function ConfirmDialog({
   title,
@@ -511,23 +494,13 @@ export function ConfirmDialog({
 
 export function Spinner({ label = "Loading" }: { label?: string }) {
   return (
-    <span
-      role="status"
-      aria-label={label}
-      className="btn-spinner"
-      style={{ borderColor: "var(--line-strong)", borderTopColor: "var(--ink-600)" }}
-    />
+    <span role="status" aria-label={label} className="btn-spinner" style={{ borderColor: "var(--border-default)", borderTopColor: "var(--neutral-600)" }} />
   );
 }
 
-/* ---------- page head ---------- */
+/* ---------- Page Head / Section Head ---------- */
 
-export function PageHead({
-  title,
-  sub,
-  actions,
-  trailing,
-}: {
+export function PageHead({ title, sub, actions, trailing }: {
   title: React.ReactNode;
   sub?: React.ReactNode;
   actions?: React.ReactNode;
@@ -544,3 +517,168 @@ export function PageHead({
     </div>
   );
 }
+
+export function SectionHead({ title, sub, action, category }: {
+  title: string;
+  sub?: React.ReactNode;
+  action?: React.ReactNode;
+  category?: Category;
+}) {
+  const catClass = category ? `section-head-accent cat-${category}` : "";
+  const accentColor = category === "student" ? "var(--student-600)"
+    : category === "teacher" ? "var(--teacher-600)"
+    : category === "parent" ? "var(--parent-600)"
+    : category === "admin" ? "var(--admin-600)"
+    : category === "institution" ? "var(--institution-600)"
+    : "var(--brand-600)";
+  return (
+    <div className="section-head" style={{ "--section-accent": accentColor } as React.CSSProperties}>
+      <div>
+        <h2>{title}</h2>
+        {sub ? <div className="sub">{sub}</div> : null}
+      </div>
+      {action ? <div className="spacer">{action}</div> : null}
+      <span className={catClass} style={{ background: accentColor }} aria-hidden="true" />
+    </div>
+  );
+}
+
+/* ---------- Metric Tile (dashboard) ---------- */
+
+export function MetricTile({
+  label,
+  value,
+  delta,
+  category,
+  icon,
+}: {
+  label: string;
+  value: string | number;
+  delta?: { value: string; trend: "up" | "down" | "flat" };
+  category?: Category;
+  icon?: React.ReactNode;
+}) {
+  const catClass = category ? `tile-cat cat-${category}` : "";
+  const accentColor = category === "student" ? "var(--student-600)"
+    : category === "teacher" ? "var(--teacher-600)"
+    : category === "parent" ? "var(--parent-600)"
+    : category === "admin" ? "var(--admin-600)"
+    : category === "institution" ? "var(--institution-600)"
+    : "var(--brand-600)";
+  const iconBg = category ? `var(--gradient-${category})` : "var(--brand-100)";
+  const iconColor = category ? "white" : "var(--brand-600)";
+  const tileStyle = { "--tile-accent": accentColor } as React.CSSProperties;
+  const iconStyle: React.CSSProperties = { background: iconBg, color: iconColor };
+
+  const deltaContent = delta ? (
+    <div className="tile-delta">
+      <span className={delta.trend === "up" ? "up" : delta.trend === "down" ? "down" : "flat"}>
+        {delta.trend === "up" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} width="12" height="12"><path d="m18 15-6-6-6 6"/></svg>}
+        {delta.trend === "down" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} width="12" height="12"><path d="m6 9 6 6 6-6"/></svg>}
+        {delta.trend === "flat" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} width="12" height="12"><path d="M5 12h14"/></svg>}
+        {delta.value}
+      </span>
+    </div>
+  ) : null;
+
+  return (
+    <div className={`tile ${catClass}`} style={tileStyle}>
+      <div className="flex items-center gap-3">
+        <span className="tile-icon" style={iconStyle}>
+          {icon}
+        </span>
+        <div>
+          <div className="tile-label">{label}</div>
+          <div className="tile-value tnum">{value}</div>
+        </div>
+      </div>
+      {deltaContent}
+    </div>
+  );
+}
+
+/* ---------- Person Card ---------- */
+
+export function PersonCard({
+  name,
+  email,
+  institution,
+  category,
+  avatarSize = "md",
+  actions,
+}: {
+  name: string;
+  email?: string;
+  institution?: string;
+  category?: Category;
+  avatarSize?: "sm" | "md" | "lg";
+  actions?: React.ReactNode;
+}) {
+  return (
+    <div className="person-card">
+      <Avatar name={name} size={avatarSize} category={category} />
+      <div>
+        <div className="pc-name">{name}</div>
+        <div className="pc-meta">
+          {email && <span>{email}</span>}
+          {email && institution && <span className="dot-sep" />}
+          {institution && <span>{institution}</span>}
+          {!email && !institution && <span>—</span>}
+        </div>
+      </div>
+      <div className="pc-actions">{actions}</div>
+    </div>
+  );
+}
+
+/* ---------- Institution Card ---------- */
+
+export function InstitutionCard({
+  name,
+  code,
+  city,
+  region,
+  country,
+  status,
+  stats,
+  actions,
+}: {
+  name: string;
+  code: string;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  status: string;
+  stats?: { label: string; value: string | number }[];
+  actions?: React.ReactNode;
+}) {
+  return (
+    <div className="inst-card">
+      <div className="ic-logo">{name.charAt(0).toUpperCase()}</div>
+      <div>
+        <div className="ic-name">{name}</div>
+        <div className="ic-meta">
+          <span className="mono">{code}</span>
+          {city && <span className="dot-sep" />} {city}
+          {region && <span className="dot-sep" />} {region}
+          {country && <span className="dot-sep" />} {country}
+          <StatusPill status={status} />
+        </div>
+        {stats && (
+          <div className="flex gap-4 mt-2">
+            {stats.map((s, i) => (
+              <div key={i}>
+                <div className="text-xs text-neutral-500">{s.label}</div>
+                <div className="tnum font-semibold">{s.value}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="ic-actions">{actions}</div>
+    </div>
+  );
+}
+
+/* re-exports for pages */
+export { IconCheckCircle, IconAlertCircle };

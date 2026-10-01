@@ -1,62 +1,86 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { CommandPalette, useCommandState } from "./CommandPalette";
 import {
-  IconActivity,
-  IconBuilding,
-  IconChevronUpDown,
   IconDashboard,
-  IconKey,
-  IconLogout,
-  IconMenu,
-  IconSearch,
-  IconSettings,
+  IconGraduationCap,
+  IconBookOpen,
+  IconHeart,
   IconShieldCheck,
-  IconUser,
-  IconUsers,
+  IconBuilding,
+  IconKey,
+  IconActivity,
+  IconSettings,
+  IconSearch,
+  IconChevronUpDown,
+  IconMenu,
+  IconLogout,
 } from "./icons";
 import { Avatar, Menu, MenuItem, MenuLabel, MenuSep } from "./ui";
 
-const NAV: {
-  group: string;
-  items: { to: string; label: string; icon: React.ReactNode; perm: string }[];
-}[] = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: React.ReactElement;
+  perm: string;
+  type?: string;
+}
+
+const NAV_GROUPS: { group: string; cat: string; items: NavItem[] }[] = [
   {
     group: "Overview",
+    cat: "overview",
     items: [{ to: "/dashboard", label: "Dashboard", icon: <IconDashboard />, perm: "dashboard.read" }],
   },
   {
-    group: "Directory",
+    group: "People",
+    cat: "people",
+    items: [
+      { to: "/students", label: "Students", icon: <IconGraduationCap />, perm: "user.read", type: "student" },
+      { to: "/teachers", label: "Teachers", icon: <IconBookOpen />, perm: "user.read", type: "teacher" },
+      { to: "/parents", label: "Parents", icon: <IconHeart />, perm: "user.read", type: "parent" },
+    ],
+  },
+  {
+    group: "Platform",
+    cat: "platform",
     items: [
       { to: "/institutions", label: "Institutions", icon: <IconBuilding />, perm: "institution.read" },
-      { to: "/users", label: "Users", icon: <IconUsers />, perm: "user.read" },
       { to: "/administrators", label: "Administrators", icon: <IconShieldCheck />, perm: "admin.read" },
     ],
   },
   {
-    group: "Governance",
+    group: "Control",
+    cat: "control",
     items: [
-      { to: "/roles", label: "Roles & permissions", icon: <IconKey />, perm: "role.read" },
+      { to: "/roles", label: "Roles & Permissions", icon: <IconKey />, perm: "role.read" },
       { to: "/activity", label: "Activity", icon: <IconActivity />, perm: "audit.read" },
     ],
   },
   {
     group: "System",
+    cat: "system",
     items: [{ to: "/settings", label: "Settings", icon: <IconSettings />, perm: "settings.read" }],
   },
 ];
 
 const CRUMBS: [RegExp, string, string][] = [
   [/^\/dashboard/, "Overview", "Dashboard"],
+  [/^\/students\/[^/]+/, "Students", "Student details"],
+  [/^\/students/, "Students", "All students"],
+  [/^\/teachers\/[^/]+/, "Teachers", "Teacher details"],
+  [/^\/teachers/, "Teachers", "All teachers"],
+  [/^\/parents\/[^/]+/, "Parents", "Parent details"],
+  [/^\/parents/, "Parents", "All parents"],
   [/^\/institutions\/[^/]+/, "Institutions", "Institution details"],
   [/^\/institutions/, "Institutions", "All institutions"],
-  [/^\/users\/[^/]+/, "Users", "User details"],
-  [/^\/users/, "Users", "All users"],
   [/^\/administrators\/[^/]+/, "Administrators", "Administrator details"],
   [/^\/administrators/, "Administrators", "All administrators"],
-  [/^\/roles\/[^/]+/, "Roles & permissions", "Role details"],
-  [/^\/roles/, "Roles & permissions", "All roles"],
+  [/^\/roles\/[^/]+/, "Roles & Permissions", "Role details"],
+  [/^\/roles/, "Roles & Permissions", "All roles"],
   [/^\/activity/, "Activity", "Audit trail"],
   [/^\/settings/, "Settings", "Platform settings"],
   [/^\/profile/, "Profile", "Your profile"],
@@ -69,12 +93,21 @@ export function Shell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const cmdk = useCommandState();
 
+  // Fetch summary for nav counts
+  const { data: summary } = useQuery({
+    queryKey: ["dashboard-summary"],
+    queryFn: () => api<any>("/api/v1/dashboard/summary"),
+    enabled: !!me,
+    staleTime: 60_000,
+    retry: false,
+  });
+
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
   const crumb = CRUMBS.find(([re]) => re.test(location.pathname));
-  const sectionTo = crumb ? `/${crumb[1].split(" ")[0].toLowerCase().replace("&", "")}` : "/dashboard";
+  const sectionTo = crumb ? `/${crumb[1].toLowerCase().split(" ")[0].replace("&", "")}` : "/dashboard";
   const isTopLevel = crumb ? crumb[2].startsWith("All") || /^\/(dashboard|activity|settings|profile)/.test(location.pathname) : true;
 
   return (
@@ -87,7 +120,7 @@ export function Shell() {
           <span className="scope-tag">Platform</span>
         </div>
 
-        {NAV.map((section) => {
+        {NAV_GROUPS.map((section) => {
           const items = section.items.filter((item) => can(item.perm));
           if (items.length === 0) return null;
           return (
@@ -99,9 +132,25 @@ export function Shell() {
                     key={item.to}
                     to={item.to}
                     className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+                    data-cat={item.type ?? section.cat}
                   >
                     {item.icon}
                     <span className="label">{item.label}</span>
+                    {item.type && summary && (
+                      <span className="count-pill tnum">
+                        {summary.users?.byType?.[item.type] ?? 0}
+                      </span>
+                    )}
+                    {item.to === "/administrators" && summary && (
+                      <span className="count-pill tnum">
+                        {summary.users?.byType?.administrator ?? 0}
+                      </span>
+                    )}
+                    {item.to === "/institutions" && summary && (
+                      <span className="count-pill tnum">
+                        {summary.institutions?.total ?? 0}
+                      </span>
+                    )}
                   </NavLink>
                 ))}
               </nav>
@@ -112,10 +161,10 @@ export function Shell() {
         <div className="side-foot">
           <Menu
             align="left"
-            width={230}
+            width={240}
             trigger={
               <button className="side-account" aria-haspopup="menu">
-                <Avatar name={me?.admin.name ?? "?"} size="sm" dark />
+                <Avatar name={me?.admin.name ?? "?"} size="sm" category="brand" />
                 <span className="acct-text min-w-0">
                   <span className="acct-name truncate" style={{ display: "block" }}>{me?.admin.name}</span>
                   <span className="acct-role truncate" style={{ display: "block" }}>
@@ -127,7 +176,7 @@ export function Shell() {
             }
           >
             <MenuLabel>Signed in as {me?.admin.email}</MenuLabel>
-            <MenuItem icon={<IconUser />} onSelect={() => navigate("/profile")}>
+            <MenuItem icon={<IconKey />} onSelect={() => navigate("/profile")}>
               Profile
             </MenuItem>
             <MenuSep />

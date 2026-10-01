@@ -3,123 +3,521 @@
 @import "@fontsource-variable/source-code-pro";
 
 /* ==========================================================================
-   EduBot Console — design tokens
-   World: ink-monochrome institutional control plane (Cal.com grammar).
-   Light surfaces, hairline borders, near-black primary actions,
-   tinted semantic status, density as a feature.
+   EduBot Premium Education Platform — Design Tokens
+   Colorful, modern, category-differentiated visual system
    ========================================================================== */
 
 :root {
-  /* --- type --- */
+  /* --- Type System --- */
   --font-ui: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "Source Serif 4 Variable", Georgia, serif;
   --font-mono: "Source Code Pro Variable", "SFMono-Regular", Consolas, monospace;
 
-  --text-11: 0.6875rem;
-  --text-12: 0.75rem;
-  --text-13: 0.8125rem;
-  --text-14: 0.875rem;
-  --text-15: 0.9375rem;
-  --text-16: 1rem;
-  --text-18: 1.125rem;
-  --text-20: 1.25rem;
-  --text-24: 1.5rem;
-  --text-30: 1.875rem;
-  --text-38: 2.375rem;
+  /* Fluid type scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+  --text-6xl: 3.75rem;   /* 60px */
 
-  /* --- ink (zinc family) --- */
-  --ink-950: #09090b;
-  --ink-900: #18181b;
-  --ink-800: #27272a;
-  --ink-700: #3f3f46;
-  --ink-600: #52525b;
-  --ink-500: #71717a;
-  --ink-400: #a1a1aa;
-  --ink-300: #d4d4d8;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-  /* --- surfaces --- */
-  --paper: #fafafa;
-  --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --surface-3: #eaeaec;
-  --surface-inset: #fbfbfc;
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
 
-  /* --- lines --- */
-  --line: #e4e4e7;
-  --line-strong: #d4d4d8;
+  /* --- Primary Brand — Indigo (the platform's own voice) --- */
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-300: #a5b4fc;
+  --brand-400: #818cf8;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --brand-800: #3730a3;
+  --brand-900: #312e81;
+  --brand-950: #1e1b4b;
 
-  /* --- action (near-black; Pine survives only as wordmark mark + landing) --- */
-  --action: #18181b;
-  --action-hover: #27272a;
-  --action-active: #09090b;
-  --action-subtle: #f4f4f5;        /* ghost hover */
-  --action-subtle-text: #3f3f46;
-  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px rgb(24 24 27 / 0.85);
+  /* --- Core Neutral Palette (Zinc-based) --- */
+  --neutral-50: #fafafa;
+  --neutral-100: #f4f4f5;
+  --neutral-200: #e4e4e7;
+  --neutral-300: #d4d4d8;
+  --neutral-400: #a1a1aa;
+  --neutral-500: #71717a;
+  --neutral-600: #52525b;
+  --neutral-700: #3f3f46;
+  --neutral-800: #27272a;
+  --neutral-900: #18181b;
+  --neutral-950: #09090b;
 
-  /* --- semantic status: tinted, always paired with label or icon --- */
-  --ok-700: #047857;
-  --ok-600: #059669;
-  --ok-100: #d1fae5;
-  --ok-50: #ecfdf5;
+  /* --- Category Color Families --- */
 
-  --warn-800: #92400e;
-  --warn-700: #b45309;
-  --warn-100: #fef3c7;
-  --warn-50: #fffbeb;
+  /* Students — Emerald/Teal family (growth, learning, energy) */
+  --student-50: #f0fdf4;
+  --student-100: #dcfce7;
+  --student-200: #bbf7d0;
+  --student-300: #86efac;
+  --student-400: #4ade80;
+  --student-500: #22c55e;
+  --student-600: #16a34a;
+  --student-700: #15803d;
+  --student-800: #166534;
+  --student-900: #14532d;
+  --student-950: #052e16;
 
-  --danger-700: #b91c1c;
-  --danger-600: #dc2626;
-  --danger-100: #fee2e2;
+  /* Teachers — Sky family (clarity, open knowledge; distinct from indigo primary) */
+  --teacher-50: #f0f9ff;
+  --teacher-100: #e0f2fe;
+  --teacher-200: #bae6fd;
+  --teacher-300: #7dd3fc;
+  --teacher-400: #38bdf8;
+  --teacher-500: #0ea5e9;
+  --teacher-600: #0284c7;
+  --teacher-700: #0369a1;
+  --teacher-800: #075985;
+  --teacher-900: #0c4a6e;
+  --teacher-950: #082f49;
+
+  /* Parents — Amber/Orange family (warmth, support, community) */
+  --parent-50: #fffbeb;
+  --parent-100: #fef3c7;
+  --parent-200: #fde68a;
+  --parent-300: #fcd34d;
+  --parent-400: #fbbf24;
+  --parent-500: #f59e0b;
+  --parent-600: #d97706;
+  --parent-700: #b45309;
+  --parent-800: #92400e;
+  --parent-900: #78350f;
+  --parent-950: #451a03;
+
+  /* Administrators — Violet/Purple family (authority, platform, governance) */
+  --admin-50: #faf5ff;
+  --admin-100: #f3e8ff;
+  --admin-200: #e9d5ff;
+  --admin-300: #d8b4fe;
+  --admin-400: #c084fc;
+  --admin-500: #a855f7;
+  --admin-600: #9333ea;
+  --admin-700: #7e22ce;
+  --admin-800: #6b21a8;
+  --admin-900: #581c87;
+  --admin-950: #3b0764;
+
+  /* Institutions — Rose/Pink family (community, identity, belonging) */
+  --institution-50: #fff1f2;
+  --institution-100: #ffe4e6;
+  --institution-200: #fecdd3;
+  --institution-300: #fda4af;
+  --institution-400: #fb7185;
+  --institution-500: #f43f5e;
+  --institution-600: #e11d48;
+  --institution-700: #be123c;
+  --institution-800: #9f1239;
+  --institution-900: #881337;
+  --institution-950: #4c0519;
+
+  /* --- Semantic Status Colors --- */
+  --success-50: #f0fdf4;
+  --success-100: #dcfce7;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+  --success-700: #15803d;
+
+  --warning-50: #fffbeb;
+  --warning-100: #fef3c7;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+  --warning-700: #b45309;
+
   --danger-50: #fef2f2;
+  --danger-100: #fee2e2;
+  --danger-500: #ef4444;
+  --danger-600: #dc2626;
+  --danger-700: #b91c1c;
 
-  --info-700: #1d4ed8;
-  --info-600: #2563eb;
-  --info-100: #dbeafe;
   --info-50: #eff6ff;
+  --info-100: #dbeafe;
+  --info-500: #3b82f6;
+  --info-600: #2563eb;
+  --info-700: #1d4ed8;
 
-  --violet-700: #6d28d9;
-  --violet-100: #ede9fe;
-  --violet-50: #f5f3ff;
+  /* --- Surface System --- */
+  --surface-0: #ffffff;           /* Pure white - highest elevation */
+  --surface-1: #fafafa;           /* Page background */
+  --surface-2: #f4f4f5;           /* Subtle elevated */
+  --surface-3: #e4e4e7;           /* Hover states */
+  --surface-glass: rgba(250, 250, 250, 0.8);  /* Glassmorphism base */
 
-  /* --- brand (landing + login mark only) --- */
-  --pine-800: #0a4a38;
-  --pine-700: #0c5a45;
-  --pine-100: #ddeee7;
+  /* --- Border System --- */
+  --border-subtle: #e4e4e7;       /* Hairline */
+  --border-default: #d4d4d8;      /* Standard */
+  --border-strong: #a1a1aa;       /* Emphasis */
 
-  /* --- shape --- */
-  --r-sm: 6px;
-  --r-md: 8px;
-  --r-lg: 12px;
-  --r-xl: 16px;
-  --r-full: 999px;
+  /* --- Category Border Colors --- */
+  --student-border: #86efac;
+  --teacher-border: #93c5fd;
+  --parent-border: #fcd34d;
+  --admin-border: #d8b4fe;
+  --institution-border: #fda4af;
 
-  /* --- elevation: real offset, never zero-blur halos --- */
-  --shadow-xs: 0 1px 2px 0 rgb(9 9 11 / 0.05);
-  --shadow-sm: 0 1px 2px 0 rgb(9 9 11 / 0.06), 0 1px 3px 0 rgb(9 9 11 / 0.07);
-  --shadow-md: 0 4px 8px -2px rgb(9 9 11 / 0.08), 0 2px 4px -2px rgb(9 9 11 / 0.06);
-  --shadow-lg: 0 12px 24px -4px rgb(9 9 11 / 0.10), 0 4px 8px -4px rgb(9 9 11 / 0.05);
-  --shadow-xl: 0 20px 40px -8px rgb(9 9 11 / 0.14), 0 8px 16px -8px rgb(9 9 11 / 0.06);
+  /* --- Shadows & Elevation --- */
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.08);
+  --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.08), 0 8px 10px -6px rgb(15 23 42 / 0.08);
+  --shadow-2xl: 0 25px 50px -12px rgb(15 23 42 / 0.15);
 
-  /* --- layout --- */
-  --sidebar-w: 248px;
-  --sidebar-rail-w: 60px;
-  --topbar-h: 56px;
-  --content-max: 1280px;
+  /* Category-tinted shadows */
+  --shadow-student: 0 4px 14px 0 rgb(22 197 94 / 0.15);
+  --shadow-teacher: 0 4px 14px 0 rgb(37 99 235 / 0.15);
+  --shadow-parent: 0 4px 14px 0 rgb(245 158 11 / 0.15);
+  --shadow-admin: 0 4px 14px 0 rgb(168 85 247 / 0.15);
+  --shadow-institution: 0 4px 14px 0 rgb(244 63 94 / 0.15);
 
-  /* --- z-index --- */
-  --z-nav: 40;
-  --z-topbar: 30;
-  --z-menu: 60;
-  --z-overlay: 100;
-  --z-dialog: 110;
-  --z-toast: 130;
-  --z-cmdk: 120;
+  /* Glassmorphism shadows */
+  --shadow-glass: 0 8px 32px 0 rgb(15 23 42 / 0.08);
+  --shadow-glass-hover: 0 12px 40px 0 rgb(15 23 42 / 0.12);
 
-  /* --- motion: state-conveying, exponential ease-out --- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-fast: 120ms;
-  --dur-base: 180ms;
-  --dur-slow: 260ms;
+  /* --- Border Radius --- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Spacing Scale (4px base) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* --- Layout --- */
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 72px;
+  --topbar-height: 64px;
+  --content-max: 1440px;
+  --content-padding: 32px;
+
+  /* --- Z-Index Scale --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-tooltip: 600;
+  --z-toast: 700;
+
+  /* --- Transitions --- */
+  --transition-fast: 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Gradients --- */
+  --gradient-brand: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --gradient-student: linear-gradient(135deg, #22c55e 0%, #06b6d4 100%);
+  --gradient-teacher: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+  --gradient-parent: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  --gradient-admin: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  --gradient-institution: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
+  --gradient-hero: linear-gradient(145deg, rgba(99, 102, 241, 0.06) 0%, rgba(14, 165, 233, 0.06) 40%, rgba(168, 85, 247, 0.06) 75%, rgba(244, 63, 94, 0.06) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(244,244,245,0.75) 100%);
+
+  /* --- Focus --- */
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.35);
+  --focus-ring-student: 0 0 0 3px rgba(34, 197, 94, 0.35);
+  --focus-ring-teacher: 0 0 0 3px rgba(14, 165, 233, 0.35);
+  --focus-ring-parent: 0 0 0 3px rgba(245, 158, 11, 0.35);
+  --focus-ring-admin: 0 0 0 3px rgba(168, 85, 247, 0.35);
+  --focus-ring-institution: 0 0 0 3px rgba(244, 63, 94, 0.35);
+
+  /* --- Breakpoints --- */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
 }
 
-/* Dark scheme reserved; console ships light-only this pass. */
+/* Dark mode variants */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-0: #09090b;
+    --surface-1: #09090b;
+    --surface-2: #18181b;
+    --surface-3: #27272a;
+    --surface-glass: rgba(9, 9, 11, 0.8);
+
+    --neutral-50: #09090b;
+    --neutral-100: #18181b;
+    --neutral-200: #27272a;
+    --neutral-300: #3f3f46;
+    --neutral-400: #71717a;
+    --neutral-500: #a1a1aa;
+    --neutral-600: #d4d4d8;
+    --neutral-700: #e4e4e7;
+    --neutral-800: #f4f4f5;
+    --neutral-900: #fafafa;
+    --neutral-950: #ffffff;
+
+    --border-subtle: #27272a;
+    --border-default: #3f3f46;
+    --border-strong: #52525b;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+
+    --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.4);
+  }
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--surface-1);
+  color: var(--neutral-900);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: var(--line-height-normal);
+  font-feature-settings: "cv11" 1, "ss01" 1;
+  min-height: 100vh;
+}
+
+/* Selection */
+::selection {
+  background: var(--teacher-500);
+  color: white;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neutral-300) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--neutral-900);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--text-5xl); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-2xl); }
+h5 { font-size: var(--text-xl); }
+h6 { font-size: var(--text-lg); }
+
+@media (max-width: 768px) {
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  color: var(--neutral-600);
+  max-width: 65ch;
+}
+
+a {
+  color: var(--teacher-600);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--teacher-700);
+  text-decoration: underline;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--neutral-100);
+  padding: 0.125em 0.375em;
+  border-radius: var(--radius-xs);
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background: var(--neutral-100);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs);
+  padding: 0.125rem 0.375rem;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Flex utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1; }
+.flex-auto { flex: 1 1 auto; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-8 { gap: var(--space-8); }
+
+.w-full { width: 100%; }
+.min-w-0 { min-width: 0; }
+.max-w-content { max-width: var(--content-max); }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.px-content { padding-left: var(--content-padding); padding-right: var(--content-padding); }
+
+/* Text color utilities */
+.text-primary { color: var(--neutral-900); }
+.text-secondary { color: var(--neutral-600); }
+.text-muted { color: var(--neutral-500); }
+.text-inverse { color: white; }
+
+/* Category text colors */
+.text-student { color: var(--student-700); }
+.text-teacher { color: var(--teacher-700); }
+.text-parent { color: var(--parent-700); }
+.text-admin { color: var(--admin-700); }
+.text-institution { color: var(--institution-700); }
+
+/* Category background utilities */
+.bg-student-50 { background: var(--student-50); }
+.bg-teacher-50 { background: var(--teacher-50); }
+.bg-parent-50 { background: var(--parent-50); }
+.bg-admin-50 { background: var(--admin-50); }
+.bg-institution-50 { background: var(--institution-50); }
+
+.bg-student-100 { background: var(--student-100); }
+.bg-teacher-100 { background: var(--teacher-100); }
+.bg-parent-100 { background: var(--parent-100); }
+.bg-admin-100 { background: var(--admin-100); }
+.bg-institution-100 { background: var(--institution-100); }
+
+/* Gradient utilities */
+.gradient-student { background: var(--gradient-student); }
+.gradient-teacher { background: var(--gradient-teacher); }
+.gradient-parent { background: var(--gradient-parent); }
+.gradient-admin { background: var(--gradient-admin); }
+.gradient-institution { background: var(--gradient-institution); }
+.gradient-hero { background: var(--gradient-hero); }
+
+/* Tabular numbers */
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
