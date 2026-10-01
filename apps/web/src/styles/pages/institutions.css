@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Institutions — list + detail page composition
+   Scoped: .page-institutions (registry) · .page-institution-detail (record)
+   Layout composition only; component visuals stay in primitives.css.
+   ========================================================================== */
+
+/* ---------- list: filter bar lives inside the table shell ---------- */
+
+.page-institutions .table-shell > .filterbar {
+  margin-bottom: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.page-institutions .filterbar .search-wrap { flex: 1 1 220px; max-width: 320px; }
+.page-institutions .filterbar .fchip,
+.page-institutions .filterbar .btn { flex: none; }
+.page-institutions .filterbar .fchip .chip-label {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* row actions: Menu root in a stable inline box inside the trailing cell */
+.page-institutions .row-menu { display: inline-flex; }
+
+/* spacing for the info alert above drawer forms */
+.page-institutions .drawer .alert { margin-bottom: 16px; }
+
+/* reason field inside the destructive confirm */
+.page-institutions .confirm-form,
+.page-institution-detail .confirm-form { display: grid; gap: 14px; }
+.page-institutions .confirm-form .field,
+.page-institution-detail .confirm-form .field { margin-bottom: 0; }
+
+/* ---------- detail ---------- */
+
+/* back link sits tight above the page head, optically aligned to content edge */
+.page-institution-detail .back-link { margin: -6px 0 10px -11px; }
+
+/* status alerts sit tight under the page head */
+.page-institution-detail .head-alerts { display: grid; gap: 10px; margin: -6px 0 16px; }
+
+/* metric strip: ONE card, stat cells split by hairlines */
+.page-institution-detail .metric-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line); /* hairline dividers show through the 1px gaps */
+  overflow: hidden; /* clip cell corners to the card radius */
+  margin-bottom: 16px;
+}
+.page-institution-detail .metric-strip > .metric {
+  background: var(--surface);
+  padding: 15px 18px 16px;
+  align-content: start;
+}
+@media (max-width: 700px) {
+  .page-institution-detail .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* overview: record card beside directory card */
+.page-institution-detail .detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .page-institution-detail .detail-grid { grid-template-columns: 1fr; }
+}
+
+/* institution id wraps instead of overflowing the record card */
+.page-institution-detail .iid { word-break: break-all; }
+
+/* directory: link rows in a flush card body */
+.page-institution-detail .rowlist a.row { color: inherit; }
+.page-institution-detail .rowlist a.row:hover { text-decoration: none; }
+.page-institution-detail .dir-icon {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--ink-500);
+}
+.page-institution-detail .dir-icon svg { width: 15px; height: 15px; }
+.page-institution-detail .dir-text { min-width: 0; display: grid; gap: 1px; }
+.page-institution-detail .dir-label { font-weight: 500; color: var(--ink-900); }
+.page-institution-detail .dir-sub { color: var(--ink-500); font-size: var(--text-12); }
+.page-institution-detail .rowlist a.row .dir-arrow {
+  margin-left: auto;
+  flex: none;
+  color: var(--ink-400);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.page-institution-detail .rowlist a.row:hover .dir-arrow { color: var(--ink-700); }
+
+/* card-head "full history" link */
+.page-institution-detail .link-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-12);
+  font-weight: 500;
+  color: var(--ink-600);
+}
+.page-institution-detail .link-more:hover { color: var(--ink-900); text-decoration: none; }
+.page-institution-detail .link-more svg { width: 12px; height: 12px; }

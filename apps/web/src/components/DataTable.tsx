@@ -1,9 +1,11 @@
 import { ErrorState, SkeletonRows } from "./ui";
+import { IconChevronLeft, IconChevronRight } from "./icons";
 
 export interface Column<T> {
   key: string;
   label: string;
   width?: string;
+  align?: "left" | "right";
   render: (row: T) => React.ReactNode;
 }
 
@@ -24,8 +26,10 @@ interface Props<T> {
   onPrev: () => void;
   pageIndex: number;
   countLabel?: string;
+  toolbar?: React.ReactNode;
 }
 
+/** The console's core instrument: dense, hairline-bound, URL-state driven. */
 export function DataTable<T>({
   columns,
   rows,
@@ -43,13 +47,15 @@ export function DataTable<T>({
   onPrev,
   pageIndex,
   countLabel,
+  toolbar,
 }: Props<T>) {
   const activeSort = sort ?? "";
   const descending = activeSort.startsWith("-");
   const activeKey = descending ? activeSort.slice(1) : activeSort;
 
   return (
-    <>
+    <div className="table-shell">
+      {toolbar}
       <div className="table-wrap">
         <table className="data">
           <thead>
@@ -60,7 +66,10 @@ export function DataTable<T>({
                 return (
                   <th
                     key={column.key}
-                    style={column.width ? { width: column.width } : undefined}
+                    style={{
+                      width: column.width,
+                      textAlign: column.align === "right" ? "right" : undefined,
+                    }}
                     className={isSortable ? "sortable" : undefined}
                     onClick={isSortable ? () => onSort(column.key) : undefined}
                     aria-sort={isActive ? (descending ? "descending" : "ascending") : undefined}
@@ -78,9 +87,7 @@ export function DataTable<T>({
                   >
                     {column.label}
                     {isActive && (
-                      <span className="dir" aria-hidden="true">
-                        {descending ? "▼" : "▲"}
-                      </span>
+                      <span className={`sort-arrow${descending ? " desc" : ""}`} aria-hidden="true" />
                     )}
                   </th>
                 );
@@ -90,17 +97,13 @@ export function DataTable<T>({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={columns.length} style={{ padding: 0 }}>
+                <td colSpan={columns.length} style={{ padding: 0, border: "none" }}>
                   <SkeletonRows />
                 </td>
               </tr>
-            ) : error ? (
+            ) : error || rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} style={{ padding: 0 }} />
-              </tr>
-            ) : rows.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length} style={{ padding: 0 }} />
+                <td colSpan={columns.length} style={{ padding: 0, border: "none" }} />
               </tr>
             ) : (
               rows.map((row) => (
@@ -118,30 +121,34 @@ export function DataTable<T>({
                   tabIndex={onRowClick ? 0 : undefined}
                 >
                   {columns.map((column) => (
-                    <td key={column.key}>{column.render(row)}</td>
+                    <td
+                      key={column.key}
+                      className={column.align === "right" ? "cell-actions" : undefined}
+                      style={column.align === "right" ? { textAlign: "right" } : undefined}
+                    >
+                      {column.render(row)}
+                    </td>
                   ))}
                 </tr>
               ))
             )}
           </tbody>
         </table>
-        {!loading && !error && rows.length === 0 && <div style={{ padding: 8 }}>{empty}</div>}
-        {!loading && error && (
-          <div style={{ padding: 8 }}>
-            <ErrorState onRetry={onRetry} />
-          </div>
-        )}
+        {!loading && !error && rows.length === 0 && empty}
+        {!loading && error && <ErrorState onRetry={onRetry} />}
       </div>
       <div className="table-foot">
         <span className="count">{countLabel ?? ""}</span>
         <button className="btn btn-secondary btn-sm" onClick={onPrev} disabled={pageIndex === 0}>
-          ← Previous
+          <IconChevronLeft />
+          Previous
         </button>
-        <span className="meta">Page {pageIndex + 1}</span>
+        <span className="meta tnum">Page {pageIndex + 1}</span>
         <button className="btn btn-secondary btn-sm" onClick={onNext} disabled={!nextCursor || loading}>
-          Next →
+          Next
+          <IconChevronRight />
         </button>
       </div>
-    </>
+    </div>
   );
 }

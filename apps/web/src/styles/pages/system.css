@@ -1,0 +1,239 @@
+/* ==========================================================================
+   System pages — Activity (audit feed), Settings, Profile
+   Scoped: .page-activity / .page-settings / .page-profile
+   Page-specific layout + widgets only; components live in primitives.css.
+   ========================================================================== */
+
+/* ---------- Activity: forensic feed ---------- */
+
+.page-activity .fb-div {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+  margin: 0 2px;
+  flex: none;
+}
+.page-activity .act-results {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* result trio chips keep their semantic tint while inactive */
+.page-activity .fchip[data-active="false"] svg.tone-ok { color: var(--ok-600); }
+.page-activity .fchip[data-active="false"] svg.tone-danger { color: var(--danger-600); }
+.page-activity .fchip[data-active="false"] svg.tone-warn { color: var(--warn-700); }
+
+.page-activity .act-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.page-activity .evt { border-bottom: 1px solid var(--line); }
+.page-activity .evt:last-child { border-bottom: none; }
+
+/* row: [icon | body | right] */
+.page-activity .evt-row {
+  display: grid;
+  grid-template-columns: 27px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 18px;
+  background: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.page-activity .evt-row:hover { background: var(--paper); }
+.page-activity .evt[data-open="true"] .evt-row { background: var(--paper); }
+
+.page-activity .evt-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.page-activity .evt-line {
+  color: var(--ink-700);
+  font-size: var(--text-13);
+  line-height: 1.45;
+}
+.page-activity .evt-line b { color: var(--ink-900); font-weight: 560; }
+.page-activity .evt-meta {
+  margin-top: 2px;
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--ink-500);
+  font-size: var(--text-12);
+}
+.page-activity .evt-meta .mono { color: var(--ink-400); font-size: var(--text-11); }
+
+.page-activity .evt-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.page-activity .evt-chev {
+  color: var(--ink-400);
+  transition: transform 200ms var(--ease-out);
+}
+.page-activity .evt[data-open="true"] .evt-chev { transform: rotate(180deg); }
+
+/* in-place expansion: 0fr → 1fr grid rows */
+.page-activity .evt-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms var(--ease-out);
+}
+.page-activity .evt[data-open="true"] .evt-detail { grid-template-rows: 1fr; }
+.page-activity .evt-detail-in { overflow: hidden; min-height: 0; }
+.page-activity .evt-detail-pad {
+  padding: 2px 18px 16px 57px; /* aligns with the body column */
+  display: grid;
+  gap: 14px;
+}
+
+/* Changes mini-table */
+.page-activity .evt-changes-head {
+  font-size: var(--text-12);
+  font-weight: 600;
+  color: var(--ink-600);
+  margin-bottom: 6px;
+}
+.page-activity .evt-diff {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.page-activity .evt-diff table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--text-12);
+}
+.page-activity .evt-diff th {
+  background: var(--surface-2);
+  color: var(--ink-500);
+  font-weight: 500;
+  text-align: left;
+  padding: 6px 10px;
+}
+.page-activity .evt-diff td {
+  padding: 6px 10px;
+  border-top: 1px solid var(--line);
+  vertical-align: middle;
+  color: var(--ink-700);
+}
+.page-activity .evt-diff td.diff-key {
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  color: var(--ink-800);
+}
+.page-activity .evt-diff td.diff-old { background: var(--danger-50); color: var(--danger-700); }
+.page-activity .evt-diff td.diff-new { background: var(--ok-50); color: var(--ok-700); }
+.page-activity .evt-diff .diff-val {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+}
+.page-activity .evt-diff .diff-none { color: var(--ink-400); }
+
+.page-activity .act-skel .skel-row:last-child { border-bottom: none; }
+
+@media (max-width: 720px) {
+  .page-activity .evt-detail-pad { padding-left: 18px; }
+}
+
+/* ---------- Settings ---------- */
+
+.page-settings .card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 13px 18px;
+  border-top: 1px solid var(--line);
+}
+.page-settings .settings-alert { margin-bottom: 16px; }
+.page-settings .policy-note { margin-top: 14px; }
+
+/* ---------- Profile ---------- */
+
+.page-profile .profile-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+}
+.page-profile .profile-id { min-width: 0; }
+.page-profile .profile-name {
+  font-size: var(--text-16);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink-900);
+}
+.page-profile .profile-email {
+  color: var(--ink-500);
+  font-size: var(--text-13);
+  margin-top: 1px;
+}
+.page-profile .profile-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.page-profile .profile-scope { margin-left: auto; flex: none; }
+
+.page-profile .profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.page-profile .access-summary {
+  font-size: var(--text-13);
+  color: var(--ink-600);
+  margin-bottom: 14px;
+}
+.page-profile .access-summary b {
+  color: var(--ink-900);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.page-profile .perm-group + .perm-group {
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+.page-profile .perm-domain {
+  font-size: var(--text-12);
+  color: var(--ink-500);
+  margin-bottom: 6px;
+}
+.page-profile .perm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.page-profile .profile-activity { margin-top: 16px; }
+.page-profile .profile-skel-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  flex: none;
+}
+.page-profile .tl-line .badge { margin-left: 8px; vertical-align: 1px; }
+
+@media (max-width: 900px) {
+  .page-profile .profile-grid { grid-template-columns: minmax(0, 1fr); }
+}

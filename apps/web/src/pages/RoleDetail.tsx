@@ -1,19 +1,50 @@
-import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api";
 import type { Permission, RoleDetail as RoleDetailType } from "@/lib/types";
-import { Badge, ConfirmDialog, ErrorState, SkeletonRows } from "@/components/ui";
+import { DataTable, type Column } from "@/components/DataTable";
+import {
+  Alert,
+  Badge,
+  Button,
+  ConfirmDialog,
+  Drawer,
+  EmptyState,
+  ErrorState,
+  Field,
+  Ident,
+  PageHead,
+  Skeleton,
+  SkeletonRows,
+  StatusPill,
+  Tabs,
+} from "@/components/ui";
+import { IconArrowLeft, IconBan, IconPencil, IconUsers } from "@/components/icons";
 import { useToast } from "@/lib/toast";
+import "@/styles/pages/governance.css";
+
+function sameSet(a: Set<string>, b: Set<string>): boolean {
+  if (a.size !== b.size) return false;
+  for (const value of a) if (!b.has(value)) return false;
+  return true;
+}
+
+function scopeLabel(scope: string): string {
+  return scope.charAt(0).toUpperCase() + scope.slice(1);
+}
+
+type Member = RoleDetailType["members"][number];
 
 export function RoleDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [editMode, setEditMode] = useState(false);
-  const [warnOpen, setWarnOpen] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [description, setDescription] = useState("");
+  const [tab, setTab] = useState("permissions");
+  const [selected, setSelected] = useState<Set<string> | null>(null);
+  const [confirm, setConfirm] = useState<"save" | "delete" | null>(null);
+  const [descOpen, setDescOpen] = useState(false);
 
   const { data: role, isLoading, isError, refetch } = useQuery({
     queryKey: ["role", id],
@@ -24,6 +55,25 @@ export function RoleDetail() {
     queryKey: ["permissions"],
     queryFn: () => api<Permission[]>("/api/v1/permissions"),
   });
+
+  const granted = useMemo(
+    () => new Set((role?.permissions ?? []).map((p) => p.key)),
+    [role],
+  );
+
+  // (Re)initialize the working selection when the role record first arrives or the id changes.
+  useEffect(() => {
+    setSelected(null);
+    setTab("permissions");
+  }, [id]);
+  useEffect(() => {
+    if (role && selected === null) {
+      setSelected(new Set(role.permissions.map((p) => p.key)));
+    }
+  }, [role, selected]);
+
+  const effectiveSelected = selected ?? granted;
+  const dirty = selected !== null && !sameSet(selected, granted);
 
   const grouped = useMemo(() => {
     const out: Record<string, Permission[]> = {};
@@ -37,12 +87,11 @@ export function RoleDetail() {
     mutationFn: async () =>
       api(`/api/v1/roles/${id}`, {
         method: "PATCH",
-        body: JSON.stringify({ description, permissionKeys: [...selected] }),
+        body: JSON.stringify({ description: role?.description, permissionKeys: [...effectiveSelected] }),
       }),
     onSuccess: () => {
       toast.notify("Role updated.");
-      setEditMode(false);
-      setWarnOpen(false);
+      setConfirm(null);
       queryClient.invalidateQueries({ queryKey: ["role", id] });
       queryClient.invalidateQueries({ queryKey: ["roles"] });
     },
@@ -53,146 +102,321 @@ export function RoleDetail() {
     mutationFn: async () => api(`/api/v1/roles/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       toast.notify("Role deleted.");
-      window.history.back();
+      navigate("/roles");
     },
     onError: (e) => toast.notify(e instanceof ApiError ? e.message : "Delete failed.", "error"),
   });
 
-  if (isError) return <ErrorState title="This role couldn't load" onRetry={() => refetch()} />;
+  if (isError) {
+    return (
+      <div className="page-role-detail">
+        <ErrorState title="This role couldn't load" onRetry={() => refetch()} />
+      </div>
+    );
+  }
   if (isLoading || !role) {
     return (
-      <div>
-        <div className="page-head"><div className="skeleton" style={{ width: 240, height: 22 }} /></div>
-        <div className="card"><SkeletonRows rows={6} /></div>
+      <div className="page-role-detail">
+        <Skeleton w={170} />
+        <div style={{ height: 10 }} />
+        <Skeleton w={260} h={22} />
+        <div style={{ height: 22 }} />
+        <div className="card">
+          <SkeletonRows rows={6} />
+        </div>
       </div>
     );
   }
 
   const inUse = role.memberCount > 0;
 
-  return (
-    <div>
-      <div className="page-head">
-        <div>
-          <div className="meta" style={{ marginBottom: 4 }}><Link to="/roles">Roles &amp; permissions</Link></div>
-          <h1 style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {role.name} {role.isSystem && <Badge tone="neutral">system</Badge>}
-            {inUse && <Badge tone="warn">assigned to {role.memberCount}</Badge>}
-          </h1>
-          <p className="sub">{role.description || "No description."}</p>
-        </div>
-        <div className="actions">
-          {!editMode && !role.isSystem && role.memberCount === 0 && (
-            <button className="btn btn-danger" onClick={() => setWarnOpen(true)}>Delete role</button>
-          )}
-          {!editMode ? (
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                setSelected(new Set(role.permissions.map((p) => p.key)));
-                setDescription(role.description);
-                setEditMode(true);
-              }}
-            >
-              Edit role
-            </button>
-          ) : (
-            <>
-              <button className="btn btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
-              <button
-                className="btn btn-primary"
-                disabled={save.isPending}
-                onClick={() => (inUse ? setWarnOpen(true) : save.mutate())}
-              >
-                {save.isPending && <span className="btn-spinner" aria-hidden="true" />}
-                Save changes
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+  function toggle(key: string, on: boolean) {
+    setSelected((current) => {
+      const next = new Set(current ?? granted);
+      if (on) next.add(key);
+      else next.delete(key);
+      return next;
+    });
+  }
 
-      {inUse && !editMode && (
-        <div className="banner-error" style={{ borderColor: "var(--warn-700)", background: "var(--warn-100)", color: "var(--warn-700)" }} role="note">
-          This role is assigned to {role.memberCount} administrator{role.memberCount === 1 ? "" : "s"}. Edits change their access immediately.
+  function toggleDomain(perms: Permission[], on: boolean) {
+    setSelected((current) => {
+      const next = new Set(current ?? granted);
+      for (const p of perms) {
+        if (on) next.add(p.key);
+        else next.delete(p.key);
+      }
+      return next;
+    });
+  }
+
+  const memberColumns: Column<Member>[] = [
+    {
+      key: "member",
+      label: "Member",
+      render: (row) => <Ident name={row.name} sub={row.email ?? "—"} />,
+    },
+    {
+      key: "status",
+      label: "Status",
+      width: "130px",
+      render: (row) => (row.status ? <StatusPill status={row.status} /> : <span className="meta">—</span>),
+    },
+    {
+      key: "scope",
+      label: "Scope",
+      width: "120px",
+      render: (row) => <span className="badge badge-outline">{scopeLabel(row.scope)}</span>,
+    },
+  ];
+
+  return (
+    <div className="page-role-detail">
+      <Link to="/roles" className="backlink">
+        <IconArrowLeft />
+        Roles &amp; permissions
+      </Link>
+      <PageHead
+        title={
+          <>
+            {role.name}
+            <span className="badge badge-outline">{scopeLabel(role.scope)}</span>
+            {role.isSystem && <Badge tone="neutral">System</Badge>}
+          </>
+        }
+        sub={role.description || "No description."}
+        actions={
+          <>
+            {!role.isSystem && role.memberCount === 0 && (
+              <Button variant="danger-ghost" icon={<IconBan />} onClick={() => setConfirm("delete")}>
+                Delete role
+              </Button>
+            )}
+            {!role.isSystem && (
+              <Button variant="secondary" icon={<IconPencil />} onClick={() => setDescOpen(true)}>
+                Edit description
+              </Button>
+            )}
+          </>
+        }
+      />
+
+      {inUse && (
+        <Alert tone="warn" title={`Assigned to ${role.memberCount} administrator${role.memberCount === 1 ? "" : "s"}`}>
+          Edits to this role change their access immediately and are recorded in the audit log.
+        </Alert>
+      )}
+
+      <Tabs
+        tabs={[
+          { id: "permissions", label: "Permissions" },
+          { id: "members", label: "Members", count: role.memberCount },
+        ]}
+        active={tab}
+        onChange={setTab}
+      />
+
+      {tab === "permissions" && (
+        <div>
+          {role.isSystem && (
+            <p className="system-note">System roles are built in and can't be edited.</p>
+          )}
+          <div className="perm-stack">
+            {Object.entries(grouped).map(([domain, perms]) => {
+              const grantedInDomain = perms.filter((p) => effectiveSelected.has(p.key)).length;
+              const all = grantedInDomain === perms.length;
+              const some = grantedInDomain > 0 && !all;
+              return (
+                <section key={domain} className="card perm-group" aria-labelledby={`perm-${domain}`}>
+                  <div className="card-head">
+                    <h2 id={`perm-${domain}`}>{domain}</h2>
+                    <span className="count-pill">
+                      {grantedInDomain}/{perms.length}
+                    </span>
+                    <div className="spacer">
+                      <label className="selectall" data-disabled={role.isSystem}>
+                        <input
+                          type="checkbox"
+                          className="check"
+                          checked={all}
+                          disabled={role.isSystem}
+                          ref={(el) => {
+                            if (el) el.indeterminate = some;
+                          }}
+                          onChange={(e) => toggleDomain(perms, e.target.checked)}
+                        />
+                        Select all
+                      </label>
+                    </div>
+                  </div>
+                  <div className="perm-rows">
+                    {perms.map((p) => (
+                      <label key={p.id} className="perm-row" data-disabled={role.isSystem}>
+                        <input
+                          type="checkbox"
+                          className="check"
+                          checked={effectiveSelected.has(p.key)}
+                          disabled={role.isSystem}
+                          onChange={(e) => toggle(p.key, e.target.checked)}
+                        />
+                        <span className="perm-main">
+                          <span className="perm-key">{p.key}</span>
+                          <span className="perm-desc">{p.description}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      <div className="grid-2">
-        <section className="card">
-          <div className="card-head"><h2>Permissions</h2><span className="meta">{editMode ? selected.size : role.permissions.length} selected</span></div>
-          <div className="card-body" style={{ display: "grid", gap: 18 }}>
-            {Object.entries(grouped).map(([domain, perms]) => (
-              <div key={domain}>
-                <div className="meta" style={{ fontWeight: 700, marginBottom: 6, color: "var(--ink-700)" }}>{domain}</div>
-                <div style={{ display: "grid", gap: 6 }}>
-                  {perms.map((p) => {
-                    const has = editMode ? selected.has(p.key) : role.permissions.some((rp) => rp.id === p.id);
-                    return (
-                      <label key={p.id} style={{ display: "grid", gridTemplateColumns: "auto 170px 1fr", gap: 8, alignItems: "baseline", fontSize: 13, cursor: editMode ? "pointer" : "default", opacity: has || editMode ? 1 : 0.45 }}>
-                        {editMode ? (
-                          <input
-                            type="checkbox"
-                            checked={selected.has(p.key)}
-                            onChange={(e) => {
-                              const next = new Set(selected);
-                              if (e.target.checked) next.add(p.key);
-                              else next.delete(p.key);
-                              setSelected(next);
-                            }}
-                          />
-                        ) : (
-                          <span aria-hidden="true" style={{ color: has ? "var(--ok-600)" : "var(--ink-400)" }}>{has ? "✓" : "–"}</span>
-                        )}
-                        <code>{p.key}</code>
-                        <span className="meta">{p.description}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+      {tab === "members" && (
+        <DataTable
+          columns={memberColumns}
+          rows={role.members}
+          keyOf={(row) => row.assignmentId}
+          loading={false}
+          error={false}
+          onRetry={() => refetch()}
+          sort={null}
+          onSort={() => {}}
+          onRowClick={(row) => navigate(`/administrators/${row.personId}`)}
+          empty={
+            <EmptyState
+              icon={<IconUsers />}
+              title="No members yet"
+              body="Assign this role to an administrator from the Administrators page."
+            />
+          }
+          nextCursor={null}
+          onNext={() => {}}
+          onPrev={() => {}}
+          pageIndex={0}
+          countLabel={`${role.memberCount} member${role.memberCount === 1 ? "" : "s"}`}
+        />
+      )}
 
-        <section className="card">
-          <div className="card-head"><h2>Members</h2><span className="meta">{role.memberCount} assigned</span></div>
-          <div className="card-body" style={{ display: "grid", gap: 12 }}>
-            {editMode && (
-              <div className="field">
-                <label htmlFor="role-desc">Description</label>
-                <textarea id="role-desc" className="input" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
-              </div>
-            )}
-            {role.members.length === 0 ? (
-              <p className="meta">No administrator currently holds this role.</p>
-            ) : (
-              role.members.map((member) => (
-                <div key={member.assignmentId} style={{ display: "flex", gap: 10, alignItems: "baseline", fontSize: 13 }}>
-                  <Link to={`/administrators/${member.personId}`}><b>{member.name}</b></Link>
-                  <span className="meta">{member.email ?? "—"}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-      </div>
+      {dirty && (
+        <div className="savebar">
+          <span className="savebar-label">Unsaved changes</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={save.isPending}
+            onClick={() => setSelected(new Set(granted))}
+          >
+            Discard
+          </Button>
+          <Button
+            size="sm"
+            loading={save.isPending}
+            onClick={() => (inUse ? setConfirm("save") : save.mutate())}
+          >
+            Save role
+          </Button>
+        </div>
+      )}
 
-      {warnOpen && (
+      {confirm && (
         <ConfirmDialog
-          title={role.memberCount === 0 && !role.isSystem ? `Delete ${role.name}?` : "Apply role changes?"}
+          title={confirm === "delete" ? `Delete ${role.name}?` : "Apply role changes?"}
           body={
-            role.memberCount === 0 && !role.isSystem
+            confirm === "delete"
               ? "This permanently removes the role. The deletion is recorded in the audit log."
               : `${role.memberCount} administrator${role.memberCount === 1 ? "" : "s"} hold this role. Your permission changes apply to them immediately and are recorded in the audit log.`
           }
-          confirmLabel={role.memberCount === 0 && !role.isSystem ? "Delete role" : "Apply changes"}
-          danger={role.memberCount === 0 && !role.isSystem}
+          confirmLabel={confirm === "delete" ? "Delete role" : "Apply changes"}
+          danger={confirm === "delete"}
           busy={save.isPending || remove.isPending}
-          onConfirm={() => (role.memberCount === 0 && !role.isSystem ? remove.mutate() : save.mutate())}
-          onClose={() => setWarnOpen(false)}
+          onConfirm={() => (confirm === "delete" ? remove.mutate() : save.mutate())}
+          onClose={() => setConfirm(null)}
+        />
+      )}
+
+      {descOpen && (
+        <EditDescriptionDrawer
+          role={role}
+          onClose={() => setDescOpen(false)}
+          onSaved={() => {
+            setDescOpen(false);
+            toast.notify("Role updated.");
+            queryClient.invalidateQueries({ queryKey: ["role", id] });
+            queryClient.invalidateQueries({ queryKey: ["roles"] });
+          }}
         />
       )}
     </div>
+  );
+}
+
+function EditDescriptionDrawer({
+  role,
+  onClose,
+  onSaved,
+}: {
+  role: RoleDetailType;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [description, setDescription] = useState(role.description);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+    try {
+      await api(`/api/v1/roles/${role.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ description }),
+      });
+      onSaved();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't reach the server. Try again.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Drawer
+      title="Edit description"
+      sub={role.name}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={busy}>
+            Cancel
+          </Button>
+          <Button type="submit" form="edit-role-desc-form" loading={busy}>
+            Save changes
+          </Button>
+        </>
+      }
+    >
+      {error && (
+        <Alert tone="danger" title="Couldn't save">
+          {error}
+        </Alert>
+      )}
+      <form id="edit-role-desc-form" onSubmit={submit} noValidate>
+        <Field
+          label="Description"
+          htmlFor="role-desc"
+          help="Shown on the roles list and inside the assignment pickers."
+        >
+          <textarea
+            id="role-desc"
+            className="input"
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </Field>
+      </form>
+    </Drawer>
   );
 }

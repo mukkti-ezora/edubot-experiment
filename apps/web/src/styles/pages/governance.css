@@ -1,0 +1,241 @@
+/* ==========================================================================
+   Governance pages — Administrators, Administrator detail, Roles, Role detail
+   Scoped under .page-administrators / .page-administrator-detail /
+   .page-roles / .page-role-detail. Compose from primitives; layout + page
+   widgets only.
+   ========================================================================== */
+
+/* ---------- shared: back link above a detail PageHead ---------- */
+
+.page-administrator-detail .backlink,
+.page-role-detail .backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--ink-500);
+  margin-bottom: 10px;
+}
+.page-administrator-detail .backlink:hover,
+.page-role-detail .backlink:hover {
+  color: var(--ink-900);
+  text-decoration: none;
+}
+.page-administrator-detail .backlink svg,
+.page-role-detail .backlink svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- Administrators list ---------- */
+
+/* role badge cluster in a table cell */
+.page-administrators .rolecell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* drawer forms: breathing room between an alert and the form */
+.page-administrators .drawer-body .alert,
+.page-administrator-detail .drawer-body .alert,
+.page-roles .drawer-body .alert,
+.page-role-detail .drawer-body .alert {
+  margin-bottom: 16px;
+}
+
+/* invite drawer: single-select role picker */
+.page-administrators .rolepick {
+  display: grid;
+  gap: 8px;
+}
+.page-administrators .rolepick-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.page-administrators .rolepick-row:hover {
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+.page-administrators .rolepick-row[data-selected="true"] {
+  border-color: var(--ink-900);
+  background: var(--surface);
+}
+.page-administrators .rolepick-row .check {
+  margin-top: 2px;
+}
+.page-administrators .rolepick-main {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.page-administrators .rolepick-name {
+  font-weight: 500;
+  font-size: var(--text-13);
+  color: var(--ink-900);
+}
+.page-administrators .rolepick-desc {
+  font-size: var(--text-12);
+  color: var(--ink-500);
+  line-height: 1.45;
+}
+.page-administrators .rolepick-scope {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ---------- Administrator detail ---------- */
+
+.page-administrator-detail .detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .page-administrator-detail .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.page-administrator-detail .kv-id {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  color: var(--ink-600);
+  word-break: break-all;
+}
+
+/* role assignment rows (flush card body) */
+.page-administrator-detail .assign-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-13);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.page-administrator-detail .assign-row:last-child {
+  border-bottom: none;
+}
+.page-administrator-detail .assign-row:hover {
+  background: var(--paper);
+}
+.page-administrator-detail .assign-row a:hover {
+  text-decoration: none;
+}
+
+/* ---------- Roles list ---------- */
+
+.page-roles .role-desc {
+  max-width: 52ch;
+}
+
+/* ---------- Role detail (permission editor) ---------- */
+
+.page-role-detail .system-note {
+  font-size: var(--text-13);
+  color: var(--ink-500);
+  margin: 0 0 14px;
+}
+
+.page-role-detail > .alert {
+  margin-bottom: 16px;
+}
+
+.page-role-detail .perm-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.page-role-detail .perm-group .count-pill {
+  margin-left: 2px;
+}
+
+.page-role-detail .selectall {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--ink-600);
+  cursor: pointer;
+}
+.page-role-detail .selectall[data-disabled="true"] {
+  cursor: default;
+  color: var(--ink-400);
+}
+
+.page-role-detail .perm-rows {
+  display: grid;
+}
+.page-role-detail .perm-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 18px;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.page-role-detail .perm-row:hover {
+  background: var(--paper);
+}
+.page-role-detail .perm-row[data-disabled="true"] {
+  cursor: default;
+}
+.page-role-detail .perm-row[data-disabled="true"]:hover {
+  background: none;
+}
+.page-role-detail .perm-row .check {
+  margin-top: 2px;
+}
+.page-role-detail .perm-main {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.page-role-detail .perm-key {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  font-weight: 500;
+  color: var(--ink-900);
+}
+.page-role-detail .perm-desc {
+  font-size: var(--text-12);
+  color: var(--ink-500);
+  line-height: 1.45;
+}
+
+/* sticky save bar (explicit-save flow, visible while dirty) */
+.page-role-detail .savebar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-full);
+  box-shadow: var(--shadow-lg);
+  padding: 8px 8px 8px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: var(--text-13);
+}
+.page-role-detail .savebar .savebar-label {
+  color: var(--ink-600);
+  font-weight: 500;
+  margin-right: 4px;
+  white-space: nowrap;
+}

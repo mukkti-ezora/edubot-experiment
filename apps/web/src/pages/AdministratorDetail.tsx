@@ -2,16 +2,51 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api";
-import type { AuditEvent, Page, UserRow } from "@/lib/types";
+import type { AuditEvent, Page, RoleSummary, UserRow } from "@/lib/types";
 import { actionLabel, formatDate, formatDateTime, relativeFromNow } from "@/lib/format";
-import { Badge, ConfirmDialog, ErrorState, SkeletonRows, statusTone } from "@/components/ui";
+import {
+  Alert,
+  Badge,
+  Button,
+  ConfirmDialog,
+  ErrorState,
+  PageHead,
+  Skeleton,
+  SkeletonRows,
+  StatusPill,
+} from "@/components/ui";
+import {
+  IconActivity,
+  IconArrowLeft,
+  IconArrowRight,
+  IconBan,
+  IconLock,
+  IconPencil,
+  IconPlus,
+  IconSettings,
+  IconShield,
+} from "@/components/icons";
 import { useToast } from "@/lib/toast";
 import { useAuth } from "@/lib/auth";
+import "@/styles/pages/governance.css";
 
 interface AdminDetailResponse {
   administrator: UserRow;
   account: { status: string; email: string; lastLoginAt: string | null } | null;
   roles: { id: string; name: string }[];
+}
+
+function eventIcon(event: AuditEvent): { icon: React.ReactNode; tone?: string } {
+  if (event.result === "denied") return { icon: <IconShield />, tone: "tone-danger" };
+  const a = event.action;
+  if (a.startsWith("auth.")) return { icon: <IconLock /> };
+  if (a.startsWith("settings")) return { icon: <IconSettings /> };
+  if (a.includes("suspend") || a.includes("deactivate") || a.includes("disabled")) {
+    return { icon: <IconBan />, tone: "tone-warn" };
+  }
+  if (a.includes("create") || a.includes("assign") || a.includes("enabled")) return { icon: <IconPlus /> };
+  if (a.includes("update") || a.includes("activate")) return { icon: <IconPencil /> };
+  return { icon: <IconActivity /> };
 }
 
 export function AdministratorDetail() {
@@ -25,6 +60,12 @@ export function AdministratorDetail() {
     queryKey: ["administrator", id],
     queryFn: () => api<AdminDetailResponse>(`/api/v1/administrators/${id}`),
     enabled: !!id,
+  });
+
+  // Role catalog gives us scope per role (the detail response carries id + name only).
+  const { data: roleCatalog } = useQuery({
+    queryKey: ["roles"],
+    queryFn: () => api<RoleSummary[]>("/api/v1/roles"),
   });
 
   const { data: activity } = useQuery({
@@ -48,73 +89,155 @@ export function AdministratorDetail() {
     },
   });
 
-  if (isError) return <ErrorState title="This administrator couldn't be loaded" onRetry={() => refetch()} />;
+  if (isError) {
+    return (
+      <div className="page-administrator-detail">
+        <ErrorState title="This administrator couldn't be loaded" onRetry={() => refetch()} />
+      </div>
+    );
+  }
   if (isLoading || !data) {
     return (
-      <div>
-        <div className="page-head"><div className="skeleton" style={{ width: 280, height: 22 }} /></div>
-        <div className="card"><SkeletonRows rows={5} /></div>
+      <div className="page-administrator-detail">
+        <Skeleton w={140} />
+        <div style={{ height: 10 }} />
+        <Skeleton w={280} h={22} />
+        <div style={{ height: 22 }} />
+        <div className="card">
+          <SkeletonRows rows={5} />
+        </div>
       </div>
     );
   }
 
   const { administrator: admin, account, roles } = data;
+  const scopeById = new Map((roleCatalog ?? []).map((r) => [r.id, r.scope]));
 
   return (
-    <div>
-      <div className="page-head">
-        <div>
-          <div className="meta" style={{ marginBottom: 4 }}>
-            <Link to="/administrators">Administrators</Link>
-          </div>
-          <h1 style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {admin.name} <Badge tone={statusTone(admin.status)}>{admin.status}</Badge>
+    <div className="page-administrator-detail">
+      <Link to="/administrators" className="backlink">
+        <IconArrowLeft />
+        Administrators
+      </Link>
+      <PageHead
+        title={
+          <>
+            {admin.name}
+            <StatusPill status={admin.status} />
             {admin.id === me?.admin.id && <Badge tone="info">you</Badge>}
-          </h1>
-          <p className="sub">{admin.email}</p>
-        </div>
-        <div className="actions">
-          {admin.id !== me?.admin.id &&
-            (admin.status === "deactivated" ? (
-              <button className="btn btn-primary" onClick={() => setConfirm("activate")}>Reactivate</button>
+          </>
+        }
+        sub={admin.email}
+        actions={
+          admin.id !== me?.admin.id ? (
+            admin.status === "deactivated" ? (
+              <Button onClick={() => setConfirm("activate")}>Reactivate</Button>
             ) : (
-              <button className="btn btn-danger" onClick={() => setConfirm("deactivate")}>Deactivate</button>
-            ))}
-        </div>
-      </div>
+              <Button variant="danger-ghost" icon={<IconBan />} onClick={() => setConfirm("deactivate")}>
+                Deactivate
+              </Button>
+            )
+          ) : undefined
+        }
+      />
 
-      <div className="grid-2">
-        <section className="card">
-          <div className="card-head"><h2>Access</h2></div>
+      <div className="detail-grid">
+        <section className="card" aria-labelledby="admin-profile">
+          <div className="card-head">
+            <h2 id="admin-profile">Profile</h2>
+          </div>
           <div className="card-body">
             <dl className="kv">
-              <dt>Roles</dt>
-              <dd>{roles.length ? roles.map((r) => <Badge key={r.id} tone="neutral">{r.name}</Badge>) : "—"}</dd>
-              <dt>Account status</dt><dd>{account ? account.status : "—"}</dd>
-              <dt>Last sign-in</dt><dd>{account?.lastLoginAt ? formatDateTime(account.lastLoginAt) : "Never"}</dd>
-              <dt>Member since</dt><dd>{formatDate(admin.createdAt)}</dd>
+              <dt>Email</dt>
+              <dd>{admin.email}</dd>
+              <dt>Status</dt>
+              <dd>
+                <StatusPill status={admin.status} />
+              </dd>
+              <dt>Scope</dt>
+              <dd>{admin.institutionName ?? "Platform"}</dd>
+              <dt>Created</dt>
+              <dd>{formatDate(admin.createdAt)}</dd>
+              <dt>Last sign-in</dt>
+              <dd>{account?.lastLoginAt ? formatDateTime(account.lastLoginAt) : "Never"}</dd>
+              <dt>Administrator ID</dt>
+              <dd className="kv-id">{admin.id}</dd>
             </dl>
           </div>
         </section>
-        <section className="card">
-          <div className="card-head"><h2>Recent actions</h2><Link className="meta" to={`/activity?actorId=${admin.id}`}>All →</Link></div>
-          <div className="card-body">
-            {!activity || activity.items.length === 0 ? (
-              <p className="meta">No recorded actions yet.</p>
-            ) : (
-              <div className="feed">
-                {activity.items.map((event) => (
-                  <div key={event.id} className="feed-item">
-                    <time dateTime={event.occurredAt}>{relativeFromNow(event.occurredAt)}</time>
-                    <span className="what">{actionLabel(event.action)}{event.targetLabel ? <> → {event.targetLabel}</> : null}</span>
-                    {event.result !== "success" && <Badge tone={event.result === "denied" ? "warn" : "danger"}>{event.result}</Badge>}
-                  </div>
-                ))}
-              </div>
-            )}
+
+        <section className="card" aria-labelledby="admin-roles">
+          <div className="card-head">
+            <h2 id="admin-roles">Role assignments</h2>
+            <div className="spacer">
+              <span className="count-pill">{roles.length}</span>
+            </div>
           </div>
+          {roles.length === 0 ? (
+            <div className="card-body">
+              <Alert tone="warn" title="No roles assigned">
+                This administrator can sign in but has no capabilities. Roles are assigned at
+                invitation time.
+              </Alert>
+            </div>
+          ) : (
+            <div>
+              {roles.map((role) => (
+                <div key={role.id} className="assign-row">
+                  <Link to={`/roles/${role.id}`}>
+                    <Badge tone="violet">{role.name}</Badge>
+                  </Link>
+                  {scopeById.get(role.id) && (
+                    <span className="badge badge-outline">{scopeById.get(role.id)}</span>
+                  )}
+                  {admin.institutionName && <span className="meta">{admin.institutionName}</span>}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
+
+      <section className="card" aria-labelledby="admin-activity">
+        <div className="card-head">
+          <h2 id="admin-activity">Recent activity</h2>
+          <div className="spacer">
+            <Link className="meta nowrap" to={`/activity?actorId=${admin.id}`}>
+              View all <IconArrowRight style={{ verticalAlign: "-2px" }} />
+            </Link>
+          </div>
+        </div>
+        <div className="card-body">
+          {!activity || activity.items.length === 0 ? (
+            <p className="meta">No recorded actions yet.</p>
+          ) : (
+            <div className="timeline">
+              {activity.items.map((event) => {
+                const { icon, tone } = eventIcon(event);
+                return (
+                  <div key={event.id} className="tl-item">
+                    <span className={`tl-icon${tone ? ` ${tone}` : ""}`}>{icon}</span>
+                    <div className="tl-body">
+                      <div className="tl-line">
+                        {actionLabel(event.action)}
+                        {event.targetLabel ? <> → <b>{event.targetLabel}</b></> : null}
+                      </div>
+                      <div className="tl-meta">
+                        <time dateTime={event.occurredAt}>{relativeFromNow(event.occurredAt)}</time>
+                        {event.result !== "success" && (
+                          <Badge tone={event.result === "denied" ? "warn" : "danger"}>
+                            {event.result}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
       {confirm && (
         <ConfirmDialog

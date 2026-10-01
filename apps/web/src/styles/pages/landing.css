@@ -1,0 +1,543 @@
+/* ==========================================================================
+   Landing — the Persuade surface. Same ink system as the console, plus
+   Source Serif display type and the pine accent (both only allowed here).
+   ========================================================================== */
+
+.page-landing {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+
+/* anchor targets clear the sticky nav */
+.page-landing [id] {
+  scroll-margin-top: 76px;
+}
+
+/* ---------- sticky nav ---------- */
+
+.pl-nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  background: rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(8px) saturate(180%);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  border-bottom: 1px solid var(--line);
+}
+.pl-nav-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  height: 60px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.pl-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.pl-brand:hover {
+  text-decoration: none;
+}
+.pl-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--pine-700);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.pl-word {
+  font-size: var(--text-16);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+.pl-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: 14px;
+}
+.pl-links a {
+  font-size: 13.5px;
+  font-weight: 450;
+  color: var(--ink-600);
+}
+.pl-links a:hover {
+  color: var(--ink-900);
+  text-decoration: none;
+}
+.pl-nav-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 767px) {
+  .pl-links {
+    display: none;
+  }
+}
+
+/* ---------- entrance: one orchestrated rise, then stillness ---------- */
+
+.page-landing .rise {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-landing.is-mounted .rise {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 260ms var(--ease-out),
+    transform 260ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* ---------- hero ---------- */
+
+.pl-hero {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 96px 24px 64px;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.pl-hero h1 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(38px, 5vw, 56px);
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+.pl-lede {
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-600);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+.pl-cta {
+  margin-top: 28px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pl-trust {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-13);
+  color: var(--ink-500);
+}
+.pl-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pl-trust-item svg {
+  width: 14px;
+  height: 14px;
+  color: var(--pine-700);
+  flex: none;
+}
+.pl-trust-sep {
+  color: var(--ink-300);
+}
+
+/* ---------- hero artifact: the console, hand-authored ---------- */
+
+.console-mock {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.cm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.cm-title {
+  font-size: var(--text-14);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink-900);
+}
+.console-mock kbd {
+  font-size: 10.5px;
+  padding: 0 5px;
+}
+
+.cm-mix {
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.cm-mix .distbar {
+  height: 6px;
+}
+.cm-mixnote {
+  font-size: var(--text-11);
+  color: var(--ink-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.cm-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.cm-row:last-child {
+  border-bottom: none;
+}
+/* re-scoped console primitives inside the panel */
+.console-mock .avatar {
+  width: 22px;
+  height: 22px;
+  font-size: 9.5px;
+}
+.cm-id {
+  min-width: 0;
+  flex: 1;
+}
+.cm-name {
+  display: block;
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--ink-900);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cm-code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  color: var(--ink-500);
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.cm-cell {
+  flex: none;
+  font-size: var(--text-12);
+  color: var(--ink-500);
+  white-space: nowrap;
+}
+.cm-type {
+  width: 118px;
+}
+.cm-loc {
+  width: 92px;
+  text-align: right;
+}
+@media (max-width: 1100px) {
+  .cm-loc {
+    display: none;
+  }
+}
+@media (max-width: 520px) {
+  .cm-type {
+    display: none;
+  }
+}
+
+.cm-caption {
+  margin-top: 12px;
+  font-size: var(--text-11);
+  color: var(--ink-500);
+  text-align: center;
+}
+
+/* ---------- sections ---------- */
+
+.pl-section {
+  border-top: 1px solid var(--line);
+}
+.pl-section-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 72px 24px;
+}
+.pl-h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+.pl-sub {
+  margin-top: 10px;
+  font-size: var(--text-15);
+  color: var(--ink-600);
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+/* --- available today --- */
+
+.pl-caps {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 40px;
+  row-gap: 36px;
+}
+.pl-cap {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.cap-icon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xs);
+  color: var(--ink-600);
+}
+.cap-title {
+  font-size: var(--text-15);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink-900);
+}
+.cap-desc {
+  margin-top: 5px;
+  font-size: 13.5px;
+  color: var(--ink-600);
+  line-height: 1.55;
+  max-width: 48ch;
+}
+@media (max-width: 899px) {
+  .pl-caps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- roadmap: visually honest — an inset, dashed-walled holding pen --- */
+
+.pl-road {
+  margin-top: 36px;
+  background: var(--surface-inset);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+}
+.pl-road-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-top: 1px dashed var(--line);
+}
+.pl-road-row:first-child {
+  border-top: none;
+}
+.pl-road-row .badge {
+  flex: none;
+  margin-top: 1px;
+}
+.road-text {
+  min-width: 0;
+}
+.road-title {
+  font-size: var(--text-14);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.road-desc {
+  margin-top: 3px;
+  font-size: var(--text-13);
+  color: var(--ink-600);
+  line-height: 1.5;
+}
+
+/* --- how administrators enter --- */
+
+.pl-access-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.pl-steps {
+  margin: 26px 0 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 14px;
+  font-size: 14.5px;
+  color: var(--ink-700);
+  line-height: 1.6;
+}
+.pl-steps li {
+  padding-left: 6px;
+}
+.pl-steps li::marker {
+  color: var(--ink-400);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* static echo of the sign-in card — decorative, inert */
+.pl-mini {
+  display: grid;
+  place-items: center;
+}
+.mini-card {
+  width: 100%;
+  max-width: 300px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+}
+.mini-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.mini-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--pine-700);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+.mini-title {
+  font-size: var(--text-14);
+  font-weight: 600;
+  color: var(--ink-900);
+  margin-bottom: 14px;
+}
+.mini-field {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.mini-label {
+  font-size: var(--text-12);
+  font-weight: 500;
+  color: var(--ink-800);
+}
+.mini-card .btn {
+  margin-top: 4px;
+}
+@media (max-width: 899px) {
+  .pl-access-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ---------- footer ---------- */
+
+.pl-foot {
+  border-top: 1px solid var(--line);
+  margin-top: auto;
+}
+.pl-foot-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+.pl-foot-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pl-mark-sm {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.pl-word-sm {
+  font-size: var(--text-15);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+.pl-foot-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--text-13);
+}
+.pl-foot-links a {
+  color: var(--ink-600);
+}
+.pl-foot-links a:hover {
+  color: var(--ink-900);
+}
+.pl-foot-plain {
+  color: var(--ink-400);
+}
+.pl-foot-note {
+  margin-left: auto;
+  font-size: var(--text-12);
+  color: var(--ink-500);
+}
+@media (max-width: 640px) {
+  .pl-foot-note {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ---------- responsive hero ---------- */
+
+@media (max-width: 899px) {
+  .pl-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 64px 20px 48px;
+  }
+  .pl-hero-copy {
+    max-width: 620px;
+  }
+  .pl-section-inner {
+    padding: 48px 20px;
+  }
+}

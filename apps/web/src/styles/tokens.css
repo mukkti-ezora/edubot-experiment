@@ -1,54 +1,125 @@
-@import "@fontsource-variable/public-sans";
+@import "@fontsource-variable/inter";
 @import "@fontsource-variable/source-serif-4";
 @import "@fontsource-variable/source-code-pro";
 
+/* ==========================================================================
+   EduBot Console — design tokens
+   World: ink-monochrome institutional control plane (Cal.com grammar).
+   Light surfaces, hairline borders, near-black primary actions,
+   tinted semantic status, density as a feature.
+   ========================================================================== */
+
 :root {
-  /* surfaces */
-  --paper: #fbfcfd;
-  --surface: #ffffff;
-  --surface-2: #f3f6f7;
-  --surface-3: #eaf0f2;
-
-  /* ink */
-  --ink-900: #0e141a;
-  --ink-700: #2e3a44;
-  --ink-600: #45525e;
-  --ink-400: #8192a0;
-
-  /* lines */
-  --line: #e2e8ec;
-  --line-strong: #c6d1d9;
-
-  /* single accent: pine */
-  --accent-700: #0a4a38;
-  --accent-600: #0c5a45;
-  --accent-100: #ddeee7;
-
-  /* status */
-  --ok-600: #2e7d46;
-  --ok-100: #e3f2e8;
-  --warn-700: #7a5200;
-  --warn-100: #f6ebd0;
-  --danger-600: #a03030;
-  --danger-050: #faeded;
-  --info-600: #3a5b8c;
-  --info-100: #e8eef7;
-
-  /* type */
-  --font-ui: "Public Sans Variable", "Public Sans", system-ui, sans-serif;
+  /* --- type --- */
+  --font-ui: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "Source Serif 4 Variable", Georgia, serif;
   --font-mono: "Source Code Pro Variable", "SFMono-Regular", Consolas, monospace;
 
-  /* shape + elevation */
-  --r1: 2px;
-  --r2: 4px;
-  --shadow-overlay:
-    0 1px 2px rgb(14 20 26 / 0.07),
-    0 10px 28px rgb(14 20 26 / 0.13);
-  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent-600);
+  --text-11: 0.6875rem;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
+  --text-14: 0.875rem;
+  --text-15: 0.9375rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-24: 1.5rem;
+  --text-30: 1.875rem;
+  --text-38: 2.375rem;
 
-  /* layout */
-  --sidebar-w: 244px;
-  --topbar-h: 52px;
-  --content-max: 1440px;
+  /* --- ink (zinc family) --- */
+  --ink-950: #09090b;
+  --ink-900: #18181b;
+  --ink-800: #27272a;
+  --ink-700: #3f3f46;
+  --ink-600: #52525b;
+  --ink-500: #71717a;
+  --ink-400: #a1a1aa;
+  --ink-300: #d4d4d8;
+
+  /* --- surfaces --- */
+  --paper: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --surface-3: #eaeaec;
+  --surface-inset: #fbfbfc;
+
+  /* --- lines --- */
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+
+  /* --- action (near-black; Pine survives only as wordmark mark + landing) --- */
+  --action: #18181b;
+  --action-hover: #27272a;
+  --action-active: #09090b;
+  --action-subtle: #f4f4f5;        /* ghost hover */
+  --action-subtle-text: #3f3f46;
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px rgb(24 24 27 / 0.85);
+
+  /* --- semantic status: tinted, always paired with label or icon --- */
+  --ok-700: #047857;
+  --ok-600: #059669;
+  --ok-100: #d1fae5;
+  --ok-50: #ecfdf5;
+
+  --warn-800: #92400e;
+  --warn-700: #b45309;
+  --warn-100: #fef3c7;
+  --warn-50: #fffbeb;
+
+  --danger-700: #b91c1c;
+  --danger-600: #dc2626;
+  --danger-100: #fee2e2;
+  --danger-50: #fef2f2;
+
+  --info-700: #1d4ed8;
+  --info-600: #2563eb;
+  --info-100: #dbeafe;
+  --info-50: #eff6ff;
+
+  --violet-700: #6d28d9;
+  --violet-100: #ede9fe;
+  --violet-50: #f5f3ff;
+
+  /* --- brand (landing + login mark only) --- */
+  --pine-800: #0a4a38;
+  --pine-700: #0c5a45;
+  --pine-100: #ddeee7;
+
+  /* --- shape --- */
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-full: 999px;
+
+  /* --- elevation: real offset, never zero-blur halos --- */
+  --shadow-xs: 0 1px 2px 0 rgb(9 9 11 / 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(9 9 11 / 0.06), 0 1px 3px 0 rgb(9 9 11 / 0.07);
+  --shadow-md: 0 4px 8px -2px rgb(9 9 11 / 0.08), 0 2px 4px -2px rgb(9 9 11 / 0.06);
+  --shadow-lg: 0 12px 24px -4px rgb(9 9 11 / 0.10), 0 4px 8px -4px rgb(9 9 11 / 0.05);
+  --shadow-xl: 0 20px 40px -8px rgb(9 9 11 / 0.14), 0 8px 16px -8px rgb(9 9 11 / 0.06);
+
+  /* --- layout --- */
+  --sidebar-w: 248px;
+  --sidebar-rail-w: 60px;
+  --topbar-h: 56px;
+  --content-max: 1280px;
+
+  /* --- z-index --- */
+  --z-nav: 40;
+  --z-topbar: 30;
+  --z-menu: 60;
+  --z-overlay: 100;
+  --z-dialog: 110;
+  --z-toast: 130;
+  --z-cmdk: 120;
+
+  /* --- motion: state-conveying, exponential ease-out --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 260ms;
 }
+
+/* Dark scheme reserved; console ships light-only this pass. */

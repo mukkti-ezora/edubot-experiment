@@ -2,13 +2,48 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError, qs } from "@/lib/api";
-import type { Institution, Page, UserRow } from "@/lib/types";
-import { formatNumber, typeLabel } from "@/lib/format";
+import type { Institution, Page, RoleSummary, UserRow } from "@/lib/types";
+import { formatDate, formatNumber, relativeFromNow, typeLabel } from "@/lib/format";
 import { DataTable, type Column } from "@/components/DataTable";
-import { Badge, ConfirmDialog, EmptyState, ErrorState, statusTone } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  ConfirmDialog,
+  EmptyState,
+  ErrorState,
+  IconButton,
+  Ident,
+  Menu,
+  MenuItem,
+  MenuSep,
+  PageHead,
+  StatusPill,
+} from "@/components/ui";
+import { IconBan, IconCheck, IconDots, IconEye, IconSearch, IconUsers, IconX } from "@/components/icons";
 import { useTableState } from "@/lib/useTableState";
 import { useToast } from "@/lib/toast";
 import { useAuth } from "@/lib/auth";
+import "@/styles/pages/users.css";
+
+const TYPE_OPTIONS = [
+  { value: "student", label: "Students" },
+  { value: "teacher", label: "Teachers" },
+  { value: "parent", label: "Parents" },
+  { value: "administrator", label: "Administrators" },
+];
+
+const STATUS_OPTIONS = [
+  { value: "active", label: "Active" },
+  { value: "invited", label: "Invited" },
+  { value: "suspended", label: "Suspended" },
+  { value: "deactivated", label: "Deactivated" },
+];
+
+function statusLabel(status: string): string {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+type PendingTransition = { user: UserRow; action: "activate" | "deactivate" };
 
 export function Users() {
   const table = useTableState();
@@ -16,7 +51,7 @@ export function Users() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const { me } = useAuth();
-  const [deactivateTarget, setDeactivateTarget] = useState<UserRow | null>(null);
+  const [pending, setPending] = useState<PendingTransition | null>(null);
 
   const query = table.get("query");
   const status = table.get("status");
@@ -28,6 +63,14 @@ export function Users() {
     queryKey: ["institutions", "options"],
     queryFn: () => api<Page<Institution>>("/api/v1/institutions?limit=100&sort=name"),
     staleTime: 120_000,
+  });
+
+  /* Only fetched to label the role filter chip when a ?roleId= deep link is present. */
+  const { data: roleOptions } = useQuery({
+    queryKey: ["roles"],
+    queryFn: () => api<RoleSummary[]>("/api/v1/roles"),
+    staleTime: 120_000,
+    enabled: !!roleId,
   });
 
   const { data, isLoading, isError, refetch } = useQuery({
@@ -48,113 +91,185 @@ export function Users() {
   });
 
   const transition = useMutation({
-    mutationFn: async ({ user, action }: { user: UserRow; action: "activate" | "deactivate" }) =>
+    mutationFn: async ({ user, action }: PendingTransition) =>
       api(`/api/v1/users/${user.id}/${action}`, { method: "POST", body: "{}" }),
     onSuccess: (_d, { user, action }) => {
       toast.notify(`${user.name} ${action === "deactivate" ? "deactivated" : "activated"}.`);
-      setDeactivateTarget(null);
+      setPending(null);
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (e) => toast.notify(e instanceof ApiError ? e.message : "Action failed.", "error"),
   });
 
+  const hasFilters = !!(query || status || type || institutionId || roleId);
+  const clearAll = () => table.set({ query: null, status: null, type: null, institutionId: null, roleId: null });
+
+  const chips: { key: string; label: string; onClear: () => void }[] = [];
+  if (query) chips.push({ key: "query", label: `Search: “${query}”`, onClear: () => table.set({ query: null }) });
+  if (type) chips.push({ key: "type", label: `Type: ${typeLabel(type)}`, onClear: () => table.set({ type: null }) });
+  if (status) chips.push({ key: "status", label: `Status: ${statusLabel(status)}`, onClear: () => table.set({ status: null }) });
+  if (institutionId) {
+    chips.push({
+      key: "institution",
+      label: `Institution: ${institutions?.items.find((i) => i.id === institutionId)?.name ?? "selected"}`,
+      onClear: () => table.set({ institutionId: null }),
+    });
+  }
+  if (roleId) {
+    chips.push({
+      key: "role",
+      label: `Role: ${roleOptions?.find((r) => r.id === roleId)?.name ?? "selected"}`,
+      onClear: () => table.set({ roleId: null }),
+    });
+  }
+
   const columns: Column<UserRow>[] = [
     {
       key: "name",
-      label: "Name",
-      render: (row) => (
-        <div>
-          <div className="cell-main">{row.name}</div>
-          <div className="cell-sub">{row.email}</div>
-        </div>
-      ),
+      label: "User",
+      render: (row) => <Ident name={row.name} sub={row.email} />,
     },
-    { key: "type", label: "Type", width: "130px", render: (row) => typeLabel(row.type) },
+    {
+      key: "type",
+      label: "Type",
+      width: "128px",
+      render: (row) => <Badge tone="neutral">{typeLabel(row.type)}</Badge>,
+    },
     {
       key: "institution",
       label: "Institution",
-      render: (row) => <span className="meta">{row.institutionName ?? "Platform"}</span>,
+      render: (row) => <span className="meta truncate inst-cell">{row.institutionName ?? "—"}</span>,
     },
     {
       key: "status",
       label: "Status",
       width: "120px",
-      render: (row) => <Badge tone={statusTone(row.status)}>{row.status}</Badge>,
+      render: (row) => <StatusPill status={row.status} />,
+    },
+    {
+      key: "lastLoginAt",
+      label: "Last active",
+      width: "110px",
+      render: (row) => <span className="meta nowrap">{row.lastLoginAt ? relativeFromNow(row.lastLoginAt) : "Never"}</span>,
+    },
+    {
+      key: "createdAt",
+      label: "Created",
+      width: "110px",
+      render: (row) => <span className="meta nowrap">{formatDate(row.createdAt)}</span>,
     },
     {
       key: "actions",
       label: "",
-      width: "110px",
-      render: (row) =>
-        row.status === "deactivated" ? (
-          <button
-            className="btn btn-quiet btn-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              transition.mutate({ user: row, action: "activate" });
+      width: "56px",
+      align: "right",
+      render: (row) => {
+        const isSelf = row.id === me?.admin.id;
+        const manage =
+          row.status === "deactivated"
+            ? ({ action: "activate" as const, label: "Activate", icon: <IconCheck /> } as const)
+            : !isSelf
+              ? ({ action: "deactivate" as const, label: "Deactivate", icon: <IconBan /> } as const)
+              : null;
+        return (
+          <div
+            className="row-menu"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key !== "Tab") e.stopPropagation();
             }}
           >
-            Activate
-          </button>
-        ) : row.id === me?.admin.id ? null : (
-          <button
-            className="btn btn-quiet btn-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeactivateTarget(row);
-            }}
-          >
-            Deactivate
-          </button>
-        ),
+            <Menu trigger={<IconButton label="Row actions" size="sm">{<IconDots />}</IconButton>} width={190}>
+              <MenuItem icon={<IconEye />} onSelect={() => navigate(`/users/${row.id}`)}>
+                View profile
+              </MenuItem>
+              {manage && <MenuSep />}
+              {manage && (
+                <MenuItem
+                  icon={manage.icon}
+                  danger={manage.action === "deactivate"}
+                  onSelect={() => setPending({ user: row, action: manage.action })}
+                >
+                  {manage.label}
+                </MenuItem>
+              )}
+            </Menu>
+          </div>
+        );
+      },
     },
   ];
 
-  return (
-    <div>
-      <div className="page-head">
-        <div>
-          <h1>Users</h1>
-          <p className="sub">
-            Every person known to the platform, across all institutions. Identity operations are recorded in the audit log.
-          </p>
-        </div>
-      </div>
-
-      <div className="filters" role="search">
+  const toolbar = (
+    <div className="filterbar" role="search">
+      <div className="search-wrap">
+        <IconSearch />
         <input
-          className="input search"
+          className="input"
           placeholder="Search name or email…"
-          defaultValue={query}
+          value={query}
           aria-label="Search users"
           onChange={(e) => table.set({ query: e.target.value || null })}
         />
-        <select className="select" aria-label="Filter by institution" value={institutionId} onChange={(e) => table.set({ institutionId: e.target.value || null })}>
-          <option value="">All institutions</option>
-          {institutions?.items.map((inst) => (
-            <option key={inst.id} value={inst.id}>{inst.name}</option>
-          ))}
-        </select>
-        <select className="select" aria-label="Filter by type" value={type} onChange={(e) => table.set({ type: e.target.value || null })}>
-          <option value="">All types</option>
-          <option value="student">Students</option>
-          <option value="teacher">Teachers</option>
-          <option value="parent">Parents</option>
-          <option value="administrator">Administrators</option>
-        </select>
-        <select className="select" aria-label="Filter by status" value={status} onChange={(e) => table.set({ status: e.target.value || null })}>
-          <option value="">All statuses</option>
-          <option value="active">Active</option>
-          <option value="invited">Invited</option>
-          <option value="suspended">Suspended</option>
-          <option value="deactivated">Deactivated</option>
-        </select>
-        {(query || status || type || institutionId) && (
-          <button className="btn btn-quiet btn-sm" onClick={() => table.set({ query: null, status: null, type: null, institutionId: null })}>
-            Clear filters
-          </button>
-        )}
       </div>
+      <select
+        className="select"
+        aria-label="Filter by type"
+        value={type}
+        onChange={(e) => table.set({ type: e.target.value || null })}
+      >
+        <option value="">All types</option>
+        {TYPE_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+      <select
+        className="select"
+        aria-label="Filter by status"
+        value={status}
+        onChange={(e) => table.set({ status: e.target.value || null })}
+      >
+        <option value="">All statuses</option>
+        {STATUS_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+      <select
+        className="select"
+        aria-label="Filter by institution"
+        value={institutionId}
+        onChange={(e) => table.set({ institutionId: e.target.value || null })}
+      >
+        <option value="">All institutions</option>
+        {institutions?.items.map((inst) => (
+          <option key={inst.id} value={inst.id}>{inst.name}</option>
+        ))}
+      </select>
+      {chips.map((chip) => (
+        <button
+          key={chip.key}
+          className="fchip"
+          data-active="true"
+          onClick={chip.onClear}
+          aria-label={`Remove filter: ${chip.label}`}
+        >
+          <span className="chip-label">{chip.label}</span>
+          <span className="x" aria-hidden="true">
+            <IconX />
+          </span>
+        </button>
+      ))}
+      {hasFilters && (
+        <Button variant="ghost" size="sm" onClick={clearAll}>
+          Clear all
+        </Button>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="page-users">
+      <PageHead title="Users" sub="Every person registered across all institutions." />
 
       {isError ? (
         <ErrorState title="The user registry couldn't load" onRetry={() => refetch()} />
@@ -170,10 +285,23 @@ export function Users() {
           onSort={table.onSort}
           sortable={new Set(["name", "type", "status", "createdAt"])}
           onRowClick={(row) => navigate(`/users/${row.id}`)}
+          toolbar={toolbar}
           empty={
             <EmptyState
-              title="No users match these filters"
-              body="Try a different institution, type, or search term."
+              icon={<IconUsers />}
+              title={hasFilters ? "No users match these filters" : "No users yet"}
+              body={
+                hasFilters
+                  ? "Try a different institution, type, or search term — or clear the filters to see everyone."
+                  : "People appear here as institutions register them and administrators are invited."
+              }
+              action={
+                hasFilters ? (
+                  <Button variant="secondary" size="sm" onClick={clearAll}>
+                    Clear filters
+                  </Button>
+                ) : undefined
+              }
             />
           }
           nextCursor={data?.nextCursor ?? null}
@@ -184,18 +312,31 @@ export function Users() {
         />
       )}
 
-      {deactivateTarget && (
+      {pending && (
         <ConfirmDialog
-          title={`Deactivate ${deactivateTarget.name}?`}
-          body={
-            <>
-              {deactivateTarget.name} will lose access immediately. Existing sessions are revoked and the action is recorded in the audit log.
-            </>
+          title={
+            pending.action === "deactivate"
+              ? `Deactivate ${pending.user.name}?`
+              : `Activate ${pending.user.name}?`
           }
-          confirmLabel="Deactivate user"
+          body={
+            pending.action === "deactivate" ? (
+              <>
+                {pending.user.name} will lose access immediately. Existing sessions are revoked and the action is
+                recorded in the audit log.
+              </>
+            ) : (
+              <>
+                {pending.user.name} regains access immediately and can sign in again. The action is recorded in the
+                audit log.
+              </>
+            )
+          }
+          confirmLabel={pending.action === "deactivate" ? "Deactivate user" : "Activate user"}
+          danger={pending.action === "deactivate"}
           busy={transition.isPending}
-          onConfirm={() => transition.mutate({ user: deactivateTarget, action: "deactivate" })}
-          onClose={() => setDeactivateTarget(null)}
+          onConfirm={() => transition.mutate({ user: pending.user, action: pending.action })}
+          onClose={() => setPending(null)}
         />
       )}
     </div>

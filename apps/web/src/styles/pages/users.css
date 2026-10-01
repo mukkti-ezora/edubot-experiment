@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Users — list + detail page composition
+   Scoped: .page-users (registry list) · .page-user-detail (record view)
+   Layout composition only; component visuals stay in primitives.css.
+   ========================================================================== */
+
+/* ---------- list: filter bar lives inside the table shell ---------- */
+
+.page-users .table-shell > .filterbar {
+  margin-bottom: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.page-users .filterbar .search-wrap { flex: 1 1 220px; max-width: 320px; }
+.page-users .filterbar .fchip,
+.page-users .filterbar .btn-ghost { flex: none; }
+.page-users .filterbar .fchip .chip-label {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* institution names clamp instead of stretching the table */
+.page-users .inst-cell { display: block; max-width: 230px; }
+
+/* row actions: Menu root in a stable inline box inside the trailing cell */
+.page-users .row-menu { display: inline-flex; }
+
+/* ---------- detail ---------- */
+
+.page-user-detail .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--ink-500);
+  margin-bottom: 12px;
+}
+.page-user-detail .back-link:hover { color: var(--ink-900); text-decoration: none; }
+.page-user-detail .back-link svg { width: 14px; height: 14px; }
+
+/* status alerts sit tight under the page head */
+.page-user-detail .head-alerts { display: grid; gap: 10px; margin: -6px 0 16px; }
+
+.page-user-detail .detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .page-user-detail .detail-grid { grid-template-columns: 1fr; }
+}
+.page-user-detail .side-stack { display: grid; gap: 16px; align-content: start; }
+
+.page-user-detail .roles-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.page-user-detail .uid {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  color: var(--ink-600);
+  word-break: break-all;
+}
