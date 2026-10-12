@@ -17,8 +17,11 @@ React 18 + TypeScript + Vite, FastAPI + Python 3.12 + SQLAlchemy 2.0 + asyncpg, 
 - Situation: Logs into the platform console to oversee all institutions, users, administrators, roles, permissions, and audit activity
 - Job: Institution lifecycle management, user administration, role/permission governance, platform configuration, audit review, compliance oversight
 
-**Secondary (Future): Institution Manager, Teacher, Student, Parent**
-- Not in current MVP scope but inform data model
+**Secondary: Student, Teacher, Parent (role portals, in scope since 2026-10-08)**
+- Sign in to a role-specific portal (`/s`, `/t`, `/p`) with a read-only dashboard; data is demonstration data from gateway BFFs until academic services exist (see OD-7)
+
+**Future: Institution Manager**
+- Not in current scope but informs the data model
 
 ## Product Purpose
 
@@ -36,7 +39,7 @@ EduBot is the **institutional operating system** — not a generic LMS or CRM. I
 - **Audit as product**: Every mutation and denied privileged attempt emits an immutable audit event; no delete UI exists
 - **RBAC as data**: Permissions are capabilities; roles compose capabilities; assignments carry explicit scope (platform/institution)
 - **Synthetic data reality**: 18 institutions, 3,308 people (2,139 students, 143 teachers, 1,003 parents, 23 administrators), ~160 audit events across 90 days, with deliberate isolation fixtures (same person name in multiple institutions, same email local-part across domains)
-- **Super Admin only (MVP)**: No institution-scoped portals yet; all current users are platform-level
+- **Platform console + role portals**: Super Admins operate at platform scope; students, teachers and parents get read-only role portals scoped to themselves
 
 ## Capabilities and Constraints
 
@@ -51,11 +54,9 @@ EduBot is the **institutional operating system** — not a generic LMS or CRM. I
 - Profile (identity, roles, own activity)
 - Deterministic seed data for consistent demos
 
+**Now in scope (2026-10-08, see docs/plans/student-experience-plan.md):** student LMS experience (Today, Learn, Practice, Progress, Inbox), a hint-first AI tutor grounded in institution material, class rosters, sign-in session logging for every role, and a teacher-reviewed learning trail. Colleges are the primary market; schools are supported per institution with minor safeguards.
+
 **Explicitly Out of Scope (Future):**
-- Student/Teacher/Parent portals
-- LMS (courses, content, assignments, grading)
-- AI-assisted learning
-- Academic hierarchy (departments, programs, courses, sections)
 - Real notifications infrastructure
 - Real email delivery
 - MFA/SSO/OIDC (architecturally ready, not implemented)
@@ -74,6 +75,8 @@ EduBot is the **institutional operating system** — not a generic LMS or CRM. I
 - **Tagline**: "One platform for institutional management and learning"
 - **Voice**: Concise, clear, direct, professional, human. Sentence case. Actions name their result ("Create institution", "Save changes", "Deactivate user"). Errors state what happened and what to do next — never apologize, never vague.
 - **Visual identity**: Institutional/academic authority, precision, modernity, trust. Not generic SaaS. Not "AI blue/purple." Not glassmorphism. Not gradient washes. Not rounded-card grids.
+- **Visual direction (2026-10-08)**: the category standard for a modern B2B education platform, played straight and executed at Stripe's craft level (finish, motion, detail), never copying Stripe's look. The live EduBot product is the hero; proof is seeded demo data, always labelled as demo.
+- **Banned outright**: purple-to-blue gradients, gradient hero text, emojis in headings, Inter everywhere, coloured left-border cards, glassmorphism cards, low-contrast dark mode, three icon boxes in a row, a badge above the headline, Lucide icons everywhere, untouched shadcn components, sections fading in on scroll, cursor-following beams, hover effects that fade buttons, inconsistent spacing, em dashes, buzzword copy, serif italics for accent words, Space Grotesk + Instrument Serif, grain texture over gradients.
 - **Visual principles**: Institutional authority, precision, modernity, trust, scale, clarity, academic credibility, operational sophistication. Dense but scannable. Meaningful color, not decoration. Typography as hierarchy. Motion as state feedback.
 
 ## Evidence on Hand

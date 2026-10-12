@@ -1,0 +1,1233 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-08T13:06:52+00:00",
+  "title": "Design System: EduBot",
+  "extensions": {
+    "colorMeta": {
+      "brand-50": {
+        "role": "primary",
+        "displayName": "Orange Wash",
+        "canonical": "#fdf1eb",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ],
+        "darkValue": "color-mix(in srgb, var(--brand-500) 14%, var(--surface-1))"
+      },
+      "brand-100": {
+        "role": "primary",
+        "displayName": "Orange Wash Deep",
+        "canonical": "#fadfd1",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ],
+        "darkValue": "color-mix(in srgb, var(--brand-500) 26%, var(--surface-1))"
+      },
+      "brand-500": {
+        "role": "primary",
+        "displayName": "Orange Mid",
+        "canonical": "#d9622a",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ]
+      },
+      "brand-600": {
+        "role": "primary",
+        "displayName": "EduBot Orange",
+        "canonical": "#c4511f",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ],
+        "darkValue": "#ff8a4c"
+      },
+      "brand-strong": {
+        "role": "primary",
+        "displayName": "Burnt Orange",
+        "canonical": "#a9441a",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ],
+        "darkValue": "#ff9e6a"
+      },
+      "brand-700": {
+        "role": "primary",
+        "displayName": "Orange Text",
+        "canonical": "#a9441a",
+        "tonalRamp": [
+          "#3d180a",
+          "#702d12",
+          "#8e3916",
+          "#a9441a",
+          "#c4511f",
+          "#e27845",
+          "#f4bfa3",
+          "#fdf1eb"
+        ],
+        "darkValue": "color-mix(in srgb, var(--brand-500) 60%, white)"
+      },
+      "on-brand": {
+        "role": "primary",
+        "displayName": "On-Brand",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#545658",
+          "#858688",
+          "#b6b6b7",
+          "#e2e2e2",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ],
+        "darkValue": "#0e1116"
+      },
+      "surface-0": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#0b0d10"
+      },
+      "surface-1": {
+        "role": "neutral",
+        "displayName": "Paper Ground",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#0b0d10"
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Well",
+        "canonical": "#f6f7f9",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#12151a"
+      },
+      "surface-3": {
+        "role": "neutral",
+        "displayName": "Well Deep",
+        "canonical": "#eef0f3",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#181c22"
+      },
+      "neutral-900": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0f172a",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#f1f5f9"
+      },
+      "neutral-800": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#1e293b",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#e2e8f0"
+      },
+      "neutral-700": {
+        "role": "neutral",
+        "displayName": "Slate Body",
+        "canonical": "#334155",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#c8d4e0"
+      },
+      "neutral-600": {
+        "role": "neutral",
+        "displayName": "Slate Secondary",
+        "canonical": "#475569",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#a3b3c6"
+      },
+      "neutral-500": {
+        "role": "neutral",
+        "displayName": "Slate Meta",
+        "canonical": "#64748b",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#7a8fa5"
+      },
+      "neutral-400": {
+        "role": "neutral",
+        "displayName": "Slate Quiet",
+        "canonical": "#94a3b8",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#546880"
+      },
+      "neutral-300": {
+        "role": "neutral",
+        "displayName": "Slate Rule",
+        "canonical": "#cbd5e1",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#2a3a50"
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e4e4e7",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#1f242c"
+      },
+      "border-default": {
+        "role": "neutral",
+        "displayName": "Hairline Hover",
+        "canonical": "#d4d4d8",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#2b323c"
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "#a1a1aa",
+        "tonalRamp": [
+          "#020617",
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#cbd5e1",
+          "#f8fafc"
+        ],
+        "darkValue": "#3a424e"
+      },
+      "success-50": {
+        "role": "tertiary",
+        "displayName": "Success 50",
+        "canonical": "#f2f9f4",
+        "tonalRamp": [
+          "#505454",
+          "#7e8382",
+          "#adb2b0",
+          "#d6ddd9",
+          "#f5faf7",
+          "#f8fcfa",
+          "#fcfefc",
+          "#fefffe"
+        ],
+        "darkValue": "color-mix(in srgb, var(--success-500) 14%, var(--surface-1))"
+      },
+      "success-600": {
+        "role": "tertiary",
+        "displayName": "Success 600",
+        "canonical": "#2e7a40",
+        "tonalRamp": [
+          "#162e1e",
+          "#1c4428",
+          "#235932",
+          "#2a6d3a",
+          "#629b70",
+          "#96bca0",
+          "#cbdecf",
+          "#eef4f0"
+        ]
+      },
+      "success-700": {
+        "role": "tertiary",
+        "displayName": "Success 700",
+        "canonical": "#266435",
+        "tonalRamp": [
+          "#13271b",
+          "#183822",
+          "#1e4a2a",
+          "#235a31",
+          "#5c8b68",
+          "#92b29a",
+          "#c9d8cc",
+          "#eef3ef"
+        ],
+        "darkValue": "color-mix(in srgb, var(--success-500) 60%, white)"
+      },
+      "warning-50": {
+        "role": "tertiary",
+        "displayName": "Warning 50",
+        "canonical": "#fdf9f0",
+        "tonalRamp": [
+          "#545453",
+          "#848380",
+          "#b4b2ad",
+          "#e0ddd5",
+          "#fefaf4",
+          "#fefcf8",
+          "#fefefb",
+          "#fffffe"
+        ],
+        "darkValue": "color-mix(in srgb, var(--warning-500) 14%, var(--surface-1))"
+      },
+      "warning-600": {
+        "role": "tertiary",
+        "displayName": "Warning 600",
+        "canonical": "#a87418",
+        "tonalRamp": [
+          "#3a2c12",
+          "#5a4014",
+          "#795516",
+          "#956817",
+          "#be9752",
+          "#d4ba8c",
+          "#e9dcc5",
+          "#f8f4ed"
+        ]
+      },
+      "warning-700": {
+        "role": "tertiary",
+        "displayName": "Warning 700",
+        "canonical": "#886014",
+        "tonalRamp": [
+          "#302611",
+          "#4a3612",
+          "#624713",
+          "#795614",
+          "#a6884f",
+          "#c4b08a",
+          "#e1d7c4",
+          "#f5f2ec"
+        ],
+        "darkValue": "color-mix(in srgb, var(--warning-500) 60%, white)"
+      },
+      "danger-50": {
+        "role": "tertiary",
+        "displayName": "Danger 50",
+        "canonical": "#fdf3f3",
+        "tonalRamp": [
+          "#545254",
+          "#848082",
+          "#b4aeaf",
+          "#e0d7d8",
+          "#fef6f6",
+          "#fef9f9",
+          "#fefcfc",
+          "#fffefe"
+        ],
+        "darkValue": "color-mix(in srgb, var(--danger-500) 14%, var(--surface-1))"
+      },
+      "danger-600": {
+        "role": "tertiary",
+        "displayName": "Danger 600",
+        "canonical": "#ab2f2f",
+        "tonalRamp": [
+          "#3b1719",
+          "#5b1e20",
+          "#7b2526",
+          "#982b2b",
+          "#c06363",
+          "#d59797",
+          "#eacbcb",
+          "#f8eeee"
+        ]
+      },
+      "danger-700": {
+        "role": "tertiary",
+        "displayName": "Danger 700",
+        "canonical": "#8f2626",
+        "tonalRamp": [
+          "#331417",
+          "#4d1a1b",
+          "#671e1f",
+          "#7f2323",
+          "#ab5c5c",
+          "#c79292",
+          "#e3c9c9",
+          "#f6eeee"
+        ],
+        "darkValue": "color-mix(in srgb, var(--danger-500) 60%, white)"
+      },
+      "info-50": {
+        "role": "tertiary",
+        "displayName": "Info 50",
+        "canonical": "#f1f5fb",
+        "tonalRamp": [
+          "#505357",
+          "#7e8186",
+          "#acafb4",
+          "#d5d9df",
+          "#f4f8fc",
+          "#f8fafd",
+          "#fcfcfe",
+          "#fefeff"
+        ],
+        "darkValue": "color-mix(in srgb, var(--info-500) 14%, var(--surface-1))"
+      },
+      "info-600": {
+        "role": "tertiary",
+        "displayName": "Info 600",
+        "canonical": "#3766a8",
+        "tonalRamp": [
+          "#18283e",
+          "#213a5c",
+          "#2a4b7a",
+          "#325b96",
+          "#698cbe",
+          "#9bb2d4",
+          "#cdd9e9",
+          "#eff3f8"
+        ]
+      },
+      "info-700": {
+        "role": "tertiary",
+        "displayName": "Info 700",
+        "canonical": "#2d548a",
+        "tonalRamp": [
+          "#152235",
+          "#1c304d",
+          "#233f65",
+          "#294b7b",
+          "#627fa7",
+          "#96aac4",
+          "#cad4e2",
+          "#eef1f6"
+        ],
+        "darkValue": "color-mix(in srgb, var(--info-500) 60%, white)"
+      },
+      "student-50": {
+        "role": "secondary",
+        "displayName": "Student 50",
+        "canonical": "#f4f9f5",
+        "tonalRamp": [
+          "#112316",
+          "#294d32",
+          "#305e3b",
+          "#3a7548",
+          "#4a8f5a",
+          "#98c6a0",
+          "#c5dfc9",
+          "#f4f9f5"
+        ],
+        "darkValue": "color-mix(in srgb, var(--student-500) 14%, var(--surface-1))"
+      },
+      "student-600": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "canonical": "#3a7548",
+        "tonalRamp": [
+          "#112316",
+          "#294d32",
+          "#305e3b",
+          "#3a7548",
+          "#4a8f5a",
+          "#98c6a0",
+          "#c5dfc9",
+          "#f4f9f5"
+        ]
+      },
+      "student-700": {
+        "role": "secondary",
+        "displayName": "Student 700",
+        "canonical": "#305e3b",
+        "tonalRamp": [
+          "#112316",
+          "#294d32",
+          "#305e3b",
+          "#3a7548",
+          "#4a8f5a",
+          "#98c6a0",
+          "#c5dfc9",
+          "#f4f9f5"
+        ],
+        "darkValue": "color-mix(in srgb, var(--student-500) 60%, white)"
+      },
+      "teacher-50": {
+        "role": "secondary",
+        "displayName": "Teacher 50",
+        "canonical": "#f3f6fa",
+        "tonalRamp": [
+          "#1a2535",
+          "#2c435d",
+          "#324f70",
+          "#3b6089",
+          "#4a77a5",
+          "#97b4d4",
+          "#c6d5e8",
+          "#f3f6fa"
+        ],
+        "darkValue": "color-mix(in srgb, var(--teacher-500) 14%, var(--surface-1))"
+      },
+      "teacher-600": {
+        "role": "secondary",
+        "displayName": "Steel Blue",
+        "canonical": "#3b6089",
+        "tonalRamp": [
+          "#1a2535",
+          "#2c435d",
+          "#324f70",
+          "#3b6089",
+          "#4a77a5",
+          "#97b4d4",
+          "#c6d5e8",
+          "#f3f6fa"
+        ]
+      },
+      "teacher-700": {
+        "role": "secondary",
+        "displayName": "Teacher 700",
+        "canonical": "#324f70",
+        "tonalRamp": [
+          "#1a2535",
+          "#2c435d",
+          "#324f70",
+          "#3b6089",
+          "#4a77a5",
+          "#97b4d4",
+          "#c6d5e8",
+          "#f3f6fa"
+        ],
+        "darkValue": "color-mix(in srgb, var(--teacher-500) 60%, white)"
+      },
+      "parent-50": {
+        "role": "secondary",
+        "displayName": "Parent 50",
+        "canonical": "#faf7f3",
+        "tonalRamp": [
+          "#2f2017",
+          "#694b34",
+          "#7f5a3a",
+          "#9a6e45",
+          "#b08456",
+          "#d4b899",
+          "#e6d6c3",
+          "#faf7f3"
+        ],
+        "darkValue": "color-mix(in srgb, var(--parent-500) 14%, var(--surface-1))"
+      },
+      "parent-600": {
+        "role": "secondary",
+        "displayName": "Warm Clay",
+        "canonical": "#9a6e45",
+        "tonalRamp": [
+          "#2f2017",
+          "#694b34",
+          "#7f5a3a",
+          "#9a6e45",
+          "#b08456",
+          "#d4b899",
+          "#e6d6c3",
+          "#faf7f3"
+        ]
+      },
+      "parent-700": {
+        "role": "secondary",
+        "displayName": "Parent 700",
+        "canonical": "#7f5a3a",
+        "tonalRamp": [
+          "#2f2017",
+          "#694b34",
+          "#7f5a3a",
+          "#9a6e45",
+          "#b08456",
+          "#d4b899",
+          "#e6d6c3",
+          "#faf7f3"
+        ],
+        "darkValue": "color-mix(in srgb, var(--parent-500) 60%, white)"
+      },
+      "admin-50": {
+        "role": "secondary",
+        "displayName": "Admin 50",
+        "canonical": "#f6f5f9",
+        "tonalRamp": [
+          "#272335",
+          "#4b435d",
+          "#594f70",
+          "#6b5f88",
+          "#8073a1",
+          "#bbb3d0",
+          "#d9d4e5",
+          "#f6f5f9"
+        ],
+        "darkValue": "color-mix(in srgb, var(--admin-500) 14%, var(--surface-1))"
+      },
+      "admin-600": {
+        "role": "secondary",
+        "displayName": "Slate Violet",
+        "canonical": "#6b5f88",
+        "tonalRamp": [
+          "#272335",
+          "#4b435d",
+          "#594f70",
+          "#6b5f88",
+          "#8073a1",
+          "#bbb3d0",
+          "#d9d4e5",
+          "#f6f5f9"
+        ]
+      },
+      "admin-700": {
+        "role": "secondary",
+        "displayName": "Admin 700",
+        "canonical": "#594f70",
+        "tonalRamp": [
+          "#272335",
+          "#4b435d",
+          "#594f70",
+          "#6b5f88",
+          "#8073a1",
+          "#bbb3d0",
+          "#d9d4e5",
+          "#f6f5f9"
+        ],
+        "darkValue": "color-mix(in srgb, var(--admin-500) 60%, white)"
+      },
+      "institution-50": {
+        "role": "secondary",
+        "displayName": "Institution 50",
+        "canonical": "#faf5f6",
+        "tonalRamp": [
+          "#2e1c22",
+          "#613e47",
+          "#744954",
+          "#8b5764",
+          "#a46b78",
+          "#d4aeb6",
+          "#e7d1d5",
+          "#faf5f6"
+        ],
+        "darkValue": "color-mix(in srgb, var(--institution-500) 14%, var(--surface-1))"
+      },
+      "institution-600": {
+        "role": "secondary",
+        "displayName": "Dusty Rose",
+        "canonical": "#8b5764",
+        "tonalRamp": [
+          "#2e1c22",
+          "#613e47",
+          "#744954",
+          "#8b5764",
+          "#a46b78",
+          "#d4aeb6",
+          "#e7d1d5",
+          "#faf5f6"
+        ]
+      },
+      "institution-700": {
+        "role": "secondary",
+        "displayName": "Institution 700",
+        "canonical": "#744954",
+        "tonalRamp": [
+          "#2e1c22",
+          "#613e47",
+          "#744954",
+          "#8b5764",
+          "#a46b78",
+          "#d4aeb6",
+          "#e7d1d5",
+          "#faf5f6"
+        ],
+        "darkValue": "color-mix(in srgb, var(--institution-500) 60%, white)"
+      },
+      "lp-ink": {
+        "role": "neutral",
+        "displayName": "Landing Ink",
+        "canonical": "#0e1116",
+        "tonalRamp": [
+          "#0c0e12",
+          "#0c0f13",
+          "#0d1014",
+          "#0e1115",
+          "#4a4c50",
+          "#86888a",
+          "#c3c4c5",
+          "#ececec"
+        ],
+        "darkValue": "#f2f4f7"
+      },
+      "lp-ink-2": {
+        "role": "neutral",
+        "displayName": "Landing Ink Soft",
+        "canonical": "#3a4250",
+        "tonalRamp": [
+          "#191d23",
+          "#222830",
+          "#2c323d",
+          "#343c48",
+          "#6b717c",
+          "#9ca0a8",
+          "#ced0d3",
+          "#eff0f1"
+        ],
+        "darkValue": "#c9cfd8"
+      },
+      "lp-muted": {
+        "role": "neutral",
+        "displayName": "Landing Muted",
+        "canonical": "#5b6472",
+        "tonalRamp": [
+          "#23272d",
+          "#333841",
+          "#434a55",
+          "#515a66",
+          "#848b95",
+          "#adb2b8",
+          "#d6d8dc",
+          "#f2f3f4"
+        ],
+        "darkValue": "#8a93a2"
+      },
+      "lp-line": {
+        "role": "neutral",
+        "displayName": "Landing Hairline",
+        "canonical": "#e6e8ec",
+        "tonalRamp": [
+          "#4d4f52",
+          "#787a7e",
+          "#a4a6aa",
+          "#ccced2",
+          "#eceef1",
+          "#f2f4f6",
+          "#f9f9fa",
+          "#fdfdfd"
+        ],
+        "darkValue": "#1f242c"
+      },
+      "lp-line-strong": {
+        "role": "neutral",
+        "displayName": "Landing Hairline Strong",
+        "canonical": "#d5d9e0",
+        "tonalRamp": [
+          "#484a4e",
+          "#707378",
+          "#989ca2",
+          "#bdc1c7",
+          "#e0e2e8",
+          "#eaecf0",
+          "#f4f6f7",
+          "#fcfcfd"
+        ],
+        "darkValue": "#2b323c"
+      },
+      "lp-accent-soft": {
+        "role": "neutral",
+        "displayName": "Landing Accent Wash",
+        "canonical": "#fbede6",
+        "tonalRamp": [
+          "#535050",
+          "#837d7b",
+          "#b3aaa6",
+          "#ded2cc",
+          "#fcf2ec",
+          "#fdf6f2",
+          "#fefaf9",
+          "#fffefd"
+        ],
+        "darkValue": "rgb(255 138 76 / 0.12)"
+      },
+      "lp-ok": {
+        "role": "tertiary",
+        "displayName": "Landing Success",
+        "canonical": "#2e7d46",
+        "tonalRamp": [
+          "#162f20",
+          "#1c452b",
+          "#235b36",
+          "#2a7040",
+          "#629e74",
+          "#96bea2",
+          "#cbded1",
+          "#eef5f0"
+        ],
+        "darkValue": "#5cc27e"
+      },
+      "lp-danger": {
+        "role": "tertiary",
+        "displayName": "Landing Danger",
+        "canonical": "#b4372f",
+        "tonalRamp": [
+          "#3e1a19",
+          "#602220",
+          "#812a26",
+          "#a0322b",
+          "#c76963",
+          "#da9b97",
+          "#eccdcb",
+          "#f9efee"
+        ],
+        "darkValue": "#ff7b72"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Landing hero headline only; balanced wrap."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Landing section heads; closing CTA scales to clamp(2.25rem, 3vw + 1rem, 3.75rem)."
+      },
+      "page-title": {
+        "displayName": "Page Title",
+        "purpose": "Console page heading with a 16px sub-line capped at 72ch."
+      },
+      "section-title": {
+        "displayName": "Section Title",
+        "purpose": "Section heads inside console pages."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel heads and role-dashboard section titles; dialogs and drawers use 18px/700."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Metric strip values, tabular. Tile values run larger at 36px."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All console text, tables included."
+      },
+      "body-landing": {
+        "displayName": "Body Landing",
+        "purpose": "Landing body copy."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Landing lead paragraphs, capped at 60ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Sub-lines, badges, chips, meta; uppercase +0.05em only for table column headers and sidebar group labels."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Console machine data: institution codes, record IDs, correlation values, rooms."
+      },
+      "mono-landing": {
+        "displayName": "Mono Landing",
+        "purpose": "Landing machine data: demo tag, capability keys, audit results, network labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06)",
+        "purpose": "Rest: panels, table shells, secondary buttons, active segmented option (with inner highlight)."
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px 0 rgb(15 23 42 / 0.04), 0 2px 6px -1px rgb(15 23 42 / 0.06)",
+        "purpose": "Primary button at rest; hover on nav-adjacent controls."
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 2px 4px -1px rgb(15 23 42 / 0.04), 0 6px 16px -4px rgb(15 23 42 / 0.08)",
+        "purpose": "Hover raise for panels and primary buttons."
+      },
+      {
+        "name": "shadow-xl",
+        "value": "0 8px 16px -4px rgb(15 23 42 / 0.04), 0 20px 48px -8px rgb(15 23 42 / 0.12)",
+        "purpose": "Menus and dropdowns."
+      },
+      {
+        "name": "shadow-2xl",
+        "value": "0 12px 24px -6px rgb(15 23 42 / 0.06), 0 32px 64px -12px rgb(15 23 42 / 0.16)",
+        "purpose": "Dialogs, drawers, command palette, toasts, open mobile sidebar."
+      },
+      {
+        "name": "shadow-inner-highlight",
+        "value": "inset 0 1px 0 0 rgba(255, 255, 255, 0.5)",
+        "purpose": "1px top highlight layered on resting surfaces and buttons; 0.04 alpha in dark."
+      },
+      {
+        "name": "lp-frame-shadow",
+        "value": "0 1px 2px rgb(14 17 22 / 0.06), 0 30px 70px -20px rgb(14 17 22 / 0.22)",
+        "purpose": "Landing live console frame only. Dark: 0 1px 2px rgb(0 0 0 / 0.4), 0 30px 80px -24px rgb(0 0 0 / 0.75)."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px rgba(255, 120, 45, 0.3)",
+        "purpose": "Console focus-visible on every interactive element (0.35 alpha in dark). Landing uses outline 2px solid accent, offset 3px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default easing for all state transitions, console and landing (--lp-ease)."
+      },
+      {
+        "name": "ease-spring",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "Switch thumb and active-nav indicator height only."
+      },
+      {
+        "name": "transition-fast",
+        "value": "120ms",
+        "purpose": "Hover colour, border and shadow changes."
+      },
+      {
+        "name": "transition-base",
+        "value": "200ms",
+        "purpose": "Overlay fades, switch track."
+      },
+      {
+        "name": "menu / dialog / drawer entry",
+        "value": "180ms / 250ms / 300ms",
+        "purpose": "Scale 0.95-0.96 plus small translate in; opacity."
+      },
+      {
+        "name": "button-press",
+        "value": "scale(0.97), 100ms",
+        "purpose": "Active state on console buttons; landing uses translateY(1px) scale(0.985)."
+      },
+      {
+        "name": "console-view-switch",
+        "value": "Framer Motion AnimatePresence, 320ms, y 8 -> 0, blur 4px -> 0",
+        "purpose": "Landing live console role switch; disabled under reduced motion."
+      },
+      {
+        "name": "role-tab-pill",
+        "value": "Framer Motion layoutId spring, stiffness 420, damping 36",
+        "purpose": "Active pill glides between role tabs."
+      },
+      {
+        "name": "audit-stream-insert",
+        "value": "Framer Motion layout + initial opacity 0, y -12",
+        "purpose": "New audit events push into the landing stream; paused off-screen and under reduced motion."
+      },
+      {
+        "name": "hero-network",
+        "value": "GSAP timeline, expo.out intro; orbits 160s / 110s linear; pulses to hub",
+        "purpose": "Ambient institution network; static under reduced motion via gsap.matchMedia."
+      },
+      {
+        "name": "scroll-scrub",
+        "value": "GSAP ScrollTrigger scrub 0.6 / true",
+        "purpose": "Console frame tilts from rotateX 14deg, scale 0.94 to flat; scale sentence words ink in; portal rows toggle is-active. Content is fully readable without it."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Global CSS clamps durations to 0.01ms; landing zeroes transitions and animations; GSAP and Framer gate every effect."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "shell-drawer",
+        "value": "760px"
+      },
+      {
+        "name": "landing-nav",
+        "value": "860px"
+      },
+      {
+        "name": "grid-collapse",
+        "value": "900px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "shell-rail / hero-stack",
+        "value": "1100px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "content-max",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one orange action per view; on-brand text, raises on hover, presses on active.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Create institution</button>",
+      "css": ".ds-btn { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 20px; font-size:14px; font-weight:600; line-height:1; border-radius:6px; border:1px solid transparent; cursor:pointer; transition: background-color 120ms cubic-bezier(0.16,1,0.3,1), border-color 120ms cubic-bezier(0.16,1,0.3,1), box-shadow 120ms cubic-bezier(0.16,1,0.3,1), transform 100ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary { background: var(--brand-600, #c4511f); color: var(--on-brand, #fff); border-color: var(--brand-strong, #a9441a); box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 2px 6px -1px rgb(15 23 42 / 0.06), inset 0 1px 0 0 rgba(255,255,255,0.5); } .ds-btn-primary:hover { background: var(--brand-strong, #a9441a); box-shadow: 0 2px 4px -1px rgb(15 23 42 / 0.04), 0 6px 16px -4px rgb(15 23 42 / 0.08), inset 0 1px 0 0 rgba(255,255,255,0.5); } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn:focus-visible { outline:none; box-shadow: 0 0 0 3px rgba(255,120,45,0.3); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral companion action; white fill, hairline that strengthens on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Export</button>",
+      "css": ".ds-btn-secondary { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 20px; font-size:14px; font-weight:600; line-height:1; border-radius:6px; cursor:pointer; background: var(--surface-0, #fff); color: var(--neutral-800, #1e293b); border:1px solid var(--border-default, #d4d4d8); box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06); transition: border-color 120ms cubic-bezier(0.16,1,0.3,1), box-shadow 120ms cubic-bezier(0.16,1,0.3,1), transform 100ms; } .ds-btn-secondary:hover { border-color: var(--border-strong, #a1a1aa); color: var(--neutral-900, #0f172a); } .ds-btn-secondary:active { transform: scale(0.97); } .ds-btn-secondary:focus-visible { outline:none; box-shadow: 0 0 0 3px rgba(255,120,45,0.3); }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "40px field with leading Phosphor icon and kbd hint; orange border and halo on focus.",
+      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z\"/></svg><input class=\"ds-input\" placeholder=\"Search institutions\" /><kbd class=\"ds-kbd\">/</kbd></label>",
+      "css": ".ds-search { position:relative; display:flex; align-items:center; width:320px; color: var(--neutral-400, #94a3b8); } .ds-search svg { position:absolute; left:12px; pointer-events:none; } .ds-input { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); width:100%; height:40px; padding:0 40px 0 44px; font-size:14px; color: var(--neutral-900, #0f172a); background: var(--surface-0, #fff); border:1px solid var(--border-default, #d4d4d8); border-radius:6px; transition: border-color 120ms cubic-bezier(0.16,1,0.3,1), box-shadow 120ms cubic-bezier(0.16,1,0.3,1); } .ds-input::placeholder { color: var(--neutral-400, #94a3b8); } .ds-input:hover { border-color: var(--border-strong, #a1a1aa); } .ds-input:focus { outline:none; border-color: var(--brand-500, #d9622a); box-shadow: 0 0 0 3px rgba(255,120,45,0.3), 0 0 0 1px var(--brand-200, #f4bfa3); } .ds-kbd { position:absolute; right:12px; font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); font-size:12px; font-weight:500; color: var(--neutral-500, #64748b); background: var(--surface-2, #f6f7f9); border:1px solid var(--border-default, #d4d4d8); border-bottom-width:2px; border-radius:4px; padding:1px 5px; }"
+    },
+    {
+      "name": "Status and Role Badges",
+      "kind": "chip",
+      "refersTo": "badge-ok",
+      "description": "Tinted pills; status and role colour always paired with a word.",
+      "html": "<div class=\"ds-badges\"><span class=\"ds-badge ds-ok\">Active</span><span class=\"ds-badge ds-warn\">Pending</span><span class=\"ds-badge ds-danger\">Suspended</span><span class=\"ds-badge ds-student\">Student</span><span class=\"ds-badge ds-teacher\">Teacher</span></div>",
+      "css": ".ds-badges { display:flex; gap:8px; flex-wrap:wrap; } .ds-badge { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); display:inline-flex; align-items:center; font-size:12px; font-weight:600; line-height:1; padding:4px 10px; border-radius:9999px; border:1px solid transparent; white-space:nowrap; } .ds-ok { background: var(--success-50, #f2f9f4); color: var(--success-700, #266435); border-color: var(--success-100, #dff0e3); } .ds-warn { background: var(--warning-50, #fdf9f0); color: var(--warning-700, #886014); border-color: var(--warning-100, #f9efd6); } .ds-danger { background: var(--danger-50, #fdf3f3); color: var(--danger-700, #8f2626); border-color: var(--danger-100, #fbe1e1); } .ds-student { background: var(--student-50, #f4f9f5); color: var(--student-700, #305e3b); border-color: var(--student-100, #e4f0e6); } .ds-teacher { background: var(--teacher-50, #f3f6fa); color: var(--teacher-700, #324f70); border-color: var(--teacher-100, #e3eaf3); }"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "38px items; active item lifts to paper with a 3px accent bar and accent icon.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item is-active\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z\"/></svg><span>Overview</span></a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z\"/></svg><span>Institutions</span><span class=\"ds-count\">18</span></a></nav>",
+      "css": ".ds-nav { display:grid; gap:2px; width:236px; padding:12px; background: var(--surface-2, #f6f7f9); } .ds-nav-item { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); position:relative; display:flex; align-items:center; gap:10px; height:38px; padding:0 10px; border-radius:6px; color: var(--neutral-600, #475569); font-size:14px; font-weight:500; text-decoration:none; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1), color 150ms cubic-bezier(0.16,1,0.3,1), box-shadow 150ms cubic-bezier(0.16,1,0.3,1); } .ds-nav-item svg { color: var(--neutral-400, #94a3b8); flex:none; } .ds-nav-item:hover { background: var(--surface-0, #fff); color: var(--neutral-900, #0f172a); box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06); } .ds-nav-item.is-active { background: var(--surface-0, #fff); color: var(--neutral-900, #0f172a); font-weight:600; box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06); } .ds-nav-item.is-active::before { content:''; position:absolute; left:-12px; top:50%; transform:translateY(-50%); width:3px; height:20px; border-radius:0 3px 3px 0; background: var(--brand-600, #c4511f); } .ds-nav-item.is-active svg { color: var(--brand-600, #c4511f); } .ds-nav-item:focus-visible { outline:none; box-shadow: 0 0 0 3px rgba(255,120,45,0.3); } .ds-count { margin-left:auto; min-width:20px; height:20px; padding:0 6px; display:inline-flex; align-items:center; justify-content:center; border-radius:9999px; background: var(--surface-2, #f6f7f9); color: var(--neutral-600, #475569); font-size:12px; font-weight:700; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Paper surface with hairline, resting shadow and inner highlight; raises on hover.",
+      "html": "<section class=\"ds-panel\"><header class=\"ds-panel-head\"><h3>Institutions needing attention</h3><span class=\"ds-sub\">3 pending review</span></header><div class=\"ds-panel-body\">Northfield Academy <code>NFA-0142</code></div></section>",
+      "css": ".ds-panel { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); width:360px; background: var(--surface-0, #fff); border:1px solid var(--border-subtle, #e4e4e7); border-radius:8px; box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06), inset 0 1px 0 0 rgba(255,255,255,0.5); transition: box-shadow 250ms cubic-bezier(0.16,1,0.3,1), border-color 250ms cubic-bezier(0.16,1,0.3,1); } .ds-panel:hover { border-color: var(--border-default, #d4d4d8); box-shadow: 0 2px 4px -1px rgb(15 23 42 / 0.04), 0 6px 16px -4px rgb(15 23 42 / 0.08), inset 0 1px 0 0 rgba(255,255,255,0.5); } .ds-panel-head { padding:16px 20px; border-bottom:1px solid var(--border-subtle, #e4e4e7); } .ds-panel-head h3 { margin:0; font-size:16px; font-weight:600; color: var(--neutral-900, #0f172a); } .ds-sub { display:block; margin-top:2px; font-size:12px; color: var(--neutral-500, #64748b); } .ds-panel-body { padding:20px; font-size:14px; color: var(--neutral-700, #334155); } .ds-panel-body code { font-family: var(--font-mono, 'Geist Mono Variable', monospace); font-size:0.92em; color: var(--neutral-600, #475569); }"
+    },
+    {
+      "name": "Metric Strip",
+      "kind": "custom",
+      "refersTo": "metric-cell",
+      "description": "Hairline-divided row of tabular metrics in one 6px container.",
+      "html": "<div class=\"ds-metrics\"><a class=\"ds-metric\" href=\"#\"><span class=\"ds-mv\">18</span><span class=\"ds-ml\">Institutions</span></a><a class=\"ds-metric\" href=\"#\"><span class=\"ds-mv\">3,308</span><span class=\"ds-ml\">People</span></a><a class=\"ds-metric ds-mwarn\" href=\"#\"><span class=\"ds-mv\">3</span><span class=\"ds-ml\">Pending review</span></a></div>",
+      "css": ".ds-metrics { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:1px; width:480px; background: var(--border-subtle, #e4e4e7); border:1px solid var(--border-subtle, #e4e4e7); border-radius:6px; overflow:hidden; } .ds-metric { display:flex; flex-direction:column; gap:2px; padding:16px 18px; background: var(--surface-0, #fff); color:inherit; text-decoration:none; transition: background 180ms cubic-bezier(0.23,1,0.32,1); } .ds-metric:hover { background: var(--surface-1, #fff); } .ds-metric:focus-visible { outline:none; box-shadow: inset 0 0 0 3px rgba(255,120,45,0.3); } .ds-mv { font-size:24px; font-weight:700; line-height:1; letter-spacing:-0.03em; color: var(--neutral-900, #0f172a); font-variant-numeric: tabular-nums; } .ds-ml { font-size:14px; font-weight:500; color: var(--neutral-500, #64748b); } .ds-mwarn .ds-mv { color: var(--warning-700, #886014); }"
+    },
+    {
+      "name": "Data Table",
+      "kind": "custom",
+      "refersTo": "table-row",
+      "description": "The console instrument: sticky uppercase header, 52px rows, mono IDs, tabular numerals.",
+      "html": "<div class=\"ds-table-shell\"><table class=\"ds-table\"><thead><tr><th>Institution</th><th>Status</th><th class=\"ds-num\">People</th></tr></thead><tbody><tr><td><span class=\"ds-cm\">Northfield Academy</span><span class=\"ds-cs\">NFA-0142</span></td><td><span class=\"ds-tb\">Active</span></td><td class=\"ds-num\">412</td></tr><tr><td><span class=\"ds-cm\">Harbor Valley College</span><span class=\"ds-cs\">HVC-0077</span></td><td><span class=\"ds-tb ds-tbw\">Pending</span></td><td class=\"ds-num\">1,208</td></tr></tbody></table></div>",
+      "css": ".ds-table-shell { width:520px; border:1px solid var(--border-subtle, #e4e4e7); border-radius:8px; background: var(--surface-0, #fff); overflow:hidden; box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 0 1px 0 rgb(15 23 42 / 0.06); } .ds-table { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); width:100%; border-collapse:collapse; font-size:14px; } .ds-table th { background: var(--surface-1, #fff); border-bottom:1px solid var(--border-default, #d4d4d8); text-align:left; font-size:12px; font-weight:600; color: var(--neutral-500, #64748b); text-transform:uppercase; letter-spacing:0.05em; padding:14px 16px; } .ds-table td { height:52px; padding:12px 16px; border-bottom:1px solid var(--border-subtle, #e4e4e7); color: var(--neutral-700, #334155); transition: background-color 120ms cubic-bezier(0.16,1,0.3,1); } .ds-table tr:last-child td { border-bottom:none; } .ds-table tbody tr:hover { background: var(--brand-50, #fdf1eb); cursor:pointer; } .ds-cm { display:block; font-weight:600; color: var(--neutral-900, #0f172a); } .ds-cs { display:block; margin-top:2px; font-family: var(--font-mono, 'Geist Mono Variable', monospace); font-size:12px; color: var(--neutral-500, #64748b); } .ds-num { text-align:right; font-variant-numeric: tabular-nums; } .ds-tb { font-size:12px; font-weight:600; padding:4px 10px; border-radius:9999px; background: var(--success-50, #f2f9f4); color: var(--success-700, #266435); border:1px solid var(--success-100, #dff0e3); } .ds-tbw { background: var(--warning-50, #fdf9f0); color: var(--warning-700, #886014); border-color: var(--warning-100, #f9efd6); }"
+    },
+    {
+      "name": "Landing Primary Button",
+      "kind": "button",
+      "refersTo": "landing-button-primary",
+      "description": "Persuade-scale primary action: 48px, 8px radius, arrow nudges on hover.",
+      "html": "<a class=\"ds-lp-btn\" href=\"#\">Explore the demo <svg width=\"16\" height=\"16\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z\"/></svg></a>",
+      "css": ".ds-lp-btn { font-family: var(--font-ui, 'Geist Variable', system-ui, sans-serif); display:inline-flex; align-items:center; gap:8px; height:48px; padding:0 22px; border-radius:8px; border:1px solid transparent; background: var(--brand-600, #c4511f); color: var(--on-brand, #fff); font-size:16px; font-weight:600; letter-spacing:-0.01em; text-decoration:none; box-shadow: 0 1px 2px rgb(14 17 22 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.14); transition: background-color 160ms cubic-bezier(0.16,1,0.3,1), transform 160ms cubic-bezier(0.16,1,0.3,1); } .ds-lp-btn svg { transition: transform 200ms cubic-bezier(0.16,1,0.3,1); } .ds-lp-btn:hover { background: var(--brand-strong, #a9441a); } .ds-lp-btn:hover svg { transform: translateX(3px); } .ds-lp-btn:active { transform: translateY(1px) scale(0.985); } .ds-lp-btn:focus-visible { outline:2px solid var(--brand-600, #c4511f); outline-offset:3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calibrated Console",
+    "overview": "EduBot looks like the category standard for a modern B2B education platform, finished to Stripe's level of craft without borrowing Stripe's look. The product itself carries the identity. Cool slate neutrals hold the ground, one EduBot orange marks what you can act on, and Geist sets everything from a 60px landing headline down to a 12px table header. The interface reads as a precise instrument for running institutions: dense tables, hairline-divided metric strips, tabular numerals, and status colour that always comes with a word or an icon.\n\nThere are two modes inside one identity. The admin console and the student, teacher and parent portals are **Operate**: 14px body text, 40px controls, 52px table rows, hairline borders, almost no motion. The public landing page is **Persuade**. It keeps the same palette, type family and component vocabulary but opens up the scale (16px body, fluid display type, `clamp(88px, 10vw, 144px)` section rhythm). Its hero is the real console built from production components and fed labelled demo data, not a screenshot. The landing's scoped `--lp-*` tokens mirror the global ones and never leak into the console.\n\nLight mode is the default and dark mode follows the system unless a choice is stored. Dark mode is designed separately rather than inverted. Surfaces drop to near-black cool greys (`#0b0d10` / `#12151a` / `#181c22`). The orange is re-tuned to `#ff8a4c` and its text flips to ink (`#0e1116`). Every tinted fill is derived with `color-mix` so it sits on the dark surface instead of glowing.",
+    "keyCharacteristics": [
+      "Cool neutral ground, one contrast-calibrated orange accent, five muted role hues for entity identity",
+      "Geist Variable for UI and display; mono only for data, IDs and codes",
+      "Hairline 1px borders and near-flat surfaces; real elevation only for overlays and the landing console frame",
+      "6px controls, 8px panels, pill-shaped badges and chips",
+      "Motion signals state changes or is scrubbed to scroll; it is never a scroll-reveal fade, and reduced motion is respected everywhere"
+    ],
+    "rules": [
+      {
+        "name": "The Calibrated Orange Rule",
+        "body": "Orange fills use `brand-600` and their text uses `--on-brand`. Never hard-code white on orange, because in dark mode the accent brightens and its text has to flip to ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Accent Rule",
+        "body": "Orange appears only on primary action, live state, the active or selected indicator, and focus. On the landing page it is limited to primary action, live state and focus. Role hues identify entities; they never act as a second brand colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Derived Tint Rule",
+        "body": "Dark-mode tints are computed with `color-mix(in srgb, <hue>-500 N%, var(--surface-1))`. Do not hand-pick dark tint hexes.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Colour-Alone Rule",
+        "body": "Every status or role colour comes with a text label or an icon.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Geist sets everything a person reads. Mono appears only where the content is machine data: IDs, codes, permission keys, counts in the audit stream. No serif anywhere in the product.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every number that can change or be compared (metrics, counts, deltas, table numerals, pagination) uses `font-variant-numeric: tabular-nums`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline First Rule",
+        "body": "A 1px line separates things. A shadow says something is above the page. Do not use shadows to group content that a border already groups.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Frame Rule",
+        "body": "On the landing page, only the live console frame casts a large shadow. Everything else on that surface is flat with hairlines.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** pair every orange fill with `--on-brand` text, and use `brand-strong` for hover.",
+      "**Do** separate surfaces with 1px `border-subtle` hairlines first. Save `shadow-xl` and `shadow-2xl` for menus, dialogs, drawers, the command palette and toasts.",
+      "**Do** set every comparable number in tabular numerals, and every ID, code or permission key in mono.",
+      "**Do** use the role hues (sage, steel, clay, violet, rose) only to identify students, teachers, parents, admins and institutions, always with a label or icon.",
+      "**Do** derive dark-mode tints with `color-mix` from the `-500` step against `surface-1`.",
+      "**Do** use Phosphor icons through `components/icons.tsx` at regular weight in the console: 16px in buttons, 18px in nav and search.",
+      "**Do** tie motion to state changes (tab pill spring, view cross-fade, audit-row insert, menu and dialog entry at 180 to 300ms on `cubic-bezier(0.16, 1, 0.3, 1)`), or scrub it to scroll with GSAP ScrollTrigger, and gate all of it behind `prefers-reduced-motion: no-preference`.",
+      "**Do** keep content visible by default, without JavaScript timing. Scroll-linked effects only add to content that is already readable.",
+      "**Do** label demo data as demo data wherever the product is shown."
+    ],
+    "donts": [
+      "**Don't** fade or slide sections in on scroll.",
+      "**Don't** use a serif typeface, Inter, or a second display face. Geist carries display and UI.",
+      "**Don't** use Lucide or mix icon families. Phosphor is the only set.",
+      "**Don't** use gradient text, purple-to-blue gradients, or gradient washes behind content.",
+      "**Don't** build glassmorphism cards or translucent blurred panels.",
+      "**Don't** mark cards with a coloured left border.",
+      "**Don't** put a badge or eyebrow label above a headline, or set three icon boxes in a row.",
+      "**Don't** add a second accent colour or use role hues decoratively.",
+      "**Don't** hard-code `#fff` text on orange or on tinted fills. It fails in dark mode.",
+      "**Don't** convey status by colour alone."
+    ]
+  }
+}

@@ -10,12 +10,12 @@
 
 ## Scope discipline
 
-- MVP surfaces only: landing, admin login, dashboard, institutions, users, administrators, roles & permissions, activity, settings, profile. Do not build student/teacher/parent/manager portals, LMS, AI features, academic hierarchy, or notification infrastructure.
+- Surfaces in scope: landing, sign-in, the admin console (dashboard, institutions, users, administrators, roles & permissions, activity, settings, profile) the student/teacher/parent role portals (see OD-7), sign-in sessions and class rosters, the student LMS + AI tutor experience planned in `docs/plans/student-experience-plan.md`, Doubts + Topics, and the study core + India edge (Practice, Progress, Schedule, credits, photo doubts, tutor language, offline lessons) per `docs/research/student-product-map.md` and `docs/plans/study-core-india-edge.md`. Build only what that plan has approved; do not build manager portals or notification infrastructure.
 - Do not invent product requirements; flag ambiguity in `docs/architecture/README.md` Open Decisions instead.
 
 ## Design guardrails (see DESIGN.md)
 
-- Institutional/ledger aesthetic: ink neutrals + single pine accent, hairline rules, tabular numerals, compact density. No gradients-as-decoration, glassmorphism, purple/blue "AI" palettes, rounded-card grids, decorative motion.
+- Modern institutional SaaS at Stripe's finish level: cool neutrals + one EduBot orange accent (contrast-calibrated, `--on-brand` for text on fills), Geist + Geist Mono, Phosphor icons, hairline rules, tabular numerals. Motion is state-driven or scroll-scrubbed, never scroll-reveal fades. The full banned list lives in PRODUCT.md.
 - Every interactive component ships the full state vocabulary: default/hover/focus/active/selected/disabled/loading/success/warning/error/empty. Skeletons, not spinners. Empty states teach.
 - WCAG 2.2 AA: visible focus, keyboard-complete flows, status never by color alone, reduced-motion respected.
 
