@@ -24,3 +24,6 @@ apps/web/coverage/
 apps/web/test-results/
 apps/web/playwright-report/
 .gstack/
+
+# Design review screenshots (regenerated on demand)
+.impeccable/review/
