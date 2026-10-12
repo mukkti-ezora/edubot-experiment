@@ -19,6 +19,8 @@ PERMISSIONS: list[tuple[str, str, str]] = [
     ("audit.read", "Audit", "View the platform activity log."),
     ("settings.read", "Settings", "View platform settings."),
     ("settings.update", "Settings", "Change platform settings."),
+    ("session.read", "Sessions", "View sign-in sessions for every role."),
+    ("session.revoke", "Sessions", "End any sign-in session."),
 ]
 
 SYSTEM_ROLES: dict[str, list[str]] = {

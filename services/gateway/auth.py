@@ -15,6 +15,7 @@ from services.shared.context import (
     HEADER_PERMISSIONS,
     HEADER_REQUEST_ID,
     HEADER_SCOPE,
+    HEADER_SESSION_ID,
 )
 from services.shared.errors import Forbidden, Unauthenticated
 from services.shared.tokens import decode_access_token
@@ -30,8 +31,23 @@ def session_claims(request: Request) -> dict[str, Any]:
     return decode_access_token(token, secret=settings.jwt_secret)
 
 
+def client_headers(request: Request) -> dict[str, str]:
+    """The end user's browser and address, so services record the person rather than the gateway."""
+    headers: dict[str, str] = {}
+    user_agent = request.headers.get("user-agent")
+    if user_agent:
+        headers["user-agent"] = user_agent
+    # The gateway is the edge: a client-supplied X-Forwarded-For is never trusted, or anyone could pick the
+    # address that rate limits and the sessions list key on. Behind a load balancer, read its hop here instead.
+    peer = request.client.host if request.client else None
+    if peer:
+        headers["x-forwarded-for"] = peer
+    return headers
+
+
 def context_headers(claims: dict[str, Any], request: Request) -> dict[str, str]:
     headers = {
+        **client_headers(request),
         HEADER_ACTOR_ID: claims["sub"],
         HEADER_ACTOR_EMAIL: claims["email"],
         HEADER_SCOPE: claims["scope"],
@@ -40,6 +56,8 @@ def context_headers(claims: dict[str, Any], request: Request) -> dict[str, str]:
     }
     if claims.get("inst"):
         headers[HEADER_INSTITUTION_ID] = claims["inst"]
+    if claims.get("sid"):
+        headers[HEADER_SESSION_ID] = claims["sid"]
     return headers
 
 

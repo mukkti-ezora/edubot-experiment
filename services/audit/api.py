@@ -33,6 +33,7 @@ class EventIn(CamelModel):
     institution_id: uuid.UUID | None = None
     institution_label: str | None = None
     request_id: str | None = None
+    session_id: uuid.UUID | None = None
     ip: str | None = None
     user_agent: str | None = None
     diff: dict | None = None
@@ -52,6 +53,7 @@ class EventOut(CamelModel):
     institution_id: uuid.UUID | None
     institution_label: str | None
     request_id: str | None
+    session_id: uuid.UUID | None
     ip: str | None
     user_agent: str | None
     diff: dict | None
@@ -72,6 +74,7 @@ def _out(row: AuditEventRow) -> EventOut:
         institution_id=row.institution_id,
         institution_label=row.institution_label,
         request_id=row.request_id,
+        session_id=row.session_id,
         ip=row.ip,
         user_agent=row.user_agent,
         diff=row.diff,
@@ -100,6 +103,7 @@ async def record_event(
         institution_id=body.institution_id,
         institution_label=body.institution_label,
         request_id=body.request_id,
+        session_id=body.session_id,
         ip=body.ip,
         user_agent=body.user_agent,
         diff=body.diff,
@@ -121,6 +125,7 @@ def _activity_query(
     actor_id: uuid.UUID | None,
     date_from: datetime | None,
     date_to: datetime | None,
+    session_id: uuid.UUID | None = None,
 ):
     stmt = select(AuditEventRow)
     if query:
@@ -140,6 +145,8 @@ def _activity_query(
         stmt = stmt.where(AuditEventRow.institution_id == institution_id)
     if actor_id:
         stmt = stmt.where(AuditEventRow.actor_id == actor_id)
+    if session_id:
+        stmt = stmt.where(AuditEventRow.session_id == session_id)
     if date_from:
         stmt = stmt.where(AuditEventRow.occurred_at >= date_from)
     if date_to:
@@ -184,6 +191,7 @@ async def list_activity(
     actor_id: uuid.UUID | None = Query(default=None, alias="actorId"),
     date_from: datetime | None = Query(default=None, alias="dateFrom"),
     date_to: datetime | None = Query(default=None, alias="dateTo"),
+    session_id: uuid.UUID | None = Query(default=None, alias="sessionId"),
     cursor: str | None = Query(default=None),
     limit: int = Query(default=25, ge=1, le=100),
 ) -> Page[EventOut]:
@@ -196,6 +204,7 @@ async def list_activity(
         actor_id=actor_id,
         date_from=date_from,
         date_to=date_to,
+        session_id=session_id,
     )
     return await _page(session, stmt, cursor=cursor, limit=limit)
 

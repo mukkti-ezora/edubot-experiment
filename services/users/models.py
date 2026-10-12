@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, Index, String, Uuid
+from sqlalchemy import DateTime, ForeignKey, Index, String, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from services.shared.db import Base
@@ -39,3 +39,39 @@ class User(Base):
         Index("ix_users_institution_created", "institution_id", "created_at"),
         Index("ix_users_name", "last_name", "first_name"),
     )
+
+
+CLASS_ROLES = ["teacher", "student"]
+
+
+class ClassSection(Base):
+    """A taught group within an institution (e.g. "Physics 101, Section A", Autumn 2026)."""
+
+    __tablename__ = "class_sections"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    institution_id: Mapped[uuid.UUID] = mapped_column(Uuid, index=True)
+    code: Mapped[str] = mapped_column(String(40))
+    name: Mapped[str] = mapped_column(String(200))
+    term: Mapped[str] = mapped_column(String(60))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    __table_args__ = (UniqueConstraint("institution_id", "code", "term", name="uq_class_section_code"),)
+
+
+class ClassMember(Base):
+    """Who teaches or attends a class section. Institution-owned, like every roster row."""
+
+    __tablename__ = "class_members"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    section_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("class_sections.id", ondelete="CASCADE"), index=True
+    )
+    institution_id: Mapped[uuid.UUID] = mapped_column(Uuid, index=True)
+    person_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    role: Mapped[str] = mapped_column(String(16))  # teacher | student
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    __table_args__ = (UniqueConstraint("section_id", "person_id", name="uq_class_member"),)
+

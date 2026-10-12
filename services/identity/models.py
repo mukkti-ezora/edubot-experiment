@@ -30,6 +30,27 @@ class AuthAccount(Base):
     )
 
 
+class AuthSession(Base):
+    """One sign-in, from login until sign-out, expiry or revocation. Refresh tokens rotate inside it."""
+
+    __tablename__ = "auth_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    account_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("auth_accounts.id", ondelete="CASCADE"), index=True
+    )
+    person_id: Mapped[uuid.UUID] = mapped_column(Uuid, index=True)
+    email: Mapped[str] = mapped_column(String(320))
+    scope: Mapped[str] = mapped_column(String(16), index=True)
+    ip: Mapped[str | None] = mapped_column(String(64))
+    user_agent: Mapped[str | None] = mapped_column(String(300))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    # signed_out | revoked | reuse_detected | expired
+    end_reason: Mapped[str | None] = mapped_column(String(24))
+
+
 class RefreshToken(Base):
     """Opaque refresh sessions. Stored as SHA-256 hashes (tokens are high-entropy)."""
 
@@ -46,3 +67,6 @@ class RefreshToken(Base):
     replaced_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     ip: Mapped[str | None] = mapped_column(String(64))
     user_agent: Mapped[str | None] = mapped_column(String(300))
+    session_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("auth_sessions.id", ondelete="CASCADE"), index=True
+    )

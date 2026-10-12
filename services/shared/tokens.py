@@ -23,6 +23,7 @@ def create_access_token(
     scope: str,
     institution_id: uuid.UUID | None,
     permissions: list[str],
+    session_id: uuid.UUID | None = None,
 ) -> str:
     now = int(time.time())
     claims: dict[str, Any] = {
@@ -37,6 +38,8 @@ def create_access_token(
     }
     if institution_id is not None:
         claims["inst"] = str(institution_id)
+    if session_id is not None:
+        claims["sid"] = str(session_id)
     return jwt.encode(claims, secret, algorithm=ALGORITHM)
 
 

@@ -6,9 +6,11 @@ CREATE DATABASE tenancy_db;
 CREATE DATABASE users_db;
 CREATE DATABASE rbac_db;
 CREATE DATABASE audit_db;
+CREATE DATABASE learning_db;
 
 CREATE DATABASE identity_test;
 CREATE DATABASE tenancy_test;
 CREATE DATABASE users_test;
 CREATE DATABASE rbac_test;
 CREATE DATABASE audit_test;
+CREATE DATABASE learning_test;

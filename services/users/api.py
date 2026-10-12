@@ -16,7 +16,7 @@ from services.shared.policy import require_perm, require_platform_scope
 from services.shared.schemas import CamelModel, Page
 from services.shared.tenancy import scope_filter
 from services.users.db import get_session
-from services.users.models import USER_STATUSES, USER_TYPES, User
+from services.users.models import USER_STATUSES, USER_TYPES, ClassMember, ClassSection, User
 
 router = APIRouter()
 
@@ -579,6 +579,52 @@ async def people_batch(
         }
         for u in result.scalars()
     ]}
+
+
+@router.get("/internal/people/{person_id}/classes")
+async def person_classes(
+    person_id: uuid.UUID,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict:
+    """A person's class sections. Teachers get each section's students; students get only teacher names."""
+    memberships = (
+        await session.execute(
+            select(ClassMember, ClassSection)
+            .join(ClassSection, ClassSection.id == ClassMember.section_id)
+            .where(ClassMember.person_id == person_id)
+            .order_by(ClassSection.code)
+        )
+    ).all()
+    if not memberships:
+        return {"classes": []}
+    section_ids = [section.id for _, section in memberships]
+    members = (
+        await session.execute(
+            select(ClassMember, User)
+            .join(User, User.id == ClassMember.person_id)
+            .where(ClassMember.section_id.in_(section_ids))
+            .order_by(User.last_name, User.first_name)
+        )
+    ).all()
+    by_section: dict[uuid.UUID, list[tuple[ClassMember, User]]] = {}
+    for member, user in members:
+        by_section.setdefault(member.section_id, []).append((member, user))
+
+    classes = []
+    for membership, section in memberships:
+        roster = by_section.get(section.id, [])
+        entry = {
+            "id": str(section.id), "code": section.code, "name": section.name, "term": section.term,
+            "institutionId": str(section.institution_id), "role": membership.role,
+            "teachers": [_name(u) for m, u in roster if m.role == "teacher"],
+        }
+        if membership.role == "teacher":
+            entry["students"] = [
+                {"id": str(u.id), "name": _name(u), "email": u.email, "status": u.status}
+                for m, u in roster if m.role == "student"
+            ]
+        classes.append(entry)
+    return {"classes": classes}
 
 
 @router.get("/internal/people/{person_id}")

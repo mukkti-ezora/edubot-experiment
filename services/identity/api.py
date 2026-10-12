@@ -1,16 +1,17 @@
 import secrets
 import uuid
-from datetime import UTC
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import EmailStr, Field
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.identity import repo
 from services.identity.config import Settings
 from services.identity.db import get_session
-from services.identity.models import AuthAccount
+from services.identity.models import AuthAccount, AuthSession
 from services.identity.ratelimit import login_limiter
 from services.identity.security import (
     hash_password,
@@ -26,7 +27,9 @@ from services.shared.errors import (
     NotFound,
     RateLimited,
     Unauthenticated,
+    ValidationFailed,
 )
+from services.shared.policy import require_perm
 from services.shared.schemas import CamelModel
 from services.shared.tokens import create_access_token
 
@@ -87,6 +90,7 @@ async def _issue_pair(
     session: AsyncSession,
     account: AuthAccount,
     ctx: RequestContext,
+    session_id: uuid.UUID,
 ) -> TokenPairOut:
     settings: Settings = request.app.state.settings
     permissions = await _permissions_for(request, account.person_id)
@@ -98,6 +102,7 @@ async def _issue_pair(
         scope=account.scope,
         institution_id=None,
         permissions=permissions,
+        session_id=session_id,
     )
     refresh = new_refresh_token()
     await repo.store_refresh(
@@ -107,6 +112,7 @@ async def _issue_pair(
         ttl_days=settings.refresh_token_ttl_days,
         ip=ctx.ip,
         user_agent=ctx.user_agent,
+        session_id=session_id,
     )
     return TokenPairOut(
         access_token=access,
@@ -171,13 +177,16 @@ async def login(
         )
         raise AccountDisabled()
 
-    pair = await _issue_pair(request, session, account, ctx)
+    auth_session = await repo.start_session(session, account=account, ip=ctx.ip, user_agent=ctx.user_agent)
+    pair = await _issue_pair(request, session, account, ctx, auth_session.id)
     await repo.touch_last_login(session, account)
     await session.commit()
     # After verification the actor IS this account; attribute the event to them.
     from dataclasses import replace as _replace
 
-    signed_in = _replace(ctx, actor_id=account.person_id, email=account.email, scope=account.scope)
+    signed_in = _replace(
+        ctx, actor_id=account.person_id, email=account.email, scope=account.scope, session_id=auth_session.id
+    )
     await audit.emit(
         signed_in,
         AuditEvent(action="auth.sign_in", target_type="account", target_id=account.person_id, target_label=email),
@@ -199,9 +208,13 @@ async def refresh(
     if stored is None:
         raise Unauthenticated("Your session has expired. Sign in again.")
 
+    auth_session = await session.get(AuthSession, stored.session_id) if stored.session_id else None
+    if stored.revoked_at is not None and stored.replaced_by is None:
+        # Revoked because its session was signed out or ended, not rotated: a stale tab, not a theft.
+        raise Unauthenticated("Your session has ended. Sign in again.")
     if stored.revoked_at is not None:
-        # Reuse detected: kill the whole session family.
-        await repo.revoke_all_sessions(session, stored.account_id)
+        # Reuse detected: a rotated-away token came back, so a stolen copy is in play. End every session.
+        await repo.end_all_sessions(session, stored.account_id, "reuse_detected")
         await session.commit()
         await _audit(request).emit(
             ctx,
@@ -214,11 +227,11 @@ async def refresh(
         )
         raise Unauthenticated("Your session has expired. Sign in again.")
 
-    from datetime import datetime
-
     if stored.expires_at < datetime.now(UTC):
         raise Unauthenticated("Your session has expired. Sign in again.")
 
+    if auth_session is not None and auth_session.ended_at is not None:
+        raise Unauthenticated("Your session has ended. Sign in again.")
     account = await session.get(AuthAccount, stored.account_id)
     if account is None:
         raise Unauthenticated("Your session has expired. Sign in again.")
@@ -234,6 +247,7 @@ async def refresh(
         scope=account.scope,
         institution_id=None,
         permissions=permissions,
+        session_id=stored.session_id,
     )
     new_token = new_refresh_token()
     await repo.rotate_refresh(
@@ -245,6 +259,8 @@ async def refresh(
         user_agent=ctx.user_agent,
         new_token=new_token,
     )
+    if auth_session is not None:
+        auth_session.last_seen_at = datetime.now(UTC)
     await session.commit()
     return TokenPairOut(
         access_token=access,
@@ -265,11 +281,127 @@ async def logout(
     if body.refresh_token:
         stored = await repo.find_refresh(session, body.refresh_token)
         if stored is not None and stored.revoked_at is None:
-            await repo.revoke_all_sessions(session, stored.account_id)
+            auth_session = await session.get(AuthSession, stored.session_id) if stored.session_id else None
+            if auth_session is not None:
+                await repo.end_session(session, auth_session, "signed_out")
+            else:
+                await repo.revoke_all_sessions(session, stored.account_id)
             await session.commit()
             await _audit(request).emit(
                 ctx, AuditEvent(action="auth.sign_out", target_type="account", target_id=stored.account_id)
             )
+
+
+# ---- sign-in sessions (Platform Owner) ----
+
+SESSION_STATUSES = ("active", "ended", "expired")
+
+
+class SessionOut(CamelModel):
+    id: uuid.UUID
+    person_id: uuid.UUID
+    email: str
+    role: str
+    ip: str | None
+    user_agent: str | None
+    started_at: datetime
+    last_seen_at: datetime
+    ended_at: datetime | None
+    end_reason: str | None
+    status: str
+
+
+def _session_status(row: AuthSession, idle_cutoff: datetime) -> str:
+    if row.ended_at is not None:
+        return "ended"
+    return "active" if row.last_seen_at >= idle_cutoff else "expired"
+
+
+def _session_out(row: AuthSession, idle_cutoff: datetime) -> SessionOut:
+    return SessionOut(
+        id=row.id, person_id=row.person_id, email=row.email, role=row.scope, ip=row.ip,
+        user_agent=row.user_agent, started_at=row.started_at, last_seen_at=row.last_seen_at,
+        ended_at=row.ended_at, end_reason=row.end_reason, status=_session_status(row, idle_cutoff),
+    )
+
+
+def _idle_cutoff(request: Request) -> datetime:
+    """A session nobody refreshed within the refresh-token lifetime can no longer be resumed."""
+    return datetime.now(UTC) - timedelta(days=_settings(request).refresh_token_ttl_days)
+
+
+@router.get("/sessions")
+async def list_sessions(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    ctx: Annotated[RequestContext, Depends(get_context)],
+    role: str | None = Query(default=None),
+    status: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict:
+    require_perm(ctx, "session.read")
+    if status is not None and status not in SESSION_STATUSES:
+        raise ValidationFailed("Unknown session status.")
+    cutoff = _idle_cutoff(request)
+    stmt = select(AuthSession).order_by(AuthSession.started_at.desc()).limit(limit)
+    if role:
+        stmt = stmt.where(AuthSession.scope == role)
+    if status == "active":
+        stmt = stmt.where(AuthSession.ended_at.is_(None), AuthSession.last_seen_at >= cutoff)
+    elif status == "ended":
+        stmt = stmt.where(AuthSession.ended_at.is_not(None))
+    elif status == "expired":
+        stmt = stmt.where(AuthSession.ended_at.is_(None), AuthSession.last_seen_at < cutoff)
+    rows = (await session.execute(stmt)).scalars().all()
+    return {"items": [_session_out(r, cutoff).model_dump(by_alias=True, mode="json") for r in rows]}
+
+
+async def _get_session_row(session: AsyncSession, session_id: uuid.UUID) -> AuthSession:
+    row = await session.get(AuthSession, session_id)
+    if row is None:
+        raise NotFound("Session not found.")
+    return row
+
+
+@router.get("/sessions/{session_id}", response_model=SessionOut)
+async def get_session_detail(
+    session_id: uuid.UUID,
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    ctx: Annotated[RequestContext, Depends(get_context)],
+) -> SessionOut:
+    require_perm(ctx, "session.read")
+    return _session_out(await _get_session_row(session, session_id), _idle_cutoff(request))
+
+
+@router.post("/sessions/{session_id}/revoke", response_model=SessionOut)
+async def revoke_session(
+    session_id: uuid.UUID,
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    ctx: Annotated[RequestContext, Depends(get_context)],
+) -> SessionOut:
+    require_perm(ctx, "session.revoke")
+    row = await _get_session_row(session, session_id)
+    await repo.end_session(session, row, "revoked")
+    await session.commit()
+    await _audit(request).emit(
+        ctx, AuditEvent(action="session.revoke", target_type="session", target_id=row.id, target_label=row.email)
+    )
+    return _session_out(row, _idle_cutoff(request))
+
+
+# ---- maintenance ----
+
+@router.post("/internal/maintenance/purge-sessions")
+async def purge_sessions(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict:
+    days = _settings(request).session_retention_days
+    purged = await repo.purge_sessions(session, datetime.now(UTC) - timedelta(days=days))
+    await session.commit()
+    return {"purged": purged, "retentionDays": days}
 
 
 # ---- internal API ----

@@ -25,6 +25,7 @@ HEADER_ACTOR_EMAIL = "X-Edubot-Actor-Email"
 HEADER_SCOPE = "X-Edubot-Scope"  # "platform" | "institution"
 HEADER_INSTITUTION_ID = "X-Edubot-Institution-Id"
 HEADER_PERMISSIONS = "X-Edubot-Permissions"  # comma-separated capability keys
+HEADER_SESSION_ID = "X-Edubot-Session-Id"  # the sign-in session this request belongs to
 
 SCOPE_PLATFORM = "platform"
 SCOPE_INSTITUTION = "institution"
@@ -40,6 +41,7 @@ class RequestContext:
     request_id: str = ""
     ip: str | None = None
     user_agent: str | None = None
+    session_id: uuid.UUID | None = None
 
     @property
     def is_authenticated(self) -> bool:
@@ -84,7 +86,17 @@ def forward_headers(ctx: RequestContext) -> dict[str, str]:
         headers[HEADER_INSTITUTION_ID] = str(ctx.institution_id)
     if ctx.permissions:
         headers[HEADER_PERMISSIONS] = ",".join(sorted(ctx.permissions))
+    if ctx.session_id:
+        headers[HEADER_SESSION_ID] = str(ctx.session_id)
     return headers
+
+
+def _client_ip(request: Request) -> str | None:
+    """First address in X-Forwarded-For (the original client), else the direct peer."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip() or None
+    return request.client.host if request.client else None
 
 
 class ContextMiddleware(BaseHTTPMiddleware):
@@ -123,6 +135,7 @@ class ContextMiddleware(BaseHTTPMiddleware):
         institution_id = uuid.UUID(inst_raw) if inst_raw else None
         perms_raw = request.headers.get(HEADER_PERMISSIONS, "")
         permissions: Iterable[str] = [p for p in perms_raw.split(",") if p]
+        session_raw = request.headers.get(HEADER_SESSION_ID)
 
         request.state.ctx = RequestContext(
             actor_id=actor_id,
@@ -131,8 +144,9 @@ class ContextMiddleware(BaseHTTPMiddleware):
             institution_id=institution_id,
             permissions=frozenset(permissions),
             request_id=request_id,
-            ip=request.headers.get("x-forwarded-for", request.client.host if request.client else None),
+            ip=_client_ip(request),
             user_agent=request.headers.get("user-agent"),
+            session_id=uuid.UUID(session_raw) if session_raw else None,
         )
 
         response = await call_next(request)

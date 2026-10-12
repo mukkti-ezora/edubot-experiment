@@ -37,6 +37,13 @@ class AuditEvent:
     occurred_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
+def _actor_type(ctx: RequestContext) -> str:
+    """Who acted: platform admins, the three role-portal users, or nobody signed in."""
+    if not ctx.is_authenticated:
+        return "anonymous"
+    return ctx.scope if ctx.scope in ("student", "teacher", "parent") else "admin"
+
+
 class AuditClient:
     def __init__(
         self,
@@ -58,7 +65,7 @@ class AuditClient:
             "action": event.action,
             "result": event.result,
             "actorId": str(ctx.actor_id) if ctx.actor_id else None,
-            "actorType": "admin" if ctx.is_authenticated else "anonymous",
+            "actorType": _actor_type(ctx),
             "actorLabel": ctx.email,
             "targetType": event.target_type,
             "targetId": str(event.target_id) if event.target_id is not None else None,
@@ -66,6 +73,7 @@ class AuditClient:
             "institutionId": str(event.institution_id) if event.institution_id is not None else None,
             "institutionLabel": event.institution_label,
             "requestId": ctx.request_id or None,
+            "sessionId": str(ctx.session_id) if ctx.session_id else None,
             "ip": ctx.ip,
             "userAgent": ctx.user_agent,
             "diff": event.diff,

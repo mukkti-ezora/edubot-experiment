@@ -7,9 +7,11 @@ network is replaced by httpx.ASGITransport. Same headers, same middleware, same 
 import os
 import uuid
 
-for _name in ("identity", "tenancy", "users", "rbac", "audit"):
+# EDUBOT_TEST_DB_SUFFIX gives parallel test runs their own databases (e.g. "_practice" -> learning_test_practice).
+_suffix = os.environ.get("EDUBOT_TEST_DB_SUFFIX", "")
+for _name in ("identity", "tenancy", "users", "rbac", "audit", "learning"):
     os.environ[f"{_name.upper()}_DATABASE_URL"] = (
-        f"postgresql+asyncpg://edubot:edubot@localhost:5433/{_name}_test"
+        f"postgresql+asyncpg://edubot:edubot@localhost:5433/{_name}_test{_suffix}"
     )
 
 import httpx  # noqa: E402
@@ -23,6 +25,8 @@ from services.identity import db as identity_db  # noqa: E402
 from services.identity.main import create_app as create_identity  # noqa: E402
 from services.identity.models import AuthAccount  # noqa: E402
 from services.identity.security import hash_password  # noqa: E402
+from services.learning import db as learning_db  # noqa: E402
+from services.learning.main import create_app as create_learning  # noqa: E402
 from services.rbac import db as rbac_db  # noqa: E402
 from services.rbac.main import create_app as create_rbac  # noqa: E402
 from services.rbac.models import Permission, Role, RoleAssignment, RolePermission  # noqa: E402
@@ -53,6 +57,7 @@ class Stack:
             "users": create_users(),
             "rbac": create_rbac(),
             "audit": create_audit(),
+            "learning": create_learning(),
         }
         audit_transport = httpx.ASGITransport(app=self.apps["audit"])
         for _name, app in self.apps.items():
@@ -75,6 +80,9 @@ class Stack:
         self.apps["rbac"].state.users = ServiceClient(
             "http://users", INTERNAL, transport=httpx.ASGITransport(app=self.apps["users"])
         )
+        self.apps["learning"].state.users = ServiceClient(
+            "http://users", INTERNAL, transport=httpx.ASGITransport(app=self.apps["users"])
+        )
 
         self.gateway = create_gateway(
             transports={name: httpx.ASGITransport(app=app) for name, app in self.apps.items()}
@@ -87,6 +95,7 @@ class Stack:
             "users": users_db,
             "rbac": rbac_db,
             "audit": audit_db,
+            "learning": learning_db,
         }
         return make_sessionmaker(engines[service].get_engine())()
 
@@ -96,7 +105,7 @@ async def stack() -> Stack:
     from services.identity.ratelimit import login_limiter
 
     login_limiter.reset()  # limiter is a process-wide singleton; isolate every gateway test
-    for module in (identity_db, tenancy_db, users_db, rbac_db, audit_db):
+    for module in (identity_db, tenancy_db, users_db, rbac_db, audit_db, learning_db):
         module.bind_from_settings()
         await module.reset_schema()
     return Stack()

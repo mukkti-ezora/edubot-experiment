@@ -25,6 +25,7 @@ class BaseServiceSettings(BaseSettings):
     users_url: str = Field(default="http://localhost:8003", alias="USERS_URL")
     rbac_url: str = Field(default="http://localhost:8004", alias="RBAC_URL")
     audit_url: str = Field(default="http://localhost:8005", alias="AUDIT_URL")
+    learning_url: str = Field(default="http://localhost:8006", alias="LEARNING_URL")
 
     access_token_ttl_seconds: int = Field(default=900, alias="ACCESS_TOKEN_TTL_SECONDS")
     refresh_token_ttl_days: int = Field(default=30, alias="REFRESH_TOKEN_TTL_DAYS")

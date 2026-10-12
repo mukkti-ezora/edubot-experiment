@@ -14,6 +14,9 @@ class Settings(BaseServiceSettings):
     login_rate_limit_window_seconds: int = Field(
         default=900, alias="LOGIN_RATE_LIMIT_WINDOW_SECONDS"
     )
+    # Sign-in session records are kept this long after they end or go idle, then rotated out.
+    session_retention_days: int = Field(default=60, alias="SESSION_RETENTION_DAYS")
+    session_purge_interval_hours: int = Field(default=6, alias="SESSION_PURGE_INTERVAL_HOURS")
 
 
 @lru_cache

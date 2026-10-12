@@ -206,6 +206,25 @@ async def seed_rbac(session) -> dict[str, uuid.UUID]:
     return role_ids
 
 
+ROLE_DEMO_ACCOUNTS = [
+    # (email, type) of people produced by build_people; checked by check_role_demo_accounts
+    ("ingrid.abiodun@ashf.example.edu", "student"),
+    ("kwame.abiodun@ashf.example.edu", "student"),
+    ("leila.abiodun@ashf.example.edu", "teacher"),
+    ("mei.amato@ashf.example.edu", "teacher"),
+    ("adaeze.abiodun@ashf.example.edu", "parent"),
+    ("farah.abiodun@ashf.example.edu", "parent"),
+]
+
+
+def check_role_demo_accounts(people: list[dict]) -> None:
+    """Fail the seed if a demo account would point at a missing or mistyped person."""
+    type_by_email = {p["email"]: p["type"] for p in people}
+    for email, user_type in ROLE_DEMO_ACCOUNTS:
+        if type_by_email.get(email) != user_type:
+            raise SystemExit(f"Demo account {email} needs a seeded {user_type}; got {type_by_email.get(email)}.")
+
+
 async def seed_identity(session) -> None:
     from services.identity.models import AuthAccount
     from services.identity.security import hash_password
@@ -225,6 +244,23 @@ async def seed_identity(session) -> None:
             created_at=days_ago(300),
         )
         session.add(account)
+
+    # Role demo accounts (students, teachers, parents)
+    role_password = os.environ.get("EDUBOT_SEED_ROLE_PASSWORD", "EduBot-demo-2026!")
+    for email, user_type in ROLE_DEMO_ACCOUNTS:
+        person_id = uid(f"person:{email}")
+        account = AuthAccount(
+            id=uid(f"account:{email}"),
+            email=email,
+            password_hash=hash_password(role_password),
+            person_id=person_id,
+            scope=user_type,
+            status="active",
+            last_login_at=None,
+            created_at=days_ago(200),
+        )
+        session.add(account)
+
     await session.commit()
 
 
@@ -337,6 +373,123 @@ async def seed_users_db(session, people_rows) -> None:
     await session.commit()
 
 
+CLASS_SECTIONS = [
+    # code, name, teacher email, demo students placed in it, extra seeded ASHF students
+    ("PHY101-A", "Physics 101, Section A", "leila.abiodun@ashf.example.edu", ["ingrid.abiodun@ashf.example.edu"], 24),
+    ("MTH201-B", "Calculus II, Section B", "leila.abiodun@ashf.example.edu", ["kwame.abiodun@ashf.example.edu"], 20),
+    ("CS110-A", "Introduction to Programming, Section A", "mei.amato@ashf.example.edu",
+     ["ingrid.abiodun@ashf.example.edu", "kwame.abiodun@ashf.example.edu"], 18),
+]
+CLASS_TERM = "2026 Autumn"
+
+
+async def seed_classes(session, people: list[dict], institutions: dict[str, dict]) -> int:
+    """Deterministic class roster at Ashford around the demo accounts."""
+    from services.users.models import ClassMember, ClassSection
+
+    ashford = institutions["ASHF"]["id"]
+    by_email = {p["email"]: p for p in people}
+    pool = sorted(p["email"] for p in people if p["inst_code"] == "ASHF" and p["type"] == "student")
+    offset = 0
+    for code, name, teacher, demo_students, extra in CLASS_SECTIONS:
+        section_id = uid(f"class:{code}")
+        session.add(ClassSection(id=section_id, institution_id=ashford, code=code, name=name, term=CLASS_TERM))
+        await session.flush()
+        extras = [e for e in pool[offset:offset + extra + len(demo_students)] if e not in demo_students][:extra]
+        offset += extra
+        members = [(teacher, "teacher")] + [(e, "student") for e in demo_students + extras]
+        for email, role in members:
+            session.add(ClassMember(
+                id=uid(f"class-member:{code}:{email}"), section_id=section_id, institution_id=ashford,
+                person_id=by_email[email]["id"], role=role,
+            ))
+    await session.commit()
+    return len(CLASS_SECTIONS)
+
+
+async def seed_learning(session, people: list[dict], institutions: dict[str, dict]) -> tuple[int, int]:
+    """Starter library at Ashford: courses on the seeded class sections, lessons, assignments."""
+    from scripts.learning_seed import ASSIGNMENTS, COURSES, TOPICS
+    from services.learning.models import Assignment, Course, Lesson, Module, Submission, Topic
+
+    ashford = institutions["ASHF"]["id"]
+    by_email = {p["email"]: p for p in people}
+    course_ids: dict[str, object] = {}
+    lessons = 0
+    for code, section_code, title, subject, summary, modules in COURSES:
+        course_id = uid(f"course:{code}")
+        course_ids[code] = course_id
+        session.add(Course(id=course_id, institution_id=ashford, section_id=uid(f"class:{section_code}"),
+                           code=code, title=title, subject=subject, summary=summary, term=CLASS_TERM))
+        await session.flush()
+        topic_of: dict[tuple[int, int], object] = {}
+        for t_pos, (t_title, t_summary, t_lessons) in enumerate(TOPICS.get(code, []), start=1):
+            topic_id = uid(f"topic:{code}:{t_pos}")
+            session.add(Topic(id=topic_id, institution_id=ashford, course_id=course_id, position=t_pos,
+                              title=t_title, summary=t_summary))
+            topic_of.update({key: topic_id for key in t_lessons})
+        await session.flush()
+        for m_pos, (m_title, m_lessons) in enumerate(modules, start=1):
+            module_id = uid(f"module:{code}:{m_pos}")
+            session.add(Module(id=module_id, institution_id=ashford, course_id=course_id, position=m_pos,
+                               title=m_title))
+            await session.flush()
+            for l_pos, (l_title, minutes, body, video, animation) in enumerate(m_lessons, start=1):
+                session.add(Lesson(id=uid(f"lesson:{code}:{m_pos}:{l_pos}"), institution_id=ashford,
+                                   course_id=course_id, module_id=module_id,
+                                   topic_id=topic_of.get((m_pos, l_pos)), position=l_pos, title=l_title,
+                                   minutes=minutes, body=body, video=video, animation=animation))
+                lessons += 1
+    await session.flush()
+    for code, a_title, kind, days, points, submitted_by in ASSIGNMENTS:
+        assignment_id = uid(f"assignment:{code}:{a_title}")
+        session.add(Assignment(id=assignment_id, institution_id=ashford, course_id=course_ids[code],
+                               title=a_title, kind=kind, due_at=ANCHOR + timedelta(days=days), points=points))
+        await session.flush()
+        for email in submitted_by:
+            session.add(Submission(institution_id=ashford, assignment_id=assignment_id,
+                                   person_id=by_email[email]["id"], status="submitted"))
+    await seed_doubts(session, by_email, ashford)
+    from scripts import seed_coursework, seed_practice, seed_progress, seed_schedule
+
+    for area in (seed_coursework, seed_practice, seed_progress, seed_schedule):
+        await area.seed(session, by_email, ashford)
+    await session.commit()
+    return len(COURSES), lessons
+
+
+async def seed_doubts(session, by_email: dict[str, dict], ashford) -> None:
+    """A few doubts in every state, so both the student Doubts page and the teacher inbox have real examples."""
+    from scripts.learning_seed import COURSES, DOUBTS
+    from services.learning.models import Doubt, DoubtMessage, Lesson
+
+    sections = {code: section_code for code, section_code, *_ in COURSES}
+    teachers = {section: teacher for section, _, teacher, *_ in CLASS_SECTIONS}
+    reply_target = timedelta(hours=48)
+    for code, (m_pos, l_pos), email, title, status, asked_hours, thread in DOUBTS:
+        lesson = await session.get(Lesson, uid(f"lesson:{code}:{m_pos}:{l_pos}"))
+        teacher = by_email[teachers[sections[code]]]
+        asked = ANCHOR - timedelta(hours=asked_hours)
+        sent = [ANCHOR - timedelta(hours=hours) for _, hours, _ in thread]
+        replies = [when for (role, _, _), when in zip(thread, sent, strict=True) if role == "teacher"]
+        doubt_id = uid(f"doubt:{code}:{title}")
+        session.add(Doubt(
+            id=doubt_id, institution_id=ashford, section_id=uid(f"class:{sections[code]}"), course_id=lesson.course_id,
+            topic_id=lesson.topic_id, lesson_id=lesson.id, student_id=by_email[email]["id"], title=title,
+            status=status, reply_due_at=sent[-1] + reply_target, created_at=asked, updated_at=sent[-1],
+            first_answered_at=replies[0] if replies else None,
+            resolved_at=sent[-1] if status == "resolved" else None,
+        ))
+        await session.flush()
+        for (role, _, body), when in zip(thread, sent, strict=True):
+            author = teacher if role == "teacher" else by_email[email]
+            session.add(DoubtMessage(
+                institution_id=ashford, doubt_id=doubt_id, author_id=author["id"], author_role=role,
+                author_name=f"{author['first']} {author['last']}" if role == "teacher" else None,
+                body=body, created_at=when,
+            ))
+
+
 async def seed_audit(session, institutions, people, admin_people) -> None:
     from services.audit.models import AuditEventRow
 
@@ -427,6 +580,7 @@ async def seed_audit(session, institutions, people, admin_people) -> None:
 async def main(reset: bool) -> None:
     import services.audit.db as audit_db
     import services.identity.db as identity_db
+    import services.learning.db as learning_db
     import services.rbac.db as rbac_db
     import services.tenancy.db as tenancy_db
     import services.users.db as users_db
@@ -438,6 +592,7 @@ async def main(reset: bool) -> None:
         "rbac": rbac_db,
         "identity": identity_db,
         "audit": audit_db,
+        "learning": learning_db,
     }
     for module in modules.values():
         module.bind_from_settings()
@@ -448,6 +603,7 @@ async def main(reset: bool) -> None:
         i[0]: {"id": uid(f"institution:{i[0]}"), "name": i[1]} for i in INSTITUTIONS
     }
     people = build_people(institutions)
+    check_role_demo_accounts(people)
 
     tenancy_mod, users_mod, rbac_mod, identity_mod, audit_mod = (
         modules["tenancy"], modules["users"], modules["rbac"], modules["identity"], modules["audit"],
@@ -470,7 +626,8 @@ async def main(reset: bool) -> None:
     users_sessions = make_sessionmaker(users_mod.get_engine())
     async with users_sessions() as session:
         await seed_users_db(session, people_rows)
-        print(f"users: {len(people_rows)} people")
+        sections = await seed_classes(session, people, institutions)
+        print(f"users: {len(people_rows)} people, {sections} class sections")
 
     rbac_sessions = make_sessionmaker(rbac_mod.get_engine())
     async with rbac_sessions() as session:
@@ -480,12 +637,17 @@ async def main(reset: bool) -> None:
     identity_sessions = make_sessionmaker(identity_mod.get_engine())
     async with identity_sessions() as session:
         await seed_identity(session)
-        print(f"identity: {len(PLATFORM_ADMINS)} admin accounts")
+        print(f"identity: {len(PLATFORM_ADMINS)} admin accounts + {len(ROLE_DEMO_ACCOUNTS)} role demo accounts")
 
     audit_sessions = make_sessionmaker(audit_mod.get_engine())
     async with audit_sessions() as session:
         await seed_audit(session, institutions, people, PLATFORM_ADMINS)
         print("audit: activity history seeded")
+
+    learning_sessions = make_sessionmaker(learning_db.get_engine())
+    async with learning_sessions() as session:
+        course_count, lesson_count = await seed_learning(session, people, institutions)
+        print(f"learning: {course_count} courses, {lesson_count} lessons")
 
     students = sum(1 for p in people if p["type"] == "student")
     print(

@@ -36,6 +36,7 @@ def create_app(transports: dict | None = None) -> FastAPI:
             "users": settings.users_url,
             "rbac": settings.rbac_url,
             "audit": settings.audit_url,
+            "learning": settings.learning_url,
         },
         transports=transports,
     )

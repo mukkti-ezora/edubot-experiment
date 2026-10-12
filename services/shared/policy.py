@@ -33,6 +33,13 @@ def require_platform_scope(ctx: RequestContext) -> None:
         raise TenantViolation(audit_action="platform.scope")
 
 
+def require_scope(ctx: RequestContext, scope: str, *, action: str) -> None:
+    """Role portals (student, teacher, parent) are gated by the signed-in principal's scope, not by a role name."""
+    require_authenticated(ctx)
+    if ctx.scope != scope or ctx.actor_id is None:
+        raise Forbidden(audit_action=action)
+
+
 def ensure_resource_scope(ctx: RequestContext, institution_id: uuid.UUID | None) -> None:
     """Guard a tenant-owned resource. Institution-scoped actors only reach their own tenant."""
     if ctx.scope == "platform":
