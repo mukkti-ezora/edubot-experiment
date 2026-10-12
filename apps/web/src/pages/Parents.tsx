@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { formatDate, relativeFromNow, formatNumber, typeLabel } from "@/lib/format";
+import { api, qs } from "@/lib/api";
+import { formatDate, relativeFromNow, formatNumber } from "@/lib/format";
 import { useTableState } from "@/lib/useTableState";
-import { useToast } from "@/lib/toast";
-import { useAuth } from "@/lib/auth";
-import { DataTable } from "@/components/DataTable";
-import { PageHead, EmptyState, ErrorState, Avatar, StatusPill, Badge, SectionHead, Alert, Button, IconButton } from "@/components/ui";
+import { DataTable, Column } from "@/components/DataTable";
+import { PageHead, EmptyState, Avatar, StatusPill, Button } from "@/components/ui";
 import {
   IconHeart,
-  IconBuilding,
   IconSearch,
   IconChevronRight,
   IconPlus,
-  IconFilter,
-  IconArrowRight,
 } from "@/components/icons";
 import "@/styles/pages/people.css";
 
@@ -35,15 +29,8 @@ interface ParentRow {
   lastLoginAt?: string | null;
 }
 
-interface ParentsResponse {
-  items: ParentRow[];
-  nextCursor: string | null;
-}
-
 export function Parents() {
-  const { can } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
   const table = useTableState({ status: "active", type: "parent" });
 
   const { data, isLoading, error, refetch } = useQuery<{ items: ParentRow[]; nextCursor: string | null }>({
@@ -55,14 +42,14 @@ export function Parents() {
       if (table.get("query")) params.query = table.get("query");
       if (table.get("status")) params.status = table.get("status");
       if (table.get("institutionId")) params.institutionId = table.get("institutionId");
-      return api<{ items: ParentRow[]; nextCursor: string | null }>("/api/v1/users", { method: "GET", body: JSON.stringify(params) });
+      return api<{ items: ParentRow[]; nextCursor: string | null }>(`/api/v1/users${qs(params)}`);
     },
     placeholderData: (prev) => prev,
   });
 
   const handleRetry = () => refetch();
 
-  const columns = [
+  const columns: Column<ParentRow>[] = [
     {
       key: "identity",
       label: "Parent",
@@ -90,7 +77,7 @@ export function Parents() {
     {
       key: "status",
       label: "Status",
-      render: (row: ParentRow) => <span className="badge badge-parent">{row.status}</span>,
+      render: (row: ParentRow) => <StatusPill status={row.status} />,
     },
     {
       key: "lastActive",
@@ -177,7 +164,7 @@ export function Parents() {
         rows={data?.items ?? []}
         keyOf={(r) => r.id}
         loading={isLoading}
-        error={error}
+        error={!!error}
         onRetry={handleRetry}
         sort={table.sort}
         onSort={table.onSort}
@@ -185,7 +172,7 @@ export function Parents() {
         onRowClick={(row) => navigate(`/parents/${row.id}`)}
         empty={<EmptyState title="No parents found" body="Try adjusting your filters or create a new parent." icon={<IconHeart />} />}
         nextCursor={data?.nextCursor ?? null}
-        onNext={table.onNext}
+        onNext={() => table.onNext(data?.nextCursor ?? null)}
         onPrev={table.onPrev}
         pageIndex={table.pageIndex}
         countLabel={data?.items.length !== undefined ? `${formatNumber(data.items.length)} parents on this page` : undefined}

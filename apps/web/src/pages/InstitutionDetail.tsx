@@ -112,10 +112,10 @@ export function InstitutionDetail() {
     return (
       <div className="page-institution-detail">
         <Skeleton w={96} h={13} />
-        <div className="page-head" style={{ marginTop: 14 }}>
+        <div className="page-head skel-mt">
           <div className="head-main">
             <Skeleton w={280} h={22} />
-            <div style={{ marginTop: 8 }}>
+            <div className="skel-gap-sm">
               <Skeleton w={320} h={13} />
             </div>
           </div>

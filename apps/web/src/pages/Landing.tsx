@@ -1,278 +1,185 @@
-import { Fragment, useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
-import {
-  IconActivity,
-  IconBuilding,
-  IconCheckCircle,
-  IconKey,
-  IconShieldCheck,
-  IconUserPlus,
-  IconUsers,
-} from "@/components/icons";
+import { ArrowRight, List, Moon, Sun, X } from "@phosphor-icons/react";
+import { useTheme } from "@/lib/theme";
+import { DEMO_SCALE } from "@/lib/landingDemo";
+import { LiveConsole } from "./landing/LiveConsole";
+import { HeroNetwork } from "./landing/HeroNetwork";
+import { AuditSection, PermissionsSection, PortalsSection, TenancySection } from "./landing/Sections";
 import "@/styles/pages/landing.css";
 
-/* Hero panel: an honest miniature of the console's Institutions table.
-   Synthetic demo rows — the same seed names the old page used. */
-const MOCK_ROWS = [
-  { name: "Ashford Institute of Technology", code: "ASHF-0041", type: "Institute of Technology", place: "Portland, OR", status: "active", tone: "ok", initials: "AT" },
-  { name: "Clearwater College", code: "CLWT-0118", type: "College", place: "Madison, WI", status: "active", tone: "ok", initials: "CC" },
-  { name: "Meredian University", code: "MRDN-0002", type: "University", place: "Albany, NY", status: "pending", tone: "warn", initials: "MU" },
-  { name: "Hillview Community College", code: "HILV-0076", type: "Community College", place: "Fresno, CA", status: "active", tone: "ok", initials: "HC" },
-  { name: "Southshore Regional Academy", code: "SORM-0059", type: "Academy", place: "Mobile, AL", status: "suspended", tone: "danger", initials: "SA" },
-] as const;
-
-const TRUST = [
-  "Multi-tenant by construction",
-  "Audit-logged by default",
-  "RBAC as policy",
+const NAV_LINKS = [
+  { href: "#portals", label: "Portals" },
+  { href: "#isolation", label: "Isolation" },
+  { href: "#permissions", label: "Permissions" },
+  { href: "#audit", label: "Audit" },
 ];
 
-const CAPABILITIES = [
-  {
-    icon: IconBuilding,
-    title: "Tenant isolation as architecture",
-    body: "Every institution's data is scoped on the server through a shared tenancy layer — isolation is structural, never a filter in the browser.",
-  },
-  {
-    icon: IconUsers,
-    title: "Directory of institutions and people",
-    body: "A searchable, filterable registry of institutions and every student, teacher, parent, and administrator attached to them.",
-  },
-  {
-    icon: IconUserPlus,
-    title: "Administrator invitations and role assignment",
-    body: "Invite administrators by email and assign roles at institution or platform scope, with a visible lifecycle from invitation to deactivation.",
-  },
-  {
-    icon: IconKey,
-    title: "Roles as composable permission sets",
-    body: "Roles are built from fine-grained capability permissions — composed, inspected, and revised without code changes.",
-  },
-  {
-    icon: IconActivity,
-    title: "Immutable audit trail, including denied attempts",
-    body: "Every administrative action is recorded — actor, target, timestamp, result. Denied privileged attempts are logged too. The log is append-only.",
-  },
-  {
-    icon: IconShieldCheck,
-    title: "Policy checks on every operation",
-    body: "Authorization is a policy decision evaluated per request on the server, not a role name compared in the UI.",
-  },
-];
+gsap.registerPlugin(ScrollTrigger);
 
-const ROADMAP = [
-  {
-    title: "Institution portals",
-    body: "Dedicated surfaces for managers, teachers, students, and parents — each scoped to their own institution.",
-  },
-  {
-    title: "Learning surfaces",
-    body: "Courses, content, and assignments built on the same tenancy and audit core as the console.",
-  },
-  {
-    title: "AI-assisted operations",
-    body: "Assistance for administration and learning, grounded in institutional data and subject to the same permission model.",
-  },
-  {
-    title: "SSO/OIDC + MFA",
-    body: "Federated sign-in against institution-managed identity providers, with multi-factor authentication.",
-  },
-  {
-    title: "Notification & email infrastructure",
-    body: "Managed delivery of invitations and operational notices by email and in-product notifications.",
-  },
-];
+const formatCount = (n: number) => n.toLocaleString("en-US");
 
-function stagger(i: number): CSSProperties {
-  return { "--i": i } as CSSProperties;
+const SCALE_SENTENCE = `The live demo runs ${DEMO_SCALE.institutions} institutions and ${formatCount(DEMO_SCALE.people)} people, from ${formatCount(DEMO_SCALE.students)} students to ${DEMO_SCALE.administrators} administrators, on synthetic data you can explore end to end.`;
+
+/** Scroll-scrubbed motion only: everything is readable before and without it. */
+function useScrollInteractions(root: React.RefObject<HTMLDivElement>) {
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".lp-hero-product .lp-app",
+          { rotateX: 14, scale: 0.94, y: 24 },
+          {
+            rotateX: 0, scale: 1, y: 0, ease: "none",
+            scrollTrigger: { trigger: ".lp-hero-product", start: "top 85%", end: "top 25%", scrub: 0.6 },
+          },
+        );
+
+        gsap.fromTo(
+          ".lp-scale-word",
+          { color: "var(--lp-line-strong)" },
+          {
+            color: "var(--lp-ink)", ease: "none", stagger: 0.1,
+            scrollTrigger: { trigger: ".lp-scale", start: "top 80%", end: "bottom 45%", scrub: true },
+          },
+        );
+
+        gsap.utils.toArray<HTMLElement>(".lp-portal").forEach((row) => {
+          ScrollTrigger.create({ trigger: row, start: "top 55%", end: "bottom 45%", toggleClass: "is-active" });
+        });
+      });
+    }, root);
+    return () => ctx.revert();
+  }, [root]);
 }
 
 export function Landing() {
-  const [mounted, setMounted] = useState(false);
+  const { resolved, setTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  useScrollInteractions(root);
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    const sentinel = document.getElementById("lp-top");
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting));
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
+  const toggleTheme = () => setTheme(resolved === "dark" ? "light" : "dark");
+
   return (
-    <div className={`page-landing${mounted ? " is-mounted" : ""}`}>
-      <nav className="pl-nav" aria-label="Site">
-        <div className="pl-nav-inner">
-          <Link to="/" className="pl-brand">
-            <span className="pl-mark" aria-hidden="true">E</span>
-            <span className="pl-word">EduBot</span>
+    <div className="lp" ref={root}>
+      <a className="lp-skip" href="#main">Skip to content</a>
+      <span id="lp-top" className="lp-top-sentinel" aria-hidden="true" />
+
+      <header className={`lp-nav${scrolled ? " is-scrolled" : ""}`}>
+        <div className="lp-nav-inner">
+          <Link to="/" className="lp-brand" aria-label="EduBot home">
+            <span className="lp-mark" aria-hidden="true">E</span>
+            EduBot
           </Link>
-          <div className="pl-links">
-            <a href="#platform">Platform</a>
-            <a href="#capabilities">Capabilities</a>
-            <a href="#roadmap">Roadmap</a>
-          </div>
-          <div className="pl-nav-actions">
-            <Link to="/login" className="btn btn-secondary btn-sm">Sign in</Link>
-            <Link to="/login" className="btn btn-primary btn-sm">Open console</Link>
-          </div>
-        </div>
-      </nav>
 
-      <header className="pl-hero" id="platform">
-        <div className="pl-hero-copy">
-          <h1 className="rise" style={stagger(0)}>
-            One platform for institutional management and learning.
-          </h1>
-          <p className="pl-lede rise" style={stagger(1)}>
-            EduBot unifies institutions, people, governance, and audit behind one operating
-            model — tenant-isolated by architecture, audited by default.
-          </p>
-          <div className="pl-cta rise" style={stagger(2)}>
-            <Link to="/login" className="btn btn-primary">Open console</Link>
-            <a href="#capabilities" className="btn btn-secondary">See what's available today</a>
-          </div>
-          <p className="pl-trust rise" style={stagger(3)}>
-            {TRUST.map((item, i) => (
-              <Fragment key={item}>
-                {i > 0 && <span className="pl-trust-sep" aria-hidden="true">·</span>}
-                <span className="pl-trust-item">
-                  <IconCheckCircle width={14} height={14} />
-                  {item}
-                </span>
-              </Fragment>
+          <nav className={`lp-nav-links${menuOpen ? " is-open" : ""}`} aria-label="Main">
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>
+                {l.label}
+              </a>
             ))}
-          </p>
-        </div>
+            <Link to="/login" className="lp-nav-signin-mobile">Sign in</Link>
+          </nav>
 
-        <div className="pl-artifact rise" style={stagger(4)}>
-          <div
-            className="console-mock"
-            role="img"
-            aria-label="Preview of the EduBot console: the institutions table with record codes and status pills."
-          >
-            <div aria-hidden="true">
-              <div className="cm-head">
-                <span className="cm-title">Institutions</span>
-                <kbd>⌘K</kbd>
-              </div>
-              <div className="cm-mix">
-                <div className="distbar">
-                  <span style={{ width: "60%", background: "var(--ok-600)" }} />
-                  <span style={{ width: "20%", background: "var(--warn-700)" }} />
-                  <span style={{ width: "20%", background: "var(--danger-600)" }} />
-                </div>
-                <span className="cm-mixnote">3 active · 1 pending · 1 suspended</span>
-              </div>
-              <div>
-                {MOCK_ROWS.map((row) => (
-                  <div className="cm-row" key={row.code}>
-                    <span className="avatar">{row.initials}</span>
-                    <span className="cm-id">
-                      <span className="cm-name">{row.name}</span>
-                      <span className="cm-code">{row.code}</span>
-                    </span>
-                    <span className="cm-cell cm-type">{row.type}</span>
-                    <span className="cm-cell cm-loc">{row.place}</span>
-                    <span className={`badge badge-${row.tone}`}>
-                      <span className="dot" />
-                      {row.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <div className="lp-nav-actions">
+            <button
+              type="button"
+              className="lp-icon-btn"
+              onClick={toggleTheme}
+              aria-label={resolved === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            >
+              {resolved === "dark" ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            </button>
+            <Link to="/login" className="lp-nav-signin">Sign in</Link>
+            <Link to="/login" className="lp-btn lp-btn-primary lp-btn-sm">Explore the demo</Link>
+            <button
+              type="button"
+              className="lp-icon-btn lp-menu-btn"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X size={20} aria-hidden="true" /> : <List size={20} aria-hidden="true" />}
+            </button>
           </div>
-          <p className="cm-caption">Console preview — synthetic demo data</p>
         </div>
       </header>
 
-      <section className="pl-section" id="capabilities">
-        <div className="pl-section-inner">
-          <h2 className="pl-h2">Available today</h2>
-          <p className="pl-sub">
-            The operational core is live — the registry, the people, the governance, and the
-            record of everything that happened.
-          </p>
-          <div className="pl-caps">
-            {CAPABILITIES.map((cap) => (
-              <div className="pl-cap" key={cap.title}>
-                <span className="cap-icon">
-                  <cap.icon width={16} height={16} />
-                </span>
-                <div>
-                  <h3 className="cap-title">{cap.title}</h3>
-                  <p className="cap-desc">{cap.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="pl-section" id="roadmap">
-        <div className="pl-section-inner">
-          <h2 className="pl-h2">Where EduBot is going</h2>
-          <p className="pl-sub">
-            The roadmap. None of this is presented as shipped — it's what the platform core is
-            built to carry.
-          </p>
-          <div className="pl-road">
-            {ROADMAP.map((item) => (
-              <div className="pl-road-row" key={item.title}>
-                <span className="badge badge-outline">
-                  <span className="dot" aria-hidden="true" />
-                  Planned
-                </span>
-                <div className="road-text">
-                  <h3 className="road-title">{item.title}</h3>
-                  <p className="road-desc">{item.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="pl-section" id="access">
-        <div className="pl-section-inner pl-access-inner">
-          <div>
-            <h2 className="pl-h2">How administrators enter</h2>
-            <ol className="pl-steps">
-              <li>Receive an invitation from your platform administrator.</li>
-              <li>Sign in with your issued credentials.</li>
-              <li>Operate at platform scope — every action is audited.</li>
-            </ol>
-          </div>
-          <div className="pl-mini" aria-hidden="true">
-            <div className="mini-card">
-              <div className="mini-brand">
-                <span className="mini-mark">E</span>
-              </div>
-              <div className="mini-title">Sign in</div>
-              <div className="mini-field">
-                <span className="mini-label">Email</span>
-                <input className="input" type="email" disabled placeholder="name@institution.edu" tabIndex={-1} />
-              </div>
-              <div className="mini-field">
-                <span className="mini-label">Password</span>
-                <input className="input" type="password" disabled placeholder="••••••••" tabIndex={-1} />
-              </div>
-              <button type="button" className="btn btn-primary w-full" disabled tabIndex={-1}>
-                Sign in
-              </button>
+      <main id="main">
+        <section className="lp-hero" aria-labelledby="hero-title">
+          <div className="lp-hero-top">
+          <div className="lp-hero-copy">
+            <h1 id="hero-title" className="lp-h1">
+              One platform for every institution you run.
+            </h1>
+            <p className="lp-hero-sub">
+              Institutions, people, permissions and an audit trail in one console, with portals for students, teachers and parents.
+            </p>
+            <div className="lp-hero-actions">
+              <Link to="/login" className="lp-btn lp-btn-primary">
+                Explore the demo <ArrowRight size={18} weight="bold" aria-hidden="true" />
+              </Link>
+              <Link to="/login" className="lp-btn lp-btn-secondary">Sign in</Link>
             </div>
           </div>
-        </div>
-      </section>
+          <div className="lp-hero-visual">
+            <HeroNetwork />
+          </div>
+          </div>
+          <div className="lp-hero-product">
+            <LiveConsole />
+          </div>
+        </section>
 
-      <footer className="pl-foot">
-        <div className="pl-foot-inner">
-          <span className="pl-foot-brand">
-            <span className="pl-mark pl-mark-sm" aria-hidden="true">E</span>
-            <span className="pl-word-sm">EduBot</span>
+        <p className="lp-scale" aria-label={SCALE_SENTENCE}>
+          {SCALE_SENTENCE.split(" ").map((word, i) => (
+            <span key={i} className="lp-scale-word" aria-hidden="true">{word} </span>
+          ))}
+        </p>
+
+        <PortalsSection />
+        <TenancySection />
+        <PermissionsSection />
+        <AuditSection />
+
+        <section className="lp-close" aria-labelledby="close-title">
+          <h2 id="close-title" className="lp-h2">See your institution in EduBot.</h2>
+          <p className="lp-lead">
+            Sign in to the demo as an administrator, student, teacher or parent. Nothing to install.
+          </p>
+          <div className="lp-hero-actions lp-center-row">
+            <Link to="/login" className="lp-btn lp-btn-primary">
+              Explore the demo <ArrowRight size={18} weight="bold" aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer className="lp-footer">
+        <div className="lp-footer-inner">
+          <span className="lp-brand lp-brand-sm">
+            <span className="lp-mark" aria-hidden="true">E</span>
+            EduBot
           </span>
-          <span className="pl-foot-links">
+          <nav className="lp-footer-links" aria-label="Footer">
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href}>{l.label}</a>
+            ))}
             <Link to="/login">Sign in</Link>
-            <span className="pl-foot-plain">Support</span>
-          </span>
-          <span className="pl-foot-note">EduBot demo environment — synthetic data, deterministic seed.</span>
+          </nav>
+          <p className="lp-footer-note">Demo environment. All names and figures are synthetic.</p>
         </div>
       </footer>
     </div>

@@ -1,0 +1,17 @@
+/* Lesson and tutor text (rendered by components/Prose.tsx). */
+.prose { color: var(--neutral-800); line-height: 1.7; }
+.prose > :first-child { margin-top: 0; }
+.prose > :last-child { margin-bottom: 0; }
+.prose p { margin: 0 0 0.9em; }
+.prose h3 { margin: 1.6em 0 0.5em; font-size: 1.125rem; font-weight: 600; color: var(--neutral-900); letter-spacing: -0.01em; }
+.prose h4 { margin: 1.3em 0 0.4em; font-size: 1rem; font-weight: 600; color: var(--neutral-900); }
+.prose ul, .prose ol { margin: 0 0 1em; padding-left: 1.3em; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li::marker { color: var(--neutral-500); }
+.prose li { margin: 0.3em 0; }
+.prose code { font-family: var(--font-mono); font-size: 0.88em; padding: 1px 5px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--border-subtle); }
+.prose pre { margin: 0 0 1em; padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface-2); border: 1px solid var(--border-subtle); overflow-x: auto; }
+.prose pre code { padding: 0; border: 0; background: none; font-size: 0.875rem; line-height: 1.6; }
+.prose strong { color: var(--neutral-900); font-weight: 600; }
+.st-lesson-prose { max-width: 70ch; font-size: 1rem; }

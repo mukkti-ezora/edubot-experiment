@@ -1,0 +1,140 @@
+/* Doubts (student and teacher) and topic pages (Operate). Tokens only; status is always icon plus words. */
+
+.doubts-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.doubts-head .st-muted { margin-top: 6px; max-width: 62ch; }
+
+/* Segmented filter */
+.doubt-filter {
+  display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; align-self: flex-start;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-full); background: var(--surface-2);
+}
+.doubt-filter-option {
+  display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px; border: 0; border-radius: var(--radius-full);
+  background: transparent; color: var(--neutral-600); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.doubt-filter-option:hover { color: var(--neutral-900); }
+.doubt-filter-option[aria-checked="true"] { background: var(--surface-0); color: var(--neutral-900); box-shadow: var(--shadow-xs), 0 0 0 1px var(--border-subtle); }
+.doubt-filter-count { min-width: 20px; padding: 0 6px; border-radius: var(--radius-full); background: var(--surface-3); color: var(--neutral-700); font-size: var(--text-xs); line-height: 18px; text-align: center; }
+
+/* Status */
+.doubt-status { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); font-weight: 600; white-space: nowrap; }
+.doubt-status.tone-neutral { color: var(--neutral-600); }
+.doubt-status.tone-brand { color: var(--brand-700); }
+.doubt-status.tone-ok { color: var(--success-700); }
+.doubt-status.tone-danger { color: var(--danger-700); }
+
+/* Lists */
+.doubt-list { list-style: none; margin: 0; padding: 0; }
+.doubt-list > li + li { border-top: 1px solid var(--border-subtle); }
+.doubt-row {
+  display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: var(--space-3); align-items: start;
+  padding: var(--space-4) var(--space-5); color: inherit; text-decoration: none;
+  transition: background-color var(--transition-fast);
+}
+.doubt-row:hover { background: var(--surface-2); text-decoration: none; }
+.doubt-row.is-compact { grid-template-columns: minmax(0, 1fr) auto; padding: var(--space-3) var(--space-5); align-items: center; }
+.doubt-row-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.doubt-row-title { font-weight: 600; color: var(--neutral-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doubt-row-meta { color: var(--neutral-500); font-size: var(--text-xs); }
+.doubt-row-preview { margin-top: 4px; color: var(--neutral-600); font-size: var(--text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doubt-row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.doubt-row-when { color: var(--neutral-500); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
+.doubt-row.is-overdue .doubt-row-when { color: var(--danger-700); font-weight: 600; }
+
+/* Teacher insights */
+.doubt-insights {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 2fr); margin: 0;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-0);
+}
+.doubt-insights > div { padding: var(--space-4) var(--space-5); min-width: 0; }
+.doubt-insights > div + div { border-left: 1px solid var(--border-subtle); }
+.doubt-insights dt { color: var(--neutral-500); font-size: var(--text-xs); }
+.doubt-insights dd { margin: 4px 0 0; font-size: var(--text-lg); font-weight: 600; color: var(--neutral-900); }
+.doubt-insights .is-alert dd { color: var(--danger-700); }
+.doubt-insights .is-wide dd { font-size: var(--text-sm); font-weight: 500; }
+.doubt-top-topics { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.doubt-top-topics li { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border: 1px solid var(--border-subtle); border-radius: var(--radius-full); background: var(--surface-2); }
+.doubt-top-topics span { color: var(--neutral-500); font-size: var(--text-xs); }
+
+/* A single doubt */
+.doubt-head { display: flex; flex-direction: column; gap: var(--space-3); }
+.doubt-anchors { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.doubt-anchor {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full); color: var(--neutral-700); font-size: var(--text-xs); font-weight: 500; text-decoration: none;
+}
+a.doubt-anchor:hover { border-color: var(--border-default); background: var(--surface-2); text-decoration: none; }
+.doubt-anchor.is-static { color: var(--neutral-600); }
+.doubt-state { margin: 0; color: var(--neutral-600); font-size: var(--text-sm); }
+
+.doubt-thread { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-5); }
+.doubt-msg { display: flex; flex-direction: column; gap: 6px; }
+.doubt-msg + .doubt-msg { padding-top: var(--space-5); border-top: 1px solid var(--border-subtle); }
+.doubt-msg-head { display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--text-sm); }
+.doubt-msg-author { font-weight: 600; color: var(--neutral-900); }
+.doubt-msg-role { padding: 0 8px; border-radius: var(--radius-full); background: var(--teacher-50); color: var(--teacher-700); font-size: var(--text-xs); font-weight: 600; }
+.doubt-msg-head time { margin-left: auto; color: var(--neutral-500); font-size: var(--text-xs); }
+.doubt-msg-body { margin: 0; max-width: 72ch; color: var(--neutral-800); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.doubt-msg.is-teacher .prose { max-width: 72ch; }
+
+.doubt-compose { display: flex; flex-direction: column; gap: var(--space-3); }
+.doubt-compose label { font-weight: 500; font-size: var(--text-sm); color: var(--neutral-700); }
+.doubt-compose-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.doubt-compose-actions { display: flex; justify-content: flex-end; gap: var(--space-2); }
+.doubt-draft-offer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: 10px 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-2); }
+.doubt-draft-offer p { margin: 0 auto 0 0; color: var(--neutral-800); font-size: var(--text-sm); }
+.doubt-draft-note { display: inline-flex; align-items: center; gap: 6px; margin: 0; color: var(--brand-700); font-size: var(--text-xs); font-weight: 500; }
+
+.doubt-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-5); align-items: start; }
+.doubt-main { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+.doubt-context { display: flex; flex-direction: column; gap: var(--space-4); position: sticky; top: 80px; }
+.doubt-facts dl { margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.doubt-facts dt { color: var(--neutral-500); font-size: var(--text-xs); }
+.doubt-facts dd { margin: 2px 0 0; color: var(--neutral-900); font-size: var(--text-sm); font-weight: 500; }
+.doubt-transcript summary {
+  display: flex; align-items: center; gap: 6px; padding: var(--space-4); cursor: pointer;
+  font-size: var(--text-sm); font-weight: 600; color: var(--neutral-800);
+}
+.doubt-transcript summary svg { color: var(--brand-600); }
+.doubt-transcript ol { list-style: none; margin: 0; padding: 0 var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); max-height: 480px; overflow-y: auto; }
+.doubt-transcript li { display: flex; flex-direction: column; gap: 4px; font-size: var(--text-sm); }
+.doubt-transcript li + li { padding-top: var(--space-3); border-top: 1px solid var(--border-subtle); }
+
+/* Ask your teacher */
+.ask-form .field:last-of-type { margin-bottom: var(--space-4); }
+.ask-anchor, .ask-promises { list-style: none; margin: 0 0 var(--space-5); padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ask-anchor li, .ask-promises li { display: flex; align-items: center; gap: 8px; color: var(--neutral-700); font-size: var(--text-sm); }
+.ask-anchor { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface-2); }
+.ask-promises li { color: var(--neutral-600); font-size: var(--text-xs); }
+
+/* Topics */
+.topic-strip { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); }
+.topic-chip {
+  display: flex; flex-direction: column; gap: 4px; padding: var(--space-3) var(--space-4); height: 100%;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-0); color: inherit; text-decoration: none;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.topic-chip:hover { border-color: var(--border-default); background: var(--surface-2); text-decoration: none; }
+.topic-chip-title { font-weight: 600; color: var(--neutral-900); font-size: var(--text-sm); }
+.topic-chip-meta { color: var(--neutral-500); font-size: var(--text-xs); }
+.topic-chip .st-progress { margin-top: 6px; height: 4px; }
+.topic-progress { display: flex; flex-direction: column; gap: 6px; max-width: 420px; color: var(--neutral-700); font-size: var(--text-sm); }
+.topic-progress .st-progress { margin-top: 0; }
+.st-topic-link { display: inline-flex; align-items: center; gap: 2px; color: var(--neutral-600); }
+.st-topic-link:hover { color: var(--brand-700); }
+
+@media (max-width: 900px) {
+  .doubt-layout { grid-template-columns: minmax(0, 1fr); }
+  .doubt-context { position: static; }
+  .doubt-insights { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .doubt-insights .is-wide { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border-subtle); }
+}
+@media (max-width: 640px) {
+  .doubts-head { flex-direction: column; }
+  .doubt-row { grid-template-columns: 36px minmax(0, 1fr); }
+  .doubt-row-side { grid-column: 2; flex-direction: row; align-items: center; gap: var(--space-3); }
+  .doubt-row.is-compact .doubt-row-side { grid-column: auto; }
+  .doubt-insights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doubt-insights > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--border-subtle); grid-column: 1 / -1; }
+}

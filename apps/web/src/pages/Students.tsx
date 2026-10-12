@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { formatDate, relativeFromNow, formatNumber, typeLabel } from "@/lib/format";
+import { api, qs } from "@/lib/api";
+import { formatDate, relativeFromNow, formatNumber } from "@/lib/format";
 import { useTableState } from "@/lib/useTableState";
-import { useToast } from "@/lib/toast";
 import { useAuth } from "@/lib/auth";
-import { DataTable } from "@/components/DataTable";
-import { PageHead, EmptyState, ErrorState, Avatar, StatusPill, Badge, SectionHead, Alert, Button, IconButton } from "@/components/ui";
+import { DataTable, Column } from "@/components/DataTable";
+import { PageHead, EmptyState, Avatar, StatusPill, Button } from "@/components/ui";
 import {
   IconGraduationCap,
-  IconBuilding,
   IconSearch,
   IconChevronRight,
   IconPlus,
-  IconFilter,
-  IconArrowRight,
-  IconChevronDown,
 } from "@/components/icons";
 import "@/styles/pages/people.css";
 
@@ -44,7 +38,6 @@ interface StudentsResponse {
 export function Students() {
   const { can } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
   const table = useTableState({ status: "active", type: "student" });
 
   const { data, isLoading, error, refetch } = useQuery<StudentsResponse>({
@@ -56,14 +49,14 @@ export function Students() {
       if (table.get("query")) params.query = table.get("query");
       if (table.get("status")) params.status = table.get("status");
       if (table.get("institutionId")) params.institutionId = table.get("institutionId");
-      return api<StudentsResponse>("/api/v1/users", { method: "GET", body: JSON.stringify(params) });
+      return api<StudentsResponse>(`/api/v1/users${qs(params)}`);
     },
     placeholderData: (prev) => prev,
   });
 
   const handleRetry = () => refetch();
 
-  const columns = [
+  const columns: Column<StudentRow>[] = [
     {
       key: "identity",
       label: "Student",
@@ -178,7 +171,7 @@ export function Students() {
         rows={data?.items ?? []}
         keyOf={(r) => r.id}
         loading={isLoading}
-        error={error}
+        error={!!error}
         onRetry={handleRetry}
         sort={table.sort}
         onSort={table.onSort}
@@ -186,7 +179,7 @@ export function Students() {
         onRowClick={(row) => navigate(`/students/${row.id}`)}
         empty={<EmptyState title="No students found" body="Try adjusting your filters or create a new student." icon={<IconGraduationCap />} />}
         nextCursor={data?.nextCursor ?? null}
-        onNext={table.onNext}
+        onNext={() => table.onNext(data?.nextCursor ?? null)}
         onPrev={table.onPrev}
         pageIndex={table.pageIndex}
         countLabel={data?.items.length !== undefined ? `${formatNumber(data.items.length)} students on this page` : undefined}

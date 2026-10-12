@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { formatDate, relativeFromNow, formatNumber } from "@/lib/format";
+import { formatDate, relativeFromNow } from "@/lib/format";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/lib/toast";
-import { PageHead, Avatar, StatusPill, Badge, SectionHead, Alert, Button, EmptyState, ConfirmDialog } from "@/components/ui";
+import { PageHead, Avatar, StatusPill, Badge, Alert, Button, EmptyState, ConfirmDialog } from "@/components/ui";
 import {
-  IconGraduationCap,
   IconBuilding,
-  IconBuilding2,
-  IconUser,
-  IconKey,
   IconActivity,
   IconArrowLeft,
-  IconEdit,
-  IconBan,
-  IconCheckCircle,
+  IconClock,
 } from "@/components/icons";
 import "@/styles/pages/people.css";
 
@@ -90,8 +84,8 @@ export function StudentDetail() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--surface-1)" }}>
-        <div className="skeleton" style={{ width: 120, height: 16 }} />
+      <div className="page-student-detail is-loading">
+        <div className="skeleton" />
       </div>
     );
   }
@@ -114,7 +108,7 @@ export function StudentDetail() {
       <PageHead
         title={<>
           <Link to="/students" className="btn btn-ghost btn-sm"><IconArrowLeft /></Link>
-          <span style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <span className="detail-head-identity">
             <Avatar name={student.name} size="lg" category="student" />
             <span>{student.name}</span>
           </span>
@@ -178,18 +172,18 @@ export function StudentDetail() {
               ))}
             </div>
           ) : (
-            <p style={{ color: "var(--neutral-500)" }}>No roles assigned</p>
+            <p className="text-muted">No roles assigned</p>
           )}
         </div>
 
         <div className="detail-section">
           <h3>Recent Activity</h3>
-          {!aLoading && activity.length === 0 && (
+          {!aLoading && activity?.length === 0 && (
             <EmptyState title="No recent activity" body="No activity recorded for this student." icon={<IconActivity />} />
           )}
-          {!aLoading && activity.length > 0 && (
+          {!aLoading && (activity?.length ?? 0) > 0 && (
             <div className="timeline">
-              {activity.slice(0, 10).map((evt) => (
+              {activity!.slice(0, 10).map((evt) => (
                 <div key={evt.id} className="tl-item">
                   <div className={`tl-icon ${evt.result === "denied" ? "tone-danger" : evt.result === "error" ? "tone-warn" : "tone-success"}`}>
                     <IconActivity />
@@ -209,21 +203,21 @@ export function StudentDetail() {
               ))}
             </div>
           )}
-          {aLoading && <div className="skeleton" style={{ height: "100px", borderRadius: "var(--radius-md)" }} />}
+          {aLoading && <div className="skeleton skel-activity" />}
         </div>
       </div>
 
-      <ConfirmDialog
-        title="Deactivate student?"
-        body={`${student.name} will lose access immediately.`}
-        confirmLabel="Deactivate student"
-        danger
-        busy={false}
-        onConfirm={handleDeactivate}
-        onClose={() => setShowDeactivate(false)}
-        isOpen={showDeactivate}
-        onCloseOverlay={() => setShowDeactivate(false)}
-      />
+      {showDeactivate && (
+        <ConfirmDialog
+          title="Deactivate student?"
+          body={`${student.name} will lose access immediately.`}
+          confirmLabel="Deactivate student"
+          danger
+          busy={false}
+          onConfirm={() => { handleDeactivate(); }}
+          onClose={() => setShowDeactivate(false)}
+        />
+      )}
     </div>
   );
 }

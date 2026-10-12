@@ -9,7 +9,7 @@
 .page-users .table-shell > .filterbar {
   margin-bottom: 0;
   padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--border-subtle);
 }
 .page-users .filterbar .search-wrap { flex: 1 1 220px; max-width: 320px; }
 .page-users .filterbar .fchip,
@@ -27,18 +27,22 @@
 /* row actions: Menu root in a stable inline box inside the trailing cell */
 .page-users .row-menu { display: inline-flex; }
 
+/* ---------- skeleton spacers ---------- */
+.page-user-detail .skel-mt { margin-top: 14px; }
+.page-user-detail .skel-gap-sm { margin-top: 8px; }
+
 /* ---------- detail ---------- */
 
 .page-user-detail .back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--text-13);
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--ink-500);
+  color: var(--neutral-500);
   margin-bottom: 12px;
 }
-.page-user-detail .back-link:hover { color: var(--ink-900); text-decoration: none; }
+.page-user-detail .back-link:hover { color: var(--neutral-900); text-decoration: none; }
 .page-user-detail .back-link svg { width: 14px; height: 14px; }
 
 /* status alerts sit tight under the page head */
@@ -59,7 +63,7 @@
 
 .page-user-detail .uid {
   font-family: var(--font-mono);
-  font-size: var(--text-12);
-  color: var(--ink-600);
+  font-size: var(--text-xs);
+  color: var(--neutral-600);
   word-break: break-all;
 }

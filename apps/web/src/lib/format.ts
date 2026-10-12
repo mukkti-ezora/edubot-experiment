@@ -36,6 +36,8 @@ export function actionLabel(action: string): string {
     "auth.sign_in_rate_limited": "Sign-in rate limited",
     "auth.sign_out": "Signed out",
     "auth.refresh_reuse_detected": "Session replay blocked",
+    "session.revoke": "Ended a session",
+    "session.read": "Viewed sessions",
     "institution.create": "Created institution",
     "institution.update": "Updated institution",
     "institution.suspend": "Suspended institution",
@@ -63,4 +65,9 @@ export function actionLabel(action: string): string {
 
 export function typeLabel(type: string): string {
   return { student: "Student", teacher: "Teacher", parent: "Parent", administrator: "Administrator" }[type] ?? type;
+}
+
+/** A score or mark: whole numbers as-is, fractions to at most two decimals ("7.5", "8.25"). */
+export function formatScore(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/0$/, "");
 }

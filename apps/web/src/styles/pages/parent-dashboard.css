@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Parent Dashboard — Role dashboard precision
+   Hairline divisions, tabular numbers, design token exclusive.
+   ========================================================================== */
+
+/* ── Loading ──────────────────────────────────────────── */
+
+/* ── Child Switcher ──────────────────────────────────── */
+
+.page-parent-dashboard .cs-group {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--border-subtle);
+}
+
+.page-parent-dashboard .cs-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-0);
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  transition: background 150ms var(--ease-out);
+  margin-right: 1px;
+}
+
+.page-parent-dashboard .cs-btn:last-child {
+  margin-right: 0;
+}
+
+.page-parent-dashboard .cs-btn:active {
+  transform: scale(0.97);
+}
+
+.page-parent-dashboard .cs-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--neutral-600);
+}
+
+.page-parent-dashboard .cs-class {
+  font-size: var(--text-xs);
+  color: var(--neutral-400);
+}
+
+.page-parent-dashboard .cs-active {
+  background: var(--parent-600);
+}
+
+.page-parent-dashboard .cs-active .cs-name {
+  color: white;
+  font-weight: 600;
+}
+
+.page-parent-dashboard .cs-active .cs-class {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Metric Grid ─────────────────────────────────────── */
+
+.page-parent-dashboard .rd-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-0);
+  border-top: 2px solid var(--parent-600);
+}
+
+@media (max-width: 768px) {
+  .page-parent-dashboard .rd-metric-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-parent-dashboard .rd-metric-cell {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .page-parent-dashboard .rd-metric-value {
+    font-size: var(--text-xl);
+  }
+}
+
+/* ── Two-column Grid ─────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .page-parent-dashboard .rd-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panels ──────────────────────────────────────────── */
+
+.page-parent-dashboard .panel {
+  background: var(--surface-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.page-parent-dashboard .panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-parent-dashboard .panel-head h2 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  letter-spacing: 0;
+}
+
+.page-parent-dashboard .panel-head .spacer {
+  margin-left: auto;
+}
+
+.page-parent-dashboard .panel-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.page-parent-dashboard .panel-body.flush {
+  padding: 0;
+}
+
+/* ── List items ──────────────────────────────────────── */
+
+.page-parent-dashboard .rd-li-unread {
+  background: var(--parent-50);
+}
+
+.page-parent-dashboard .rd-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--parent-600);
+  flex-shrink: 0;
+}
+
+/* ── Key-value list ──────────────────────────────────── */
+
+/* ── Achievements ────────────────────────────────────── */
+
+.page-parent-dashboard .pd-achievements-panel {
+  margin-bottom: var(--space-4);
+}
+
+.page-parent-dashboard .pd-achievements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.page-parent-dashboard .pd-ach-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.page-parent-dashboard .pd-ach-icon {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--parent-50);
+  border-radius: var(--radius-sm);
+  color: var(--parent-600);
+  flex-shrink: 0;
+}
+
+.page-parent-dashboard .pd-ach-text {
+  min-width: 0;
+}
+
+.page-parent-dashboard .pd-ach-title {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  line-height: 1.2;
+}
+
+.page-parent-dashboard .pd-ach-meta {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+  margin-top: 1px;
+}
+
+/* ── Shared ──────────────────────────────────────────── */
+
+/* ── Timetable ───────────────────────────────────────── */
+
+/* ── Subject bars ────────────────────────────────────── */
+

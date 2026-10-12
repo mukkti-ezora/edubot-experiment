@@ -118,9 +118,9 @@ export function RoleDetail() {
     return (
       <div className="page-role-detail">
         <Skeleton w={170} />
-        <div style={{ height: 10 }} />
+        <div className="skel-gap-sm" />
         <Skeleton w={260} h={22} />
-        <div style={{ height: 22 }} />
+        <div className="skel-gap-lg" />
         <div className="card">
           <SkeletonRows rows={6} />
         </div>

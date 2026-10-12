@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Alert, Button, Field } from "@/components/ui";
+import { demoAccounts, type DemoAccount } from "@/lib/demoAccounts";
 import "@/styles/pages/auth.css";
 
 const schema = z.object({
@@ -39,7 +40,7 @@ export function Login() {
         body: JSON.stringify({ email: values.email.trim(), password: values.password }),
       });
       await refresh();
-      navigate(location.state?.from ?? "/dashboard", { replace: true });
+      navigate(location.state?.from ?? "/home", { replace: true });
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.code === "ACCOUNT_DISABLED") {
@@ -60,13 +61,15 @@ export function Login() {
     }
   }
 
+  const demos = demoAccounts();
+
   return (
     <div className="page-login">
       <main className="login-stack">
         <div className="login-brand">
           <span className="login-mark" aria-hidden="true">E</span>
           <span className="login-word">EduBot</span>
-          <span className="login-subline">Platform administration console</span>
+          <span className="login-subline">Sign in to your institution workspace</span>
         </div>
 
         <div className="login-card">
@@ -107,12 +110,33 @@ export function Login() {
           </form>
         </div>
 
+        {demos.length > 0 && (
+          <section className="login-demo" aria-labelledby="demo-title">
+            <h2 id="demo-title" className="login-demo-title">Demo access</h2>
+            <p className="login-demo-sub">Sign in as a seeded account. Synthetic data only.</p>
+            <div className="login-demo-grid">
+              {demos.map((d: DemoAccount) => (
+                <button
+                  key={d.role}
+                  type="button"
+                  className="login-demo-btn"
+                  disabled={isSubmitting}
+                  onClick={() => void onSubmit({ email: d.email, password: d.password })}
+                >
+                  <span className="login-demo-role">{d.role}</span>
+                  <span className="login-demo-name">{d.name}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         <div className="login-below">
           <Link to="/">Back to home</Link>
           <span className="login-sep" aria-hidden="true">·</span>
           <span>Need help? Contact support</span>
         </div>
-        <p className="login-dataset">Deterministic demo dataset · 18 institutions · 3,308 people</p>
+        <p className="login-dataset">Demo environment: 18 institutions and 3,308 synthetic people.</p>
       </main>
     </div>
   );

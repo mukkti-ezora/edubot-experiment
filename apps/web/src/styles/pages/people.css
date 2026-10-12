@@ -58,57 +58,38 @@
   box-shadow: var(--shadow-parent);
 }
 
-/* Detail pages */
+/* ---------- Detail page loading state ---------- */
+
 .page-student-detail,
 .page-teacher-detail,
 .page-parent-detail {
-  .detail-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    margin-bottom: 24px;
-    padding: 24px;
-    background: var(--surface-0);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xs);
+  /* full-page loading spinner / skeleton */
+  &.is-loading {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: var(--surface-1);
   }
 
-  .detail-avatar {
-    flex-shrink: 0;
-  }
-
-  .detail-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .detail-name {
+  /* avatar + name row in PageHead */
+  .detail-head-identity {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 8px;
   }
 
-  .detail-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-size: var(--text-sm);
-    color: var(--neutral-500);
+  /* skeleton placeholder for activity section */
+  .skel-activity {
+    height: 100px;
+    border-radius: var(--radius-md);
   }
+}
 
-  .detail-meta .mono {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-  }
+/* ---------- Detail page sections ---------- */
 
-  .detail-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
+.page-student-detail,
+.page-teacher-detail,
+.page-parent-detail {
   .detail-sections {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -119,7 +100,7 @@
   .detail-section {
     background: var(--surface-0);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     padding: 24px;
     box-shadow: var(--shadow-xs);
   }
@@ -150,50 +131,17 @@
   }
 }
 
-/* Category-specific detail page accents */
-.page-student-detail .detail-header {
-  border-left: 4px solid var(--student-600);
+/* Category-specific detail page accents — 2px left border on sections */
+.page-student-detail .detail-section {
+  border-left: 2px solid var(--student-600);
 }
 
-.page-student-detail .detail-section h3::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--gradient-student);
-  margin-right: 8px;
-  vertical-align: middle;
+.page-teacher-detail .detail-section {
+  border-left: 2px solid var(--teacher-600);
 }
 
-.page-teacher-detail .detail-header {
-  border-left: 4px solid var(--teacher-600);
-}
-
-.page-teacher-detail .detail-section h3::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--gradient-teacher);
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-.page-parent-detail .detail-header {
-  border-left: 4px solid var(--parent-600);
-}
-
-.page-parent-detail .detail-section h3::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--gradient-parent);
-  margin-right: 8px;
-  vertical-align: middle;
+.page-parent-detail .detail-section {
+  border-left: 2px solid var(--parent-600);
 }
 
 /* Role badges in detail */

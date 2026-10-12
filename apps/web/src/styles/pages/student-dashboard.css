@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Student Dashboard — Role dashboard precision
+   Hairline divisions, tabular numbers, design token exclusive.
+   ========================================================================== */
+
+/* ── Loading ──────────────────────────────────────────── */
+
+/* ── Metric Grid ─────────────────────────────────────── */
+
+.page-student-dashboard .rd-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-0);
+  border-top: 2px solid var(--student-600);
+}
+
+@media (max-width: 768px) {
+  .page-student-dashboard .rd-metric-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-student-dashboard .rd-metric-cell {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .page-student-dashboard .rd-metric-value {
+    font-size: var(--text-xl);
+  }
+}
+
+/* ── Two-column Grid ─────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .page-student-dashboard .rd-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panels ──────────────────────────────────────────── */
+
+.page-student-dashboard .panel {
+  background: var(--surface-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.page-student-dashboard .panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-student-dashboard .panel-head h2 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  letter-spacing: 0;
+}
+
+.page-student-dashboard .panel-head .spacer {
+  margin-left: auto;
+}
+
+.page-student-dashboard .panel-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.page-student-dashboard .panel-body.flush {
+  padding: 0;
+}
+
+/* ── List items ──────────────────────────────────────── */
+
+/* ── Compact table ───────────────────────────────────── */
+
+.page-student-dashboard .rd-compact-table {
+  display: grid;
+}
+
+.page-student-dashboard .rd-ct-header,
+.page-student-dashboard .rd-ct-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  align-items: center;
+}
+
+.page-student-dashboard .rd-ct-header {
+  font-weight: 600;
+  color: var(--neutral-500);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-2);
+}
+
+.page-student-dashboard .rd-ct-row {
+  color: var(--neutral-700);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-student-dashboard .rd-ct-row:last-child {
+  border-bottom: none;
+}
+
+.page-student-dashboard .rd-ct-primary {
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+.page-student-dashboard .rd-ct-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/* ── Key-value list ──────────────────────────────────── */
+
+/* ── Shared ──────────────────────────────────────────── */
+
+/* ── Timetable ───────────────────────────────────────── */
+
+/* ── Subject bars ────────────────────────────────────── */
+

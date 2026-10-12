@@ -1,0 +1,63 @@
+/* Subject bars (components/SubjectBars.tsx). Fill colour is set inline per score. */
+
+.sb-list {
+  display: grid;
+  gap: var(--space-3);
+}
+.sb-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.sb-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.sb-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--neutral-700);
+  flex: 1;
+}
+.sb-grade-badge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--neutral-600);
+  background: var(--surface-2);
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+.sb-score {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--neutral-900);
+  min-width: 36px;
+  text-align: right;
+}
+.sb-trend {
+  flex-shrink: 0;
+}
+.sb-trend-up { color: var(--success-600); }
+.sb-trend-down { color: var(--danger-600); }
+.sb-trend-flat { color: var(--neutral-400); }
+.sb-bar-track {
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.sb-bar-fill {
+  height: 100%;
+  width: var(--sb-fill-w);
+  background: var(--sb-fill-color);
+  border-radius: var(--radius-full);
+}
+.sb-empty {
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+.sb-empty-text {
+  font-size: var(--text-sm);
+  color: var(--neutral-400);
+}

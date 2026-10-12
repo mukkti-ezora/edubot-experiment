@@ -3,7 +3,9 @@
  * Visual grammar in styles/primitives.css; these own behavior.
  */
 import {
+  cloneElement,
   createContext,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -39,9 +41,9 @@ export function Button({
 }) {
   return (
     <button
+      {...rest}
       className={`btn btn-${variant}${size !== "md" ? ` btn-${size}` : ""} ${className}`.trim()}
       disabled={rest.disabled || loading}
-      {...rest}
     >
       {loading ? <span className="btn-spinner" aria-hidden="true" /> : icon}
       {children}
@@ -175,17 +177,25 @@ export function Field({
   error?: string;
   children: React.ReactNode;
 }) {
+  const messageId = htmlFor && (error || help) ? `${htmlFor}-${error ? "error" : "help"}` : undefined;
+  // The control announces its error or hint; callers keep passing a plain input as the child.
+  const control = isValidElement<{ "aria-describedby"?: string; "aria-invalid"?: boolean }>(children)
+    ? cloneElement(children, {
+        "aria-describedby": [children.props["aria-describedby"], messageId].filter(Boolean).join(" ") || undefined,
+        "aria-invalid": children.props["aria-invalid"] ?? (error ? true : undefined),
+      })
+    : children;
   return (
     <div className="field">
       <label htmlFor={htmlFor}>{label}</label>
-      {children}
+      {control}
       {error ? (
-        <span className="error" role="alert">
+        <span className="error" role="alert" id={messageId}>
           <IconAlertCircle />
           {error}
         </span>
       ) : help ? (
-        <span className="help">{help}</span>
+        <span className="help" id={messageId}>{help}</span>
       ) : null}
     </div>
   );
@@ -334,32 +344,51 @@ export function Drawer({
   children,
   footer,
   onClose,
+  dismissible = true,
 }: {
   title: string;
   sub?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
   onClose: () => void;
+  /** False while work is in flight (for example a form submitting), so it can't be closed mid-save. */
+  dismissible?: boolean;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  const dismissibleRef = useRef(dismissible);
+  onCloseRef.current = onClose;
+  dismissibleRef.current = dismissible;
+  const close = () => { if (dismissibleRef.current) onCloseRef.current(); };
   useEffect(() => {
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const first = panelRef.current?.querySelector<HTMLElement>("[data-autofocus]") ?? closeRef.current;
+    first?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && dismissibleRef.current) onCloseRef.current();
+      if (e.key === "Tab") trapFocus(e, panelRef.current);
+    };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
-  }, [onClose]);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      if (opener?.isConnected) opener.focus();
+    };
+  }, []);
 
   return (
     <>
-      <div className="drawer-overlay" onMouseDown={onClose} />
-      <div className="drawer" role="dialog" aria-modal="true" aria-label={title}>
+      <div className="drawer-overlay" onMouseDown={close} />
+      <div ref={panelRef} className="drawer" role="dialog" aria-modal="true" aria-label={title}>
         <div className="drawer-head">
           <div className="min-w-0">
             <h2>{title}</h2>
             {sub ? <div className="sub">{sub}</div> : null}
           </div>
-          <button ref={closeRef} className="btn btn-ghost btn-icon btn-sm right" onClick={onClose} aria-label="Close panel">
+          <button ref={closeRef} className="btn btn-ghost btn-icon btn-sm right" onClick={close} aria-label="Close panel"
+            aria-disabled={!dismissible || undefined}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" width="16" height="16" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
           </button>
         </div>
@@ -371,6 +400,30 @@ export function Drawer({
 }
 
 /* ---------- Loading / Empty / Error ---------- */
+
+const FOCUSABLE = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function isReachable(element: HTMLElement): boolean {
+  return !element.closest("[hidden], [inert], [aria-hidden='true']");
+}
+
+/** Keeps Tab and Shift+Tab cycling inside a modal surface, and pulls focus back in if it has escaped. */
+export function trapFocus(event: KeyboardEvent, container: HTMLElement | null) {
+  const items = container ? Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(isReachable) : [];
+  if (!container || items.length === 0) return;
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (!container.contains(document.activeElement)) {
+    event.preventDefault();
+    first.focus();
+  } else if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
 
 export function SkeletonRows({ rows = 8 }: { rows?: number }) {
   return (
@@ -467,16 +520,27 @@ export function ConfirmDialog({
   onClose: () => void;
 }) {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // Callers often pass an inline onClose; a ref keeps the effect from re-running (and stealing focus) every render.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
     cancelRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCloseRef.current();
+      if (e.key === "Tab") trapFocus(e, dialogRef.current);
+    };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      if (opener && document.contains(opener)) opener.focus();
+    };
+  }, []);
 
   return (
-    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="dialog" role="alertdialog" aria-modal="true" aria-label={title}>
+    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onCloseRef.current()}>
+      <div ref={dialogRef} className="dialog" role="alertdialog" aria-modal="true" aria-label={title}>
         <h2>{title}</h2>
         <div className="body">{body}</div>
         <footer>

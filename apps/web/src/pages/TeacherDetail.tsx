@@ -1,21 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { formatDate, relativeFromNow, formatNumber } from "@/lib/format";
+import { formatDate, relativeFromNow } from "@/lib/format";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/lib/toast";
-import { PageHead, Avatar, StatusPill, Badge, SectionHead, Alert, Button, EmptyState, ConfirmDialog } from "@/components/ui";
+import { PageHead, Avatar, StatusPill, Badge, Alert, Button, EmptyState, ConfirmDialog } from "@/components/ui";
 import {
-  IconBookOpen,
   IconBuilding,
-  IconUser,
-  IconKey,
   IconActivity,
   IconArrowLeft,
-  IconEdit,
-  IconBan,
-  IconCheckCircle,
+  IconClock,
 } from "@/components/icons";
 import "@/styles/pages/people.css";
 
@@ -76,21 +71,10 @@ export function TeacherDetail() {
     }
   };
 
-  const handleDeactivate = async () => {
-    try {
-      await api(`/api/v1/users/${id}/deactivate`, { method: "POST", body: "{}" });
-      toast.notify("Teacher deactivated");
-      refetch();
-      setShowDeactivate(false);
-    } catch (e: any) {
-      toast.notify(e.message ?? "Failed to deactivate teacher", "error");
-    }
-  };
-
   if (isLoading) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--surface-1)" }}>
-        <div className="skeleton" style={{ width: 120, height: 16 }} />
+      <div className="page-teacher-detail is-loading">
+        <div className="skeleton" />
       </div>
     );
   }
@@ -104,16 +88,12 @@ export function TeacherDetail() {
     );
   }
 
-  const isInvited = teacher.status === "invited";
-  const isSuspended = teacher.status === "suspended";
-  const isDeactivated = teacher.status === "deactivated";
-
   return (
     <div className="page-teacher-detail">
       <PageHead
         title={<>
           <Link to="/teachers" className="btn btn-ghost btn-sm"><IconArrowLeft /></Link>
-          <span style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <span className="detail-head-identity">
             <Avatar name={teacher.name} size="lg" category="teacher" />
             <span>{teacher.name}</span>
           </span>
@@ -177,16 +157,16 @@ export function TeacherDetail() {
               ))}
             </div>
           ) : (
-            <p style={{ color: "var(--neutral-500)" }}>No roles assigned</p>
+            <p className="text-muted">No roles assigned</p>
           )}
         </div>
 
         <div className="detail-section">
           <h3>Recent Activity</h3>
-          {!aLoading && activity.length === 0 && (
+          {!aLoading && activity && activity.length === 0 && (
             <EmptyState title="No recent activity" body="No activity recorded for this teacher." icon={<IconActivity />} />
           )}
-          {!aLoading && activity.length > 0 && (
+          {!aLoading && activity && activity.length > 0 && (
             <div className="timeline">
               {activity.slice(0, 10).map((evt) => (
                 <div key={evt.id} className="tl-item">
@@ -208,30 +188,31 @@ export function TeacherDetail() {
               ))}
             </div>
           )}
-          {aLoading && <div className="skeleton" style={{ height: "100px", borderRadius: "var(--radius-md)" }} />}
+          {aLoading && <div className="skeleton skel-activity" />}
         </div>
       </div>
 
-      <ConfirmDialog
-        title="Deactivate teacher?"
-        body={`${teacher.name} will lose access immediately.`}
-        confirmLabel="Deactivate teacher"
-        danger
-        busy={false}
-        onConfirm={async () => {
-          try {
-            await api(`/api/v1/users/${id}/deactivate`, { method: "POST", body: "{}" });
-            toast.notify("Teacher deactivated");
-            refetch();
-            setShowDeactivate(false);
-          } catch (e: any) {
-            toast.notify(e.message ?? "Failed to deactivate teacher", "error");
-          }
-        }}
-        onClose={() => setShowDeactivate(false)}
-        isOpen={showDeactivate}
-        onCloseOverlay={() => setShowDeactivate(false)}
-      />
+      {showDeactivate && (
+        <ConfirmDialog
+          title="Deactivate teacher?"
+          body={`${teacher.name} will lose access immediately.`}
+          confirmLabel="Deactivate teacher"
+          danger
+          busy={false}
+          onConfirm={() => {
+            api(`/api/v1/users/${id}/deactivate`, { method: "POST", body: "{}" })
+              .then(() => {
+                toast.notify("Teacher deactivated");
+                refetch();
+                setShowDeactivate(false);
+              })
+              .catch((e: any) => {
+                toast.notify(e.message ?? "Failed to deactivate teacher", "error");
+              });
+          }}
+          onClose={() => setShowDeactivate(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { formatDate, relativeFromNow, formatNumber, typeLabel } from "@/lib/format";
+import { api, qs } from "@/lib/api";
+import { formatDate, relativeFromNow, formatNumber } from "@/lib/format";
 import { useTableState } from "@/lib/useTableState";
-import { useToast } from "@/lib/toast";
-import { useAuth } from "@/lib/auth";
-import { DataTable } from "@/components/DataTable";
-import { PageHead, EmptyState, ErrorState, Avatar, StatusPill, Badge, SectionHead, Alert, Button, IconButton } from "@/components/ui";
+import { DataTable, type Column } from "@/components/DataTable";
+import { PageHead, EmptyState, Avatar, StatusPill, Button } from "@/components/ui";
 import {
   IconBookOpen,
-  IconBuilding,
   IconSearch,
   IconChevronRight,
   IconPlus,
-  IconFilter,
-  IconArrowRight,
 } from "@/components/icons";
 import "@/styles/pages/people.css";
 
@@ -35,15 +29,8 @@ interface TeacherRow {
   lastLoginAt?: string | null;
 }
 
-interface TeachersResponse {
-  items: TeacherRow[];
-  nextCursor: string | null;
-}
-
 export function Teachers() {
-  const { can } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
   const table = useTableState({ status: "active", type: "teacher" });
 
   const { data, isLoading, error, refetch } = useQuery<{ items: TeacherRow[]; nextCursor: string | null }>({
@@ -55,14 +42,14 @@ export function Teachers() {
       if (table.get("query")) params.query = table.get("query");
       if (table.get("status")) params.status = table.get("status");
       if (table.get("institutionId")) params.institutionId = table.get("institutionId");
-      return api<{ items: TeacherRow[]; nextCursor: string | null }>("/api/v1/users", { method: "GET", body: JSON.stringify(params) });
+      return api<{ items: TeacherRow[]; nextCursor: string | null }>(`/api/v1/users${qs(params)}`);
     },
     placeholderData: (prev) => prev,
   });
 
   const handleRetry = () => refetch();
 
-  const columns = [
+  const columns: Column<TeacherRow>[] = [
     {
       key: "identity",
       label: "Teacher",
@@ -90,7 +77,7 @@ export function Teachers() {
     {
       key: "status",
       label: "Status",
-      render: (row: TeacherRow) => <span className="badge badge-teacher">{row.status}</span>,
+      render: (row: TeacherRow) => <StatusPill status={row.status} />,
     },
     {
       key: "lastActive",
@@ -107,7 +94,7 @@ export function Teachers() {
     {
       key: "actions",
       label: "",
-      align: "right",
+      align: "right" as const,
       render: (row: TeacherRow) => (
         <div className="cell-actions">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/teachers/${row.id}`)}>
@@ -177,7 +164,7 @@ export function Teachers() {
         rows={data?.items ?? []}
         keyOf={(r) => r.id}
         loading={isLoading}
-        error={error}
+        error={!!error}
         onRetry={handleRetry}
         sort={table.sort}
         onSort={table.onSort}
@@ -185,7 +172,7 @@ export function Teachers() {
         onRowClick={(row) => navigate(`/teachers/${row.id}`)}
         empty={<EmptyState title="No teachers found" body="Try adjusting your filters or create a new teacher." icon={<IconBookOpen />} />}
         nextCursor={data?.nextCursor ?? null}
-        onNext={table.onNext}
+        onNext={() => table.onNext(data?.nextCursor ?? null)}
         onPrev={table.onPrev}
         pageIndex={table.pageIndex}
         countLabel={data?.items.length !== undefined ? `${formatNumber(data.items.length)} teachers on this page` : undefined}

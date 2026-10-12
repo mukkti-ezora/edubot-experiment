@@ -1,17 +1,16 @@
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/source-serif-4";
-@import "@fontsource-variable/source-code-pro";
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 /* ==========================================================================
    EduBot Premium Education Platform — Design Tokens
-   Colorful, modern, category-differentiated visual system
+   Modern premium SaaS visual system with category differentiation
    ========================================================================== */
 
 :root {
   /* --- Type System --- */
-  --font-ui: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Source Serif 4 Variable", Georgia, serif;
-  --font-mono: "Source Code Pro Variable", "SFMono-Regular", Consolas, monospace;
+  --font-ui: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", "SFMono-Regular", ui-monospace, monospace;
 
   /* Fluid type scale */
   --text-xs: 0.75rem;    /* 12px */
@@ -35,169 +34,188 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
 
-  /* --- Primary Brand — Indigo (the platform's own voice) --- */
-  --brand-50: #eef2ff;
-  --brand-100: #e0e7ff;
-  --brand-200: #c7d2fe;
-  --brand-300: #a5b4fc;
-  --brand-400: #818cf8;
-  --brand-500: #6366f1;
-  --brand-600: #4f46e5;
-  --brand-700: #4338ca;
-  --brand-800: #3730a3;
-  --brand-900: #312e81;
-  --brand-950: #1e1b4b;
+  /* --- Primary Brand — Warm Education Orange (inviting, trustworthy) --- */
+  --brand-50: #fdf1eb;
+  --brand-100: #fadfd1;
+  --brand-200: #f4bfa3;
+  --brand-300: #ec9a70;
+  --brand-400: #e27845;
+  --brand-500: #d9622a;
+  --brand-600: #c4511f;
+  --brand-700: #a9441a;
+  --brand-800: #8e3916;
+  --brand-900: #702d12;
+  --brand-950: #3d180a;
 
-  /* --- Core Neutral Palette (Zinc-based) --- */
-  --neutral-50: #fafafa;
-  --neutral-100: #f4f4f5;
-  --neutral-200: #e4e4e7;
-  --neutral-300: #d4d4d8;
-  --neutral-400: #a1a1aa;
-  --neutral-500: #71717a;
-  --neutral-600: #52525b;
-  --neutral-700: #3f3f46;
-  --neutral-800: #27272a;
-  --neutral-900: #18181b;
-  --neutral-950: #09090b;
+  /* --- Core Neutral Palette (cool slate) --- */
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+  --neutral-950: #020617;
 
-  /* --- Category Color Families --- */
+  /* --- Category Color Families (desaturated, muted — not Tailwind defaults) --- */
 
-  /* Students — Emerald/Teal family (growth, learning, energy) */
-  --student-50: #f0fdf4;
-  --student-100: #dcfce7;
-  --student-200: #bbf7d0;
-  --student-300: #86efac;
-  --student-400: #4ade80;
-  --student-500: #22c55e;
-  --student-600: #16a34a;
-  --student-700: #15803d;
-  --student-800: #166534;
-  --student-900: #14532d;
-  --student-950: #052e16;
+  /* Students — Muted sage green */
+  --student-50: #f4f9f5;
+  --student-100: #e4f0e6;
+  --student-200: #c5dfc9;
+  --student-300: #98c6a0;
+  --student-400: #6ba978;
+  --student-500: #4a8f5a;
+  --student-600: #3a7548;
+  --student-700: #305e3b;
+  --student-800: #294d32;
+  --student-900: #23402b;
+  --student-950: #112316;
 
-  /* Teachers — Sky family (clarity, open knowledge; distinct from indigo primary) */
-  --teacher-50: #f0f9ff;
-  --teacher-100: #e0f2fe;
-  --teacher-200: #bae6fd;
-  --teacher-300: #7dd3fc;
-  --teacher-400: #38bdf8;
-  --teacher-500: #0ea5e9;
-  --teacher-600: #0284c7;
-  --teacher-700: #0369a1;
-  --teacher-800: #075985;
-  --teacher-900: #0c4a6e;
-  --teacher-950: #082f49;
+  /* Teachers — Muted steel blue */
+  --teacher-50: #f3f6fa;
+  --teacher-100: #e3eaf3;
+  --teacher-200: #c6d5e8;
+  --teacher-300: #97b4d4;
+  --teacher-400: #6b92bd;
+  --teacher-500: #4a77a5;
+  --teacher-600: #3b6089;
+  --teacher-700: #324f70;
+  --teacher-800: #2c435d;
+  --teacher-900: #283a4f;
+  --teacher-950: #1a2535;
 
-  /* Parents — Amber/Orange family (warmth, support, community) */
-  --parent-50: #fffbeb;
-  --parent-100: #fef3c7;
-  --parent-200: #fde68a;
-  --parent-300: #fcd34d;
-  --parent-400: #fbbf24;
-  --parent-500: #f59e0b;
-  --parent-600: #d97706;
-  --parent-700: #b45309;
-  --parent-800: #92400e;
-  --parent-900: #78350f;
-  --parent-950: #451a03;
+  /* Parents — Muted warm clay */
+  --parent-50: #faf7f3;
+  --parent-100: #f3ece2;
+  --parent-200: #e6d6c3;
+  --parent-300: #d4b899;
+  --parent-400: #c29a72;
+  --parent-500: #b08456;
+  --parent-600: #9a6e45;
+  --parent-700: #7f5a3a;
+  --parent-800: #694b34;
+  --parent-900: #573f2e;
+  --parent-950: #2f2017;
 
-  /* Administrators — Violet/Purple family (authority, platform, governance) */
-  --admin-50: #faf5ff;
-  --admin-100: #f3e8ff;
-  --admin-200: #e9d5ff;
-  --admin-300: #d8b4fe;
-  --admin-400: #c084fc;
-  --admin-500: #a855f7;
-  --admin-600: #9333ea;
-  --admin-700: #7e22ce;
-  --admin-800: #6b21a8;
-  --admin-900: #581c87;
-  --admin-950: #3b0764;
+  /* Administrators — Muted slate violet */
+  --admin-50: #f6f5f9;
+  --admin-100: #eceaf2;
+  --admin-200: #d9d4e5;
+  --admin-300: #bbb3d0;
+  --admin-400: #9a8fb8;
+  --admin-500: #8073a1;
+  --admin-600: #6b5f88;
+  --admin-700: #594f70;
+  --admin-800: #4b435d;
+  --admin-900: #403a4f;
+  --admin-950: #272335;
 
-  /* Institutions — Rose/Pink family (community, identity, belonging) */
-  --institution-50: #fff1f2;
-  --institution-100: #ffe4e6;
-  --institution-200: #fecdd3;
-  --institution-300: #fda4af;
-  --institution-400: #fb7185;
-  --institution-500: #f43f5e;
-  --institution-600: #e11d48;
-  --institution-700: #be123c;
-  --institution-800: #9f1239;
-  --institution-900: #881337;
-  --institution-950: #4c0519;
+  /* Institutions — Muted dusty rose */
+  --institution-50: #faf5f6;
+  --institution-100: #f3e8ea;
+  --institution-200: #e7d1d5;
+  --institution-300: #d4aeb6;
+  --institution-400: #bc8893;
+  --institution-500: #a46b78;
+  --institution-600: #8b5764;
+  --institution-700: #744954;
+  --institution-800: #613e47;
+  --institution-900: #53363e;
+  --institution-950: #2e1c22;
 
-  /* --- Semantic Status Colors --- */
-  --success-50: #f0fdf4;
-  --success-100: #dcfce7;
-  --success-500: #22c55e;
-  --success-600: #16a34a;
-  --success-700: #15803d;
+  /* --- Semantic Status Colors (slightly desaturated) --- */
+  --success-50: #f2f9f4;
+  --success-100: #dff0e3;
+  --success-500: #3d9452;
+  --success-600: #2e7a40;
+  --success-400: #5fae72;
+  --success-700: #266435;
 
-  --warning-50: #fffbeb;
-  --warning-100: #fef3c7;
-  --warning-500: #f59e0b;
-  --warning-600: #d97706;
-  --warning-700: #b45309;
+  --warning-50: #fdf9f0;
+  --warning-100: #f9efd6;
+  --warning-500: #c98a1e;
+  --warning-600: #a87418;
+  --warning-700: #886014;
 
-  --danger-50: #fef2f2;
-  --danger-100: #fee2e2;
-  --danger-500: #ef4444;
-  --danger-600: #dc2626;
-  --danger-700: #b91c1c;
+  --danger-50: #fdf3f3;
+  --danger-100: #fbe1e1;
+  --danger-500: #c94040;
+  --danger-600: #ab2f2f;
+  --danger-400: #d96565;
+  --danger-700: #8f2626;
+  --danger-800: #731e1e;
 
-  --info-50: #eff6ff;
-  --info-100: #dbeafe;
-  --info-500: #3b82f6;
-  --info-600: #2563eb;
-  --info-700: #1d4ed8;
+  --info-50: #f1f5fb;
+  --info-100: #dce7f5;
+  --info-500: #4a7dc4;
+  --info-600: #3766a8;
+  --info-700: #2d548a;
 
-  /* --- Surface System --- */
-  --surface-0: #ffffff;           /* Pure white - highest elevation */
-  --surface-1: #fafafa;           /* Page background */
-  --surface-2: #f4f4f5;           /* Subtle elevated */
-  --surface-3: #e4e4e7;           /* Hover states */
-  --surface-glass: rgba(250, 250, 250, 0.8);  /* Glassmorphism base */
+  /* --- Surface System (warm whites) --- */
+  --surface-0: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #f6f7f9;
+  --surface-3: #eef0f3;
+  --surface-glass: rgba(255, 255, 255, 0.78);
 
   /* --- Border System --- */
-  --border-subtle: #e4e4e7;       /* Hairline */
-  --border-default: #d4d4d8;      /* Standard */
-  --border-strong: #a1a1aa;       /* Emphasis */
+  --border-subtle: #e4e4e7;
+  --border-default: #d4d4d8;
+  --border-strong: #a1a1aa;
 
-  /* --- Category Border Colors --- */
-  --student-border: #86efac;
-  --teacher-border: #93c5fd;
-  --parent-border: #fcd34d;
-  --admin-border: #d8b4fe;
-  --institution-border: #fda4af;
+  /* --- Category Border Colors (muted) --- */
+  --student-border: #c5dfc9;
+  --teacher-border: #c6d5e8;
+  --parent-border: #e6d6c3;
+  --admin-border: #d9d4e5;
+  --institution-border: #e7d1d5;
 
-  /* --- Shadows & Elevation --- */
-  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.05);
-  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.08);
-  --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.08);
-  --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.08);
-  --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.08), 0 8px 10px -6px rgb(15 23 42 / 0.08);
-  --shadow-2xl: 0 25px 50px -12px rgb(15 23 42 / 0.15);
+  /* --- Shadows & Elevation (multi-layer diffused, premium) --- */
+  --shadow-xs:
+    0 1px 2px 0 rgb(15 23 42 / 0.04),
+    0 0 1px 0 rgb(15 23 42 / 0.06);
+  --shadow-sm:
+    0 1px 2px 0 rgb(15 23 42 / 0.04),
+    0 2px 6px -1px rgb(15 23 42 / 0.06);
+  --shadow-md:
+    0 2px 4px -1px rgb(15 23 42 / 0.04),
+    0 6px 16px -4px rgb(15 23 42 / 0.08);
+  --shadow-lg:
+    0 4px 8px -2px rgb(15 23 42 / 0.04),
+    0 12px 32px -6px rgb(15 23 42 / 0.1);
+  --shadow-xl:
+    0 8px 16px -4px rgb(15 23 42 / 0.04),
+    0 20px 48px -8px rgb(15 23 42 / 0.12);
+  --shadow-2xl:
+    0 12px 24px -6px rgb(15 23 42 / 0.06),
+    0 32px 64px -12px rgb(15 23 42 / 0.16);
 
-  /* Category-tinted shadows */
-  --shadow-student: 0 4px 14px 0 rgb(22 197 94 / 0.15);
-  --shadow-teacher: 0 4px 14px 0 rgb(37 99 235 / 0.15);
-  --shadow-parent: 0 4px 14px 0 rgb(245 158 11 / 0.15);
-  --shadow-admin: 0 4px 14px 0 rgb(168 85 247 / 0.15);
-  --shadow-institution: 0 4px 14px 0 rgb(244 63 94 / 0.15);
+  /* Category-tinted shadows (subtle, desaturated) */
+  --shadow-student: 0 4px 20px -4px rgb(74 143 90 / 0.15), 0 0 0 1px rgb(74 143 90 / 0.04);
+  --shadow-teacher: 0 4px 20px -4px rgb(74 119 165 / 0.15), 0 0 0 1px rgb(74 119 165 / 0.04);
+  --shadow-parent: 0 4px 20px -4px rgb(176 132 86 / 0.15), 0 0 0 1px rgb(176 132 86 / 0.04);
+  --shadow-admin: 0 4px 20px -4px rgb(128 115 161 / 0.15), 0 0 0 1px rgb(128 115 161 / 0.04);
+  --shadow-institution: 0 4px 20px -4px rgb(164 107 120 / 0.15), 0 0 0 1px rgb(164 107 120 / 0.04);
 
-  /* Glassmorphism shadows */
-  --shadow-glass: 0 8px 32px 0 rgb(15 23 42 / 0.08);
-  --shadow-glass-hover: 0 12px 40px 0 rgb(15 23 42 / 0.12);
+  /* Glassmorphism */
+  --shadow-glass: 0 8px 32px 0 rgb(15 23 42 / 0.06), 0 0 0 1px rgb(15 23 42 / 0.04);
+  --shadow-glass-hover: 0 12px 40px 0 rgb(15 23 42 / 0.1), 0 0 0 1px rgb(15 23 42 / 0.06);
 
-  /* --- Border Radius --- */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
+  /* Inner shadow for depth (double-bezel) */
+  --shadow-inner-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+  --shadow-inner-border: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+
+  /* --- Border Radius (consistent sharp — 2-8px, never large rounds) --- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
   --radius-full: 9999px;
 
   /* --- Spacing Scale (4px base) --- */
@@ -216,9 +234,9 @@
   --space-24: 96px;
 
   /* --- Layout --- */
-  --sidebar-width: 280px;
+  --sidebar-width: 260px;
   --sidebar-collapsed: 72px;
-  --topbar-height: 64px;
+  --topbar-height: 56px;
   --content-max: 1440px;
   --content-padding: 32px;
 
@@ -231,30 +249,42 @@
   --z-tooltip: 600;
   --z-toast: 700;
 
-  /* --- Transitions --- */
-  --transition-fast: 120ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-base: 200ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-slow: 300ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* --- Transitions (premium easing) --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Named for history; both decelerate smoothly now (no overshoot). */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* --- Gradients --- */
-  --gradient-brand: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  --gradient-student: linear-gradient(135deg, #22c55e 0%, #06b6d4 100%);
-  --gradient-teacher: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
-  --gradient-parent: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  --gradient-admin: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-  --gradient-institution: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
-  --gradient-hero: linear-gradient(145deg, rgba(99, 102, 241, 0.06) 0%, rgba(14, 165, 233, 0.06) 40%, rgba(168, 85, 247, 0.06) 75%, rgba(244, 63, 94, 0.06) 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(244,244,245,0.75) 100%);
+  --transition-fast: 120ms var(--ease-out);
+  --transition-base: 200ms var(--ease-out);
+  --transition-slow: 300ms var(--ease-out);
+  --transition-spring: 400ms var(--ease-spring);
+
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-enter: 350ms;
+  --dur-exit: 200ms;
+
+  /* --- Gradients (warm, education-focused) --- */
+  --gradient-brand: linear-gradient(135deg, #ff782d 0%, #e8604c 100%);
+  --gradient-student: var(--student-600);
+  --gradient-teacher: var(--teacher-600);
+  --gradient-parent: var(--parent-600);
+  --gradient-admin: var(--admin-600);
+  --gradient-institution: var(--institution-600);
+  --gradient-hero: none;
+  --gradient-surface: linear-gradient(180deg, var(--surface-0) 0%, var(--surface-1) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(241,245,249,0.75) 100%);
+  --gradient-mesh: radial-gradient(at 27% 77%, rgba(255, 120, 45, 0.04) 0%, transparent 50%),
+                    radial-gradient(at 77% 23%, rgba(232, 96, 76, 0.03) 0%, transparent 50%);
 
   /* --- Focus --- */
-  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.35);
-  --focus-ring-student: 0 0 0 3px rgba(34, 197, 94, 0.35);
-  --focus-ring-teacher: 0 0 0 3px rgba(14, 165, 233, 0.35);
-  --focus-ring-parent: 0 0 0 3px rgba(245, 158, 11, 0.35);
-  --focus-ring-admin: 0 0 0 3px rgba(168, 85, 247, 0.35);
-  --focus-ring-institution: 0 0 0 3px rgba(244, 63, 94, 0.35);
+  --focus-ring: 0 0 0 3px rgba(255, 120, 45, 0.3);
+  --focus-ring-student: 0 0 0 3px rgba(74, 143, 90, 0.3);
+  --focus-ring-teacher: 0 0 0 3px rgba(74, 119, 165, 0.3);
+  --focus-ring-parent: 0 0 0 3px rgba(176, 132, 86, 0.3);
+  --focus-ring-admin: 0 0 0 3px rgba(128, 115, 161, 0.3);
+  --focus-ring-institution: 0 0 0 3px rgba(164, 107, 120, 0.3);
 
   /* --- Breakpoints --- */
   --bp-sm: 640px;
@@ -264,38 +294,179 @@
   --bp-2xl: 1536px;
 }
 
-/* Dark mode variants */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface-0: #09090b;
-    --surface-1: #09090b;
-    --surface-2: #18181b;
-    --surface-3: #27272a;
-    --surface-glass: rgba(9, 9, 11, 0.8);
+/* ==========================================================================
+   Dark Mode — attribute-based toggle + system fallback
+   ========================================================================== */
 
-    --neutral-50: #09090b;
-    --neutral-100: #18181b;
-    --neutral-200: #27272a;
-    --neutral-300: #3f3f46;
-    --neutral-400: #71717a;
-    --neutral-500: #a1a1aa;
-    --neutral-600: #d4d4d8;
-    --neutral-700: #e4e4e7;
-    --neutral-800: #f4f4f5;
-    --neutral-900: #fafafa;
+:root {
+  /* Solid fills (button hovers/borders). Fixed across themes, unlike -700, which
+     lightens in dark mode because it is the text colour on tints. */
+  --brand-strong: #a9441a;
+  --on-brand: #ffffff;
+  --danger-strong: #8f2626;
+  --student-strong: #305e3b;
+  --teacher-strong: #324f70;
+  --parent-strong: #7f5a3a;
+  --admin-strong: #594f70;
+  --institution-strong: #744954;
+}
+
+[data-theme="dark"] {
+  --surface-0: #0b0d10;
+  --surface-1: #0b0d10;
+  --surface-2: #12151a;
+  --surface-3: #181c22;
+  --brand-600: #ff8a4c;
+  --brand-strong: #ff9e6a;
+  --on-brand: #0e1116;
+  --surface-glass: rgba(12, 17, 23, 0.85);
+
+  --neutral-50: #0c1117;
+  --neutral-100: #131b27;
+  --neutral-200: #1c2738;
+  --neutral-300: #2a3a50;
+  --neutral-400: #546880;
+  --neutral-500: #7a8fa5;
+  --neutral-600: #a3b3c6;
+  --neutral-700: #c8d4e0;
+  --neutral-800: #e2e8f0;
+  --neutral-900: #f1f5f9;
+  --neutral-950: #ffffff;
+
+  --border-subtle: #1f242c;
+  --border-default: #2b323c;
+  --border-strong: #3a424e;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 0 1px 0 rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 2px 6px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 2px 4px -1px rgb(0 0 0 / 0.3), 0 6px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 4px 8px -2px rgb(0 0 0 / 0.3), 0 12px 32px -6px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 8px 16px -4px rgb(0 0 0 / 0.3), 0 20px 48px -8px rgb(0 0 0 / 0.5);
+
+  --shadow-inner-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  --shadow-inner-border: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  --focus-ring: 0 0 0 3px rgba(255, 120, 45, 0.35);
+
+  --gradient-hero: none;
+  --gradient-surface: linear-gradient(180deg, #0c1117 0%, #0f172a 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,41,59,0.75) 100%);
+  --gradient-mesh: radial-gradient(at 27% 77%, rgba(255, 120, 45, 0.06) 0%, transparent 50%),
+                    radial-gradient(at 77% 23%, rgba(232, 96, 76, 0.04) 0%, transparent 50%);
+
+  /* Tone tints: derived from -500 so badges and alerts sit on dark surfaces. */
+  --success-50: color-mix(in srgb, var(--success-500) 14%, var(--surface-1));
+  --success-100: color-mix(in srgb, var(--success-500) 26%, var(--surface-1));
+  --success-700: color-mix(in srgb, var(--success-500) 60%, white);
+  --warning-50: color-mix(in srgb, var(--warning-500) 14%, var(--surface-1));
+  --warning-100: color-mix(in srgb, var(--warning-500) 26%, var(--surface-1));
+  --warning-700: color-mix(in srgb, var(--warning-500) 60%, white);
+  --danger-50: color-mix(in srgb, var(--danger-500) 14%, var(--surface-1));
+  --danger-100: color-mix(in srgb, var(--danger-500) 26%, var(--surface-1));
+  --danger-700: color-mix(in srgb, var(--danger-500) 60%, white);
+  --info-50: color-mix(in srgb, var(--info-500) 14%, var(--surface-1));
+  --info-100: color-mix(in srgb, var(--info-500) 26%, var(--surface-1));
+  --info-700: color-mix(in srgb, var(--info-500) 60%, white);
+  --student-50: color-mix(in srgb, var(--student-500) 14%, var(--surface-1));
+  --student-100: color-mix(in srgb, var(--student-500) 26%, var(--surface-1));
+  --student-700: color-mix(in srgb, var(--student-500) 60%, white);
+  --teacher-50: color-mix(in srgb, var(--teacher-500) 14%, var(--surface-1));
+  --teacher-100: color-mix(in srgb, var(--teacher-500) 26%, var(--surface-1));
+  --teacher-700: color-mix(in srgb, var(--teacher-500) 60%, white);
+  --parent-50: color-mix(in srgb, var(--parent-500) 14%, var(--surface-1));
+  --parent-100: color-mix(in srgb, var(--parent-500) 26%, var(--surface-1));
+  --parent-700: color-mix(in srgb, var(--parent-500) 60%, white);
+  --admin-50: color-mix(in srgb, var(--admin-500) 14%, var(--surface-1));
+  --admin-100: color-mix(in srgb, var(--admin-500) 26%, var(--surface-1));
+  --admin-700: color-mix(in srgb, var(--admin-500) 60%, white);
+  --institution-50: color-mix(in srgb, var(--institution-500) 14%, var(--surface-1));
+  --institution-100: color-mix(in srgb, var(--institution-500) 26%, var(--surface-1));
+  --institution-700: color-mix(in srgb, var(--institution-500) 60%, white);
+  --brand-50: color-mix(in srgb, var(--brand-500) 14%, var(--surface-1));
+  --brand-100: color-mix(in srgb, var(--brand-500) 26%, var(--surface-1));
+  --brand-700: color-mix(in srgb, var(--brand-500) 60%, white);
+
+  color-scheme: dark;
+}
+
+/* System default when no explicit theme is set */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --surface-0: #0b0d10;
+    --surface-1: #0b0d10;
+    --surface-2: #12151a;
+    --surface-3: #181c22;
+    --brand-600: #ff8a4c;
+    --brand-strong: #ff9e6a;
+    --on-brand: #0e1116;
+    --surface-glass: rgba(12, 17, 23, 0.85);
+
+    --neutral-50: #0c1117;
+    --neutral-100: #131b27;
+    --neutral-200: #1c2738;
+    --neutral-300: #2a3a50;
+    --neutral-400: #546880;
+    --neutral-500: #7a8fa5;
+    --neutral-600: #a3b3c6;
+    --neutral-700: #c8d4e0;
+    --neutral-800: #e2e8f0;
+    --neutral-900: #f1f5f9;
     --neutral-950: #ffffff;
 
-    --border-subtle: #27272a;
-    --border-default: #3f3f46;
-    --border-strong: #52525b;
+    --border-subtle: #1f242c;
+    --border-default: #2b323c;
+    --border-strong: #3a424e;
 
-    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 0 1px 0 rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 2px 6px -1px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 2px 4px -1px rgb(0 0 0 / 0.3), 0 6px 16px -4px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 4px 8px -2px rgb(0 0 0 / 0.3), 0 12px 32px -6px rgb(0 0 0 / 0.5);
+    --shadow-xl: 0 8px 16px -4px rgb(0 0 0 / 0.3), 0 20px 48px -8px rgb(0 0 0 / 0.5);
 
-    --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.4);
+    --shadow-inner-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    --shadow-inner-border: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+    --focus-ring: 0 0 0 3px rgba(255, 120, 45, 0.35);
+
+    --gradient-hero: none;
+    --gradient-surface: linear-gradient(180deg, #0c1117 0%, #0f172a 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,41,59,0.75) 100%);
+    --gradient-mesh: radial-gradient(at 27% 77%, rgba(255, 120, 45, 0.06) 0%, transparent 50%),
+                      radial-gradient(at 77% 23%, rgba(232, 96, 76, 0.04) 0%, transparent 50%);
+
+    color-scheme: dark;
+
+    /* Tone tints: derived from -500 so badges and alerts sit on dark surfaces. */
+    --success-50: color-mix(in srgb, var(--success-500) 14%, var(--surface-1));
+    --success-100: color-mix(in srgb, var(--success-500) 26%, var(--surface-1));
+    --success-700: color-mix(in srgb, var(--success-500) 60%, white);
+    --warning-50: color-mix(in srgb, var(--warning-500) 14%, var(--surface-1));
+    --warning-100: color-mix(in srgb, var(--warning-500) 26%, var(--surface-1));
+    --warning-700: color-mix(in srgb, var(--warning-500) 60%, white);
+    --danger-50: color-mix(in srgb, var(--danger-500) 14%, var(--surface-1));
+    --danger-100: color-mix(in srgb, var(--danger-500) 26%, var(--surface-1));
+    --danger-700: color-mix(in srgb, var(--danger-500) 60%, white);
+    --info-50: color-mix(in srgb, var(--info-500) 14%, var(--surface-1));
+    --info-100: color-mix(in srgb, var(--info-500) 26%, var(--surface-1));
+    --info-700: color-mix(in srgb, var(--info-500) 60%, white);
+    --student-50: color-mix(in srgb, var(--student-500) 14%, var(--surface-1));
+    --student-100: color-mix(in srgb, var(--student-500) 26%, var(--surface-1));
+    --student-700: color-mix(in srgb, var(--student-500) 60%, white);
+    --teacher-50: color-mix(in srgb, var(--teacher-500) 14%, var(--surface-1));
+    --teacher-100: color-mix(in srgb, var(--teacher-500) 26%, var(--surface-1));
+    --teacher-700: color-mix(in srgb, var(--teacher-500) 60%, white);
+    --parent-50: color-mix(in srgb, var(--parent-500) 14%, var(--surface-1));
+    --parent-100: color-mix(in srgb, var(--parent-500) 26%, var(--surface-1));
+    --parent-700: color-mix(in srgb, var(--parent-500) 60%, white);
+    --admin-50: color-mix(in srgb, var(--admin-500) 14%, var(--surface-1));
+    --admin-100: color-mix(in srgb, var(--admin-500) 26%, var(--surface-1));
+    --admin-700: color-mix(in srgb, var(--admin-500) 60%, white);
+    --institution-50: color-mix(in srgb, var(--institution-500) 14%, var(--surface-1));
+    --institution-100: color-mix(in srgb, var(--institution-500) 26%, var(--surface-1));
+    --institution-700: color-mix(in srgb, var(--institution-500) 60%, white);
+    --brand-50: color-mix(in srgb, var(--brand-500) 14%, var(--surface-1));
+    --brand-100: color-mix(in srgb, var(--brand-500) 26%, var(--surface-1));
+    --brand-700: color-mix(in srgb, var(--brand-500) 60%, white);
   }
 }
 
@@ -328,8 +499,8 @@ body {
 
 /* Selection */
 ::selection {
-  background: var(--teacher-500);
-  color: white;
+  background: var(--brand-100);
+  color: var(--neutral-900);
 }
 
 /* Focus visible */
@@ -356,8 +527,8 @@ body {
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -367,8 +538,6 @@ body {
 *::-webkit-scrollbar-thumb {
   background: var(--neutral-300);
   border-radius: var(--radius-full);
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
@@ -384,7 +553,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   color: var(--neutral-900);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 h1 { font-size: var(--text-5xl); }
@@ -407,13 +576,13 @@ p {
 }
 
 a {
-  color: var(--teacher-600);
+  color: var(--brand-600);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--teacher-700);
+  color: var(--brand-700);
   text-decoration: underline;
 }
 
@@ -432,10 +601,11 @@ kbd {
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xs);
   padding: 0.125rem 0.375rem;
+  box-shadow: var(--shadow-xs);
 }
 
 /* ==========================================================================
-   Utility Classes
+   Utility Classes (kept for backward compat — Tailwind replaces these over time)
    ========================================================================== */
 
 .sr-only {

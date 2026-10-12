@@ -100,9 +100,9 @@ export function AdministratorDetail() {
     return (
       <div className="page-administrator-detail">
         <Skeleton w={140} />
-        <div style={{ height: 10 }} />
+        <div className="skel-gap-sm" />
         <Skeleton w={280} h={22} />
-        <div style={{ height: 22 }} />
+        <div className="skel-gap-lg" />
         <div className="card">
           <SkeletonRows rows={5} />
         </div>
@@ -203,7 +203,7 @@ export function AdministratorDetail() {
           <h2 id="admin-activity">Recent activity</h2>
           <div className="spacer">
             <Link className="meta nowrap" to={`/activity?actorId=${admin.id}`}>
-              View all <IconArrowRight style={{ verticalAlign: "-2px" }} />
+              View all <IconArrowRight className="icon-inline" />
             </Link>
           </div>
         </div>

@@ -1,0 +1,283 @@
+/* ==========================================================================
+   Teacher Dashboard — Role dashboard precision
+   Hairline divisions, tabular numbers, design token exclusive.
+   ========================================================================== */
+
+/* ── Loading ──────────────────────────────────────────── */
+
+/* ── Greeting ────────────────────────────────────────── */
+
+.page-teacher-dashboard .td-greeting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Metric Grid ─────────────────────────────────────── */
+
+.page-teacher-dashboard .rd-metric-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.page-teacher-dashboard .rd-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-0);
+  border-top: 2px solid var(--teacher-600);
+}
+
+@media (max-width: 1100px) {
+  .page-teacher-dashboard .rd-metric-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page-teacher-dashboard .rd-metric-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-teacher-dashboard .rd-metric-cell {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .page-teacher-dashboard .rd-metric-value {
+    font-size: var(--text-xl);
+  }
+}
+
+/* ── Two-column Grid ─────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .page-teacher-dashboard .rd-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panels ──────────────────────────────────────────── */
+
+.page-teacher-dashboard .panel {
+  background: var(--surface-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.page-teacher-dashboard .panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-teacher-dashboard .panel-head h2 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  letter-spacing: 0;
+}
+
+.page-teacher-dashboard .panel-head .spacer {
+  margin-left: auto;
+}
+
+.page-teacher-dashboard .panel-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.page-teacher-dashboard .panel-body.flush {
+  padding: 0;
+}
+
+/* ── My Classes ──────────────────────────────────────── */
+
+.page-teacher-dashboard .td-classes {
+  display: grid;
+}
+
+.page-teacher-dashboard .td-class-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-teacher-dashboard .td-class-card:last-child {
+  border-bottom: none;
+}
+
+.page-teacher-dashboard .td-cc-main {
+  min-width: 0;
+}
+
+.page-teacher-dashboard .td-cc-name {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  line-height: 1.3;
+}
+
+.page-teacher-dashboard .td-cc-subject {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+  margin-top: 1px;
+}
+
+.page-teacher-dashboard .td-cc-meta {
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+  white-space: nowrap;
+}
+
+.page-teacher-dashboard .td-cc-room {
+  font-family: var(--font-mono);
+}
+
+/* ── Timeline ────────────────────────────────────────── */
+
+.page-teacher-dashboard .timeline {
+  display: grid;
+}
+
+.page-teacher-dashboard .tl-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 11px;
+  padding: 10px 0;
+}
+
+.page-teacher-dashboard .tl-item:first-child {
+  padding-top: 2px;
+}
+
+.page-teacher-dashboard .tl-item + .tl-item {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.page-teacher-dashboard .tl-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--neutral-500);
+  margin-top: 1px;
+}
+
+.page-teacher-dashboard .tl-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.page-teacher-dashboard .tl-icon.tone-success {
+  background: var(--success-50);
+  border-color: var(--success-100);
+  color: var(--success-600);
+}
+
+.page-teacher-dashboard .tl-icon.tone-warn {
+  background: var(--warning-50);
+  border-color: var(--warning-100);
+  color: var(--warning-600);
+}
+
+.page-teacher-dashboard .tl-line {
+  font-size: 13px;
+  color: var(--neutral-700);
+  line-height: 1.45;
+}
+
+.page-teacher-dashboard .tl-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+}
+
+/* ── Pending Assignments Table ───────────────────────── */
+
+.page-teacher-dashboard .td-pending-panel {
+  margin-bottom: var(--space-4);
+}
+
+.page-teacher-dashboard .td-assign-table {
+  display: grid;
+}
+
+.page-teacher-dashboard .td-at-header,
+.page-teacher-dashboard .td-at-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  align-items: center;
+}
+
+.page-teacher-dashboard .td-at-header {
+  font-weight: 600;
+  color: var(--neutral-500);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-2);
+}
+
+.page-teacher-dashboard .td-at-row {
+  color: var(--neutral-700);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-teacher-dashboard .td-at-row:last-child {
+  border-bottom: none;
+}
+
+.page-teacher-dashboard .td-at-title {
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+.page-teacher-dashboard .td-at-pct {
+  margin-left: var(--space-1);
+  color: var(--neutral-400);
+  font-size: var(--text-xs);
+}
+
+/* ── Shared ──────────────────────────────────────────── */
+
+/* ── Timetable ───────────────────────────────────────── */
+
+/* ── Subject bars ────────────────────────────────────── */
+
+/* ── Responsive table ────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .page-teacher-dashboard .td-at-header,
+  .page-teacher-dashboard .td-at-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .page-teacher-dashboard .td-at-header span:nth-child(3),
+  .page-teacher-dashboard .td-at-row span:nth-child(3) {
+    display: none;
+  }
+
+  .page-teacher-dashboard .td-at-header span:nth-child(5),
+  .page-teacher-dashboard .td-at-row span:nth-child(5) {
+    display: none;
+  }
+}

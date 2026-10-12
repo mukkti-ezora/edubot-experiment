@@ -1,0 +1,34 @@
+/* Attachments: the picker in composers and the files shown on sent messages. */
+.attach { display: flex; flex-direction: column; gap: var(--space-2); border-radius: var(--radius-md); transition: background-color var(--transition-fast), box-shadow var(--transition-fast); }
+.attach.is-dragging { background: var(--surface-2); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-600) 40%, transparent); }
+.attach-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.attach-choose { cursor: pointer; }
+.attach-choose.is-disabled { opacity: 0.55; cursor: not-allowed; }
+.attach-choose:has(+ input:focus-visible) { outline: 2px solid var(--brand-600); outline-offset: 2px; }
+.attach-hint { font-size: var(--text-xs); color: var(--neutral-500); }
+
+.attach-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.attach-item {
+  display: flex; align-items: center; gap: var(--space-2); max-width: 260px;
+  padding: 4px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  background: var(--surface-0);
+}
+.attach-item.is-uploading { opacity: 0.75; }
+.attach-item.is-failed { border-color: var(--danger-400); }
+.attach-thumb { width: 40px; height: 40px; flex: none; border-radius: var(--radius-sm); object-fit: cover; background: var(--surface-2); }
+.attach-thumb-file { display: grid; place-items: center; color: var(--neutral-600); }
+.attach-name { display: flex; flex-direction: column; min-width: 0; font-size: var(--text-sm); color: var(--neutral-800); }
+.attach-meta { font-size: var(--text-xs); color: var(--neutral-500); }
+.attach-item.is-failed .attach-meta { color: var(--danger-700); }
+.attach-errors { margin: 0; padding: 0; list-style: none; font-size: var(--text-sm); color: var(--danger-700); }
+
+.attach-sent { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.attach-sent-image { display: block; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-subtle); }
+.attach-sent-image img { display: block; width: 160px; height: 120px; object-fit: cover; transition: transform 200ms var(--ease-out); }
+.attach-sent-image:hover img { transform: scale(1.03); }
+.attach-sent-file {
+  display: inline-flex; align-items: center; gap: var(--space-2); max-width: 280px; height: 36px; padding: 0 12px;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--neutral-800); font-size: var(--text-sm);
+}
+.attach-sent-file:hover { text-decoration: none; border-color: var(--border-default); background: var(--surface-1); }
+@media (prefers-reduced-motion: reduce) { .attach-sent-image img { transition: none; } }

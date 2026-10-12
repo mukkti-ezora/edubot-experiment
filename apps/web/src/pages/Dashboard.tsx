@@ -5,10 +5,6 @@ import { api } from "@/lib/api";
 import { relativeFromNow, actionLabel, formatNumber } from "@/lib/format";
 import { useAuth } from "@/lib/auth";
 import {
-  IconGraduationCap,
-  IconBookOpen,
-  IconHeart,
-  IconShieldCheck,
   IconBuilding,
   IconTrendingUp,
   IconAlertTriangle,
@@ -17,18 +13,17 @@ import {
   IconClock,
   IconUsers,
   IconActivity,
-  IconSearch,
   IconInbox,
 } from "@/components/icons";
 import {
   PageHead,
-  MetricTile,
   Avatar,
   Alert,
   EmptyState,
   Badge,
 } from "@/components/ui";
-import { useCommandState } from "@/components/CommandPalette";
+import { InstitutionGrowthChart, StatusDonut, ActivityBarChart } from "@/components/Charts";
+import "@/styles/pages/dashboard.css";
 
 type DashboardSummary = {
   generatedAt: string;
@@ -57,7 +52,6 @@ type PeopleStats = {
 
 export function Dashboard() {
   const { me } = useAuth();
-  const cmdk = useCommandState();
   const [greeting, setGreeting] = useState("Good morning");
 
   useEffect(() => {
@@ -91,8 +85,8 @@ export function Dashboard() {
 
   if (sLoading) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--surface-1)" }}>
-        <div className="skeleton" style={{ width: 300, height: 16 }} />
+      <div className="db-loading">
+        <div className="skeleton db-loading-skeleton" />
       </div>
     );
   }
@@ -107,73 +101,101 @@ export function Dashboard() {
   const failedSignins = summary?.attention.failedSignins24h ?? 0;
   const elevatedSignins = summary?.attention.failedSigninsElevated ?? false;
 
-  // Metric tiles data
+  const attentionCount = pendingInstitutions.length + (elevatedSignins ? 1 : 0) + (suspendedUsers > 0 ? 1 : 0);
+
   const metrics = [
-    { label: "Institutions", value: totalInstitutions, category: "institution" as const, icon: <IconBuilding />, delta: { value: `+${summary?.institutions.newLast30Days ?? 0} this month`, trend: "up" as const }, to: "/institutions" },
-    { label: "Students", value: totalStudents, category: "student" as const, icon: <IconGraduationCap />, delta: { value: `+${summary?.users.newLast30Days ?? 0} this month`, trend: "up" as const }, to: "/students" },
-    { label: "Teachers", value: totalTeachers, category: "teacher" as const, icon: <IconBookOpen />, delta: { value: "—", trend: "flat" as const }, to: "/teachers" },
-    { label: "Parents", value: totalParents, category: "parent" as const, icon: <IconHeart />, delta: { value: "—", trend: "flat" as const }, to: "/parents" },
-    { label: "Administrators", value: totalAdmins, category: "admin" as const, icon: <IconShieldCheck />, delta: { value: "—", trend: "flat" as const }, to: "/administrators" },
-    { label: "Needs Attention", value: pendingInstitutions.length + (elevatedSignins ? 1 : 0) + (suspendedUsers > 0 ? 1 : 0), category: "brand" as const, icon: <IconAlertTriangle />, delta: { value: elevatedSignins ? "Elevated" : "Normal", trend: elevatedSignins ? "down" as const : "flat" as const }, to: "/activity?action=auth.sign_in_failed" },
+    {
+      label: "Institutions",
+      value: totalInstitutions,
+      delta: `+${summary?.institutions.newLast30Days ?? 0} this month`,
+      to: "/institutions",
+    },
+    {
+      label: "Students",
+      value: totalStudents,
+      delta: `+${summary?.users.newLast30Days ?? 0} this month`,
+      to: "/students",
+    },
+    {
+      label: "Teachers",
+      value: totalTeachers,
+      delta: null,
+      to: "/teachers",
+    },
+    {
+      label: "Parents",
+      value: totalParents,
+      delta: null,
+      to: "/parents",
+    },
+    {
+      label: "Administrators",
+      value: totalAdmins,
+      delta: null,
+      to: "/administrators",
+    },
+    {
+      label: "Needs attention",
+      value: attentionCount,
+      delta: elevatedSignins ? "Elevated" : "Normal",
+      to: "/activity?action=auth.sign_in_failed",
+      warn: elevatedSignins,
+    },
   ];
 
-  // People overview from pstats
-  const peopleOverview = pstats?.byType
+  const peopleRows = pstats?.byType
     ? [
-        { key: "student", label: "Students", count: pstats.byType.student?.total ?? 0, status: pstats.byType.student?.byStatus, cat: "student", icon: <IconGraduationCap /> },
-        { key: "teacher", label: "Teachers", count: pstats.byType.teacher?.total ?? 0, status: pstats.byType.teacher?.byStatus, cat: "teacher", icon: <IconBookOpen /> },
-        { key: "parent", label: "Parents", count: pstats.byType.parent?.total ?? 0, status: pstats.byType.parent?.byStatus, cat: "parent", icon: <IconHeart /> },
-        { key: "administrator", label: "Administrators", count: pstats.byType.administrator?.total ?? 0, status: pstats.byType.administrator?.byStatus, cat: "admin", icon: <IconShieldCheck /> },
+        { key: "student", label: "Students", count: pstats.byType.student?.total ?? 0, status: pstats.byType.student?.byStatus, cat: "student", to: "/students" },
+        { key: "teacher", label: "Teachers", count: pstats.byType.teacher?.total ?? 0, status: pstats.byType.teacher?.byStatus, cat: "teacher", to: "/teachers" },
+        { key: "parent", label: "Parents", count: pstats.byType.parent?.total ?? 0, status: pstats.byType.parent?.byStatus, cat: "parent", to: "/parents" },
+        { key: "administrator", label: "Administrators", count: pstats.byType.administrator?.total ?? 0, status: pstats.byType.administrator?.byStatus, cat: "admin", to: "/administrators" },
       ]
     : [
-        { key: "student", label: "Students", count: totalStudents, status: null, cat: "student", icon: <IconGraduationCap /> },
-        { key: "teacher", label: "Teachers", count: totalTeachers, status: null, cat: "teacher", icon: <IconBookOpen /> },
-        { key: "parent", label: "Parents", count: totalParents, status: null, cat: "parent", icon: <IconHeart /> },
-        { key: "administrator", label: "Administrators", count: totalAdmins, status: null, cat: "admin", icon: <IconShieldCheck /> },
+        { key: "student", label: "Students", count: totalStudents, status: null, cat: "student", to: "/students" },
+        { key: "teacher", label: "Teachers", count: totalTeachers, status: null, cat: "teacher", to: "/teachers" },
+        { key: "parent", label: "Parents", count: totalParents, status: null, cat: "parent", to: "/parents" },
+        { key: "administrator", label: "Administrators", count: totalAdmins, status: null, cat: "admin", to: "/administrators" },
       ];
 
-  // Institution status dist
   const instStatus = summary?.institutions.byStatus
     ? Object.entries(summary.institutions.byStatus).map(([status, count]) => ({
         status, count, color: status === "active" ? "var(--student-600)" : status === "pending" ? "var(--parent-600)" : "var(--danger-600)"
       }))
     : [];
 
-  // Top active institutions
   const topInstitutions = (summary?.institutionActivity ?? []).slice(0, 6);
 
   return (
     <div className="page-dashboard">
-      {/* Greeting + Command Palette */}
+      {/* ── Header ─────────────────────────────────── */}
       <PageHead
         title={<>
-          <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <span className="db-greeting">
             <Avatar name={me?.admin.name ?? "Admin"} size="md" category="brand" />
             <span>{greeting}, {me?.admin.name?.split(" ")[0] ?? "Admin"}</span>
           </span>
         </>}
         sub="Here's what's happening across EduBot today."
         trailing={
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "var(--text-sm)", color: "var(--neutral-500)" }}>{today}</span>
-            <button className="cmdk-trigger" onClick={() => cmdk.setOpen(true)} aria-keyshortcuts="meta+k ctrl+k">
-              <IconSearch />
-              <span className="cmdk-label">Search or jump to…</span>
-              <kbd>⌘K</kbd>
-            </button>
+          <div className="db-header-trailing">
+            <span className="db-date">{today}</span>
           </div>
         }
-        actions={<button className="cmdk-trigger compact" onClick={() => cmdk.setOpen(true)} aria-keyshortcuts="meta+k ctrl+k"><IconSearch /><kbd>⌘K</kbd></button>}
       />
 
-      {/* Metric Strip */}
-      <div className="flex flex-wrap gap-4" style={{ marginBottom: "24px" }}>
+      {/* ── Metric Strip — hairline-divided grid ──── */}
+      <div className="db-metric-grid">
         {metrics.map((m, i) => (
-          <MetricTile key={i} {...m} />
+          <Link key={i} to={m.to} className={`db-metric-cell${m.warn ? " db-metric-warn" : ""}`}>
+            <span className="db-metric-value">{formatNumber(m.value)}</span>
+            <span className="db-metric-label">{m.label}</span>
+            {m.delta && <span className="db-metric-delta">{m.delta}</span>}
+          </Link>
         ))}
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: "24px", marginBottom: "24px" }}>
+      {/* ── Main Grid: Institutions + People ──────── */}
+      <div className="db-grid-2col">
         {/* Institution Landscape */}
         <div className="panel">
           <div className="panel-head">
@@ -182,46 +204,28 @@ export function Dashboard() {
               <Link to="/institutions" className="btn btn-ghost btn-sm"><IconArrowRight /> View all</Link>
             </div>
           </div>
-          <div className="panel-body" style={{ display: "grid", gap: "20px" }}>
-            {/* Status Distribution */}
+          <div className="panel-body db-inst-body">
             <div>
-              <h3 style={{ fontSize: "var(--text-sm)", fontWeight: 600, marginBottom: "12px", color: "var(--neutral-700)" }}>Status Distribution</h3>
-              <div className="distbar" style={{ height: "14px" }}>
-                {instStatus.map((s) => (
-                  <span key={s.status} style={{ width: `${totalInstitutions > 0 ? (s.count / totalInstitutions) * 100 : 0}%`, background: s.color }} />
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-4 mt-4" style={{ fontSize: "var(--text-xs)" }}>
-                {instStatus.map(s => (
-                  <div key={s.status} className="flex items-center gap-2">
-                    <span style={{ width: "10px", height: "10px", borderRadius: "var(--radius-full)", background: s.color }} />
-                    <span style={{ fontWeight: 500 }}>{s.status.charAt(0).toUpperCase() + s.status.slice(1)}</span>
-                    <span className="tnum font-semibold">{s.count}</span>
-                  </div>
-                ))}
-              </div>
+              <h3 className="db-sub-heading">Status Distribution</h3>
+              <StatusDonut
+                data={instStatus.map((s) => ({
+                  name: s.status.charAt(0).toUpperCase() + s.status.slice(1),
+                  value: s.count,
+                  color: s.color,
+                }))}
+                total={totalInstitutions}
+              />
             </div>
 
-            {/* Most Active Institutions */}
-            <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "16px" }}>
-              <h3 style={{ fontSize: "var(--text-sm)", fontWeight: 600, marginBottom: "12px", color: "var(--neutral-700)" }}>Most Active Institutions</h3>
+            <div className="db-inst-activity">
+              <h3 className="db-sub-heading">Most Active Institutions</h3>
               {topInstitutions.length > 0 ? (
-                <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                  {topInstitutions.map((inst, _i) => (
-                    <div key={inst.institutionId} className="panel-tint-institution" style={{ borderRadius: "var(--radius-md)", padding: "12px 16px" }}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className="avatar avatar-sm avatar-institution">{inst.institution.charAt(0)}</span>
-                          <div>
-                            <div className="font-semibold text-sm">{inst.institution}</div>
-                            <div className="text-xs text-neutral-500">#{_i + 1} most active</div>
-                          </div>
-                        </div>
-                        <div className="tnum font-semibold text-institution-700">{inst.events}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ActivityBarChart
+                  data={topInstitutions.map((inst) => ({
+                    name: (inst.institution ?? "Unknown").length > 18 ? (inst.institution ?? "Unknown").slice(0, 18) + "…" : (inst.institution ?? "Unknown"),
+                    events: inst.events,
+                  }))}
+                />
               ) : (
                 <EmptyState title="No activity data" body="Institution activity will appear here as events are recorded." icon={<IconActivity />} />
               )}
@@ -229,67 +233,58 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* People Overview */}
+        {/* People Overview — category-accented rows with inline status */}
         <div className="panel">
           <div className="panel-head">
             <h2><IconUsers /> People Overview</h2>
             <div className="spacer">
-              <Link to="/students" className="btn btn-ghost btn-sm"><IconGraduationCap /> Students</Link>
-              <Link to="/teachers" className="btn btn-ghost btn-sm"><IconBookOpen /> Teachers</Link>
-              <Link to="/parents" className="btn btn-ghost btn-sm"><IconHeart /> Parents</Link>
+              <span className="db-people-total tnum">{formatNumber(totalStudents + totalTeachers + totalParents + totalAdmins)} total</span>
             </div>
           </div>
-          <div className="panel-body" style={{ display: "grid", gap: "16px" }}>
-            {peopleOverview.map((p, _i) => (
-              <div key={p.key} className={`panel-tint-${p.cat}`} style={{ borderRadius: "var(--radius-lg)", padding: "20px", display: "flex", alignItems: "center", gap: "16px" }}>
-                <div className="flex items-center justify-center" style={{ width: "56px", height: "56px", borderRadius: "var(--radius-lg)", background: `var(--gradient-${p.cat})`, color: "white" }}>
-                  {p.icon}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 style={{ fontSize: "var(--text-base)", fontWeight: 600 }}>{p.label}</h3>
-                    <span className="count-pill tnum">{formatNumber(p.count)}</span>
-                  </div>
-                  {p.status && (
-                    <div className="flex flex-wrap gap-2 mt-2" style={{ fontSize: "var(--text-xs)" }}>
-                      {Object.entries(p.status).map(([status, count]) => (
-                        <span key={status} className="badge badge-outline" style={{ fontWeight: 500 }}>
-                          {status}: {formatNumber(count)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <div style={{ marginTop: "12px" }}>
-                    <Link to={`/${p.key}s`} className="btn btn-ghost btn-sm" style={{ fontSize: "var(--text-xs)" }}>
-                      View all <IconArrowRight />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="panel-body flush">
+            <div className="db-people-table">
+              {peopleRows.map((p) => (
+                <Link key={p.key} to={p.to} className="db-people-row" data-cat={p.cat}>
+                  <span className="db-pr-label">{p.label}</span>
+                  <span className="db-pr-count tnum">{formatNumber(p.count)}</span>
+                  <span className="db-pr-status">
+                    {p.status
+                      ? Object.entries(p.status).map(([status, count]) => (
+                          <span key={status} className="db-pr-status-item">
+                            <span className="db-pr-status-dot" data-status={status} />
+                            {formatNumber(count)} {status}
+                          </span>
+                        ))
+                      : <span className="db-pr-status-item db-pr-status-empty">--</span>
+                    }
+                  </span>
+                  <IconArrowRight className="db-pr-arrow" />
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Needs Attention + Activity */}
-      <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: "24px", marginBottom: "24px" }}>
+      {/* ── Attention + Activity ──────────────────── */}
+      <div className="db-grid-2col">
         {/* Needs Attention */}
         <div className="panel">
           <div className="panel-head">
             <h2><IconAlertTriangle /> Needs Attention</h2>
           </div>
-          <div className="panel-body" style={{ display: "grid", gap: "16px" }}>
+          <div className="panel-body db-attn-body">
             {pendingInstitutions.length > 0 && (
               <Alert tone="warn" title={`${pendingInstitutions.length} institution${pendingInstitutions.length > 1 ? "s" : ""} pending approval`}>
-                <ul style={{ margin: "8px 0 0 20px", display: "grid", gap: "6px" }}>
+                <ul className="db-attn-list">
                   {pendingInstitutions.slice(0, 3).map(inst => (
-                    <li key={inst.id} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Link to={`/institutions/${inst.id}`} style={{ fontWeight: 600 }}>{inst.name}</Link>
-                      <span className="mono text-xs text-neutral-500">({inst.code})</span>
+                    <li key={inst.id}>
+                      <Link to={`/institutions/${inst.id}`}>{inst.name}</Link>
+                      <span className="db-attn-code">({inst.code})</span>
                     </li>
                   ))}
                   {pendingInstitutions.length > 3 && (
-                    <li><Link to="/institutions?status=pending" className="text-sm">View all {pendingInstitutions.length} →</Link></li>
+                    <li><Link to="/institutions?status=pending">View all {pendingInstitutions.length} →</Link></li>
                   )}
                 </ul>
               </Alert>
@@ -297,14 +292,14 @@ export function Dashboard() {
 
             {suspendedUsers > 0 && (
               <Alert tone="warn" title={`${formatNumber(suspendedUsers)} user${suspendedUsers > 1 ? "s" : ""} suspended recently`}>
-                <Link to="/users?status=suspended" style={{ fontWeight: 500 }}>Review suspended users →</Link>
+                <Link to="/users?status=suspended" className="db-attn-link">Review suspended users →</Link>
               </Alert>
             )}
 
             {failedSignins > 0 && (
               <Alert tone={elevatedSignins ? "danger" : "warn"} title={`${formatNumber(failedSignins)} failed sign-in${failedSignins > 1 ? "s" : ""} in the last 24h`}>
-                {elevatedSignins && <div className="text-sm text-danger-700 mt-1">Elevated — investigate sign-in activity</div>}
-                <Link to="/activity?action=auth.sign_in_failed" style={{ fontWeight: 500 }}>View audit trail →</Link>
+                {elevatedSignins && <div className="db-attn-elevated">Elevated — investigate sign-in activity</div>}
+                <Link to="/activity?action=auth.sign_in_failed" className="db-attn-link">View audit trail →</Link>
               </Alert>
             )}
 
@@ -352,29 +347,26 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Institution Growth Trend (placeholder chart) */}
+      {/* ── Growth Chart ──────────────────────────── */}
       {summary && (
-        <div className="panel">
+        <div className="panel db-growth-panel">
           <div className="panel-head">
             <h2><IconTrendingUp /> Institution Growth (Last 12 Months)</h2>
             <div className="spacer">
-              <span className="meta">New: {summary.institutions.newLast30Days} this month · {summary.institutions.newPrior30Days} prior month</span>
+              <span className="db-growth-meta">New: <b>{summary.institutions.newLast30Days}</b> this month · <b>{summary.institutions.newPrior30Days}</b> prior month</span>
             </div>
           </div>
           <div className="panel-body">
-            <div className="chart-panel" style={{ height: "200px", display: "flex", alignItems: "end", gap: "16px", padding: "24px 0" }}>
-              {Array.from({ length: 12 }).map((_, i) => {
-                const base = Math.max(1, totalInstitutions - 12 + i);
-                const val = base + Math.floor(Math.random() * 3);
-                return (
-                  <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                    <div className="bar-fill" style={{ background: "var(--gradient-brand)", width: "24px", height: `${(val / Math.max(totalInstitutions, 1)) * 180}px`, minHeight: "20px", borderRadius: "var(--radius-sm) var(--radius-sm) 0 0", transition: "height 0.5s ease-out" }} />
-                    <span className="text-xs text-neutral-500">{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][i]}</span>
-                    <span className="tnum text-xs font-semibold">{val}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <InstitutionGrowthChart
+              data={(() => {
+                const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                const base = Math.max(1, totalInstitutions - 12);
+                return months.map((month, i) => ({
+                  month,
+                  count: base + Math.round((totalInstitutions - base) * ((i + 1) / 12)),
+                }));
+              })()}
+            />
           </div>
         </div>
       )}

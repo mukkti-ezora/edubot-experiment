@@ -1,0 +1,124 @@
+/* Building blocks shared by the role dashboards (components/RoleDashboard.tsx). */
+
+.rd-loading {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+.rd-loading-skeleton {
+  width: 300px;
+  height: 16px;
+}
+.rd-metric-grid {
+  display: grid;
+  background: var(--border-subtle);
+  gap: 1px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+.rd-metric-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.rd-metric-value {
+  font-family: var(--font-ui);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--neutral-900);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.03em;
+}
+.rd-metric-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--neutral-500);
+  line-height: 1.4;
+}
+.rd-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.rd-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.rd-list {
+  display: grid;
+}
+.rd-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.rd-list-item:last-child {
+  border-bottom: none;
+}
+.rd-li-main {
+  flex: 1;
+  min-width: 0;
+}
+.rd-li-title {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+  line-height: 1.3;
+}
+.rd-li-meta {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+  margin-top: 2px;
+}
+.rd-kv-list {
+  display: grid;
+  gap: 0;
+}
+.rd-kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.rd-kv:last-child {
+  border-bottom: none;
+}
+.rd-kv-label {
+  font-size: var(--text-sm);
+  color: var(--neutral-600);
+}
+.rd-kv-value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+.rd-kv-ok {
+  color: var(--success-600);
+}
+.rd-kv-warn {
+  color: var(--warning-600);
+}
+.rd-count-tag {
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
+  font-weight: 500;
+}
+
+.rd-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.rd-table th {
+  text-align: left; font-weight: 500; color: var(--neutral-500);
+  padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--border-subtle); background: var(--surface-2);
+}
+.rd-table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); color: var(--neutral-700); }
+.rd-table tr:last-child td { border-bottom: 0; }
+.rd-table .tnum { text-align: right; font-variant-numeric: tabular-nums; }
+.rd-section-title { margin: 0; font-size: var(--text-base); font-weight: 600; color: var(--neutral-900); }

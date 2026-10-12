@@ -126,8 +126,8 @@ function EventRow({
                   <table>
                     <thead>
                       <tr>
-                        <th scope="col" style={{ width: "32%" }}>Field</th>
-                        <th scope="col" style={{ width: "34%" }}>Before</th>
+                        <th scope="col" className="diff-col-field">Field</th>
+                        <th scope="col" className="diff-col-before">Before</th>
                         <th scope="col">After</th>
                       </tr>
                     </thead>

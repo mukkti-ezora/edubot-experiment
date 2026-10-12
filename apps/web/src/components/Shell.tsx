@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { CommandPalette, useCommandState } from "./CommandPalette";
@@ -13,6 +14,7 @@ import {
   IconBuilding,
   IconKey,
   IconActivity,
+  IconClock,
   IconSettings,
   IconSearch,
   IconChevronUpDown,
@@ -58,6 +60,7 @@ const NAV_GROUPS: { group: string; cat: string; items: NavItem[] }[] = [
     items: [
       { to: "/roles", label: "Roles & Permissions", icon: <IconKey />, perm: "role.read" },
       { to: "/activity", label: "Activity", icon: <IconActivity />, perm: "audit.read" },
+      { to: "/sessions", label: "Sessions", icon: <IconClock />, perm: "session.read" },
     ],
   },
   {
@@ -82,16 +85,25 @@ const CRUMBS: [RegExp, string, string][] = [
   [/^\/roles\/[^/]+/, "Roles & Permissions", "Role details"],
   [/^\/roles/, "Roles & Permissions", "All roles"],
   [/^\/activity/, "Activity", "Audit trail"],
+  [/^\/sessions\/[^/]+/, "Sessions", "Session details"],
+  [/^\/sessions/, "Sessions", "Sign-in sessions"],
   [/^\/settings/, "Settings", "Platform settings"],
   [/^\/profile/, "Profile", "Your profile"],
 ];
 
 export function Shell() {
   const { me, signOut, can } = useAuth();
+  const { resolved, setTheme, theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const cmdk = useCommandState();
+
+  const cycleTheme = () => {
+    const order: Array<"light" | "dark" | "system"> = ["light", "dark", "system"];
+    const next = order[(order.indexOf(theme) + 1) % order.length];
+    setTheme(next);
+  };
 
   // Fetch summary for nav counts
   const { data: summary } = useQuery({
@@ -221,6 +233,22 @@ export function Shell() {
               <IconSearch />
               <span className="cmdk-label">Search or jump to…</span>
               <kbd>⌘K</kbd>
+            </button>
+            <button
+              className="theme-toggle"
+              onClick={cycleTheme}
+              aria-label={`Theme: ${theme}. Click to change.`}
+              title={`Theme: ${theme}`}
+            >
+              {resolved === "dark" ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
             </button>
             <span className="scope-chip" title="You are operating at platform scope">
               <span className="dot" aria-hidden="true" />

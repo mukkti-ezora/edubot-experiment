@@ -118,7 +118,7 @@ export function Profile() {
         <>
           <div className="card">
             <div className="profile-head">
-              <Avatar name={me.admin.name} size="lg" dark />
+              <Avatar name={me.admin.name} size="lg" />
               <div className="profile-id">
                 <div className="profile-name">{me.admin.name}</div>
                 <div className="profile-email">{me.admin.email}</div>

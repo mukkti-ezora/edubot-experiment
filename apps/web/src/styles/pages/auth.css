@@ -1,6 +1,5 @@
 /* ==========================================================================
-   Sign-in — persuade-side surface inside the ink world.
-   Serif + pine are allowed here (mark only); the card composes primitives.
+   Sign-in — Premium glass card on gradient mesh background
    ========================================================================== */
 
 .page-login {
@@ -9,7 +8,8 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--paper);
+  background: var(--surface-1);
+  position: relative;
 }
 
 .login-stack {
@@ -17,6 +17,11 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
+  animation: login-enter 500ms var(--ease-out) both;
+}
+@keyframes login-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* --- brand stack above the card --- */
@@ -26,59 +31,60 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 .login-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--pine-700);
-  color: #fff;
-  font-family: var(--font-serif);
-  font-size: 15px;
-  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--brand-600);
+  color: var(--on-brand);
+  font-family: var(--font-ui);
+  font-size: var(--text-lg);
+  font-weight: 700;
   line-height: 1;
   display: grid;
   place-items: center;
+  box-shadow: var(--shadow-md);
 }
 .login-word {
-  margin-top: 10px;
-  font-size: 17px;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  color: var(--ink-900);
+  margin-top: 12px;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--neutral-900);
 }
 .login-subline {
-  margin-top: 3px;
-  font-size: var(--text-13);
-  color: var(--ink-500);
+  margin-top: 4px;
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
 }
 
-/* --- the card --- */
+/* --- the card (glass effect) --- */
 
 .login-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 26px;
+  background: var(--surface-0);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), var(--shadow-inner-highlight);
+  padding: 28px;
 }
 .login-title {
-  font-size: var(--text-16);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink-900);
-  margin-bottom: 16px;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--neutral-900);
+  margin-bottom: 20px;
 }
 .page-login .alert {
   margin-bottom: 16px;
 }
 
-/* caps-lock / status note between fields and the submit button */
+/* caps-lock / status note */
 .login-notice {
   margin: -8px 0 14px;
-  font-size: var(--text-12);
-  color: var(--ink-500);
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
   line-height: 1.45;
 }
 
@@ -89,33 +95,53 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  font-size: 12.5px;
-  color: var(--ink-500);
+  gap: 8px;
+  font-size: var(--text-xs);
+  color: var(--neutral-500);
 }
 .login-below a {
-  color: var(--ink-600);
-  font-weight: 450;
+  color: var(--neutral-600);
+  font-weight: 500;
 }
 .login-below a:hover {
-  color: var(--ink-900);
+  color: var(--neutral-900);
 }
 .login-sep {
-  color: var(--ink-300);
+  color: var(--neutral-300);
 }
 
 .login-dataset {
-  margin-top: 10px;
+  margin-top: 12px;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: var(--text-11);
-  color: var(--ink-400);
+  font-size: var(--text-xs);
+  color: var(--neutral-400);
 }
 
-/* --- mobile: edge-to-edge with 16px gutters --- */
+/* --- mobile --- */
 
 @media (max-width: 480px) {
   .page-login {
     padding: 16px;
   }
+  .login-card {
+    padding: 24px 20px;
+  }
 }
+
+/* Demo access: one-click sign-in for seeded accounts */
+.login-demo { margin-top: var(--space-5); padding: var(--space-5); border: 1px dashed var(--border-default); border-radius: var(--radius-lg); }
+.login-demo-title { margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--neutral-900); }
+.login-demo-sub { margin: 2px 0 var(--space-3); font-size: var(--text-xs); color: var(--neutral-500); }
+.login-demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.login-demo-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-0);
+  font: inherit; text-align: left; cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), transform 100ms var(--ease-out);
+}
+.login-demo-btn:hover:not(:disabled) { border-color: var(--brand-600); background: var(--surface-2); }
+.login-demo-btn:active:not(:disabled) { transform: scale(0.98); }
+.login-demo-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.login-demo-role { font-size: var(--text-sm); font-weight: 600; color: var(--neutral-900); }
+.login-demo-name { font-size: var(--text-xs); color: var(--neutral-500); }

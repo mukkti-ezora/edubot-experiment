@@ -7,7 +7,6 @@ import { useAuth } from "@/lib/auth";
 import { useToast } from "@/lib/toast";
 import { PageHead, Avatar, StatusPill, Badge, Alert, Button, EmptyState, ConfirmDialog } from "@/components/ui";
 import {
-  IconHeart,
   IconBuilding,
   IconActivity,
   IconArrowLeft,
@@ -60,7 +59,7 @@ export function ParentDetail() {
     queryFn: () => api<ParentActivityEvent[]>(`/api/v1/activity?targetId=${id}&limit=20`),
     enabled: !!id,
     retry: false,
-  );
+  });
 
   const handleActivate = async () => {
     try {
@@ -72,21 +71,10 @@ export function ParentDetail() {
     }
   };
 
-  const handleDeactivate = async () => {
-    try {
-      await api(`/api/v1/users/${id}/deactivate`, { method: "POST", body: "{}" });
-      toast.notify("Parent deactivated");
-      refetch();
-      setShowDeactivate(false);
-    } catch (e: any) {
-      toast.notify(e.message ?? "Failed to deactivate parent", "error");
-    }
-  };
-
   if (isLoading) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "var(--surface-1)" }}>
-        <div className="skeleton" style={{ width: 120, height: 16 }} />
+      <div className="page-parent-detail is-loading">
+        <div className="skeleton" />
       </div>
     );
   }
@@ -105,7 +93,7 @@ export function ParentDetail() {
       <PageHead
         title={<>
           <Link to="/parents" className="btn btn-ghost btn-sm"><IconArrowLeft /></Link>
-          <span style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <span className="detail-head-identity">
             <Avatar name={parent.name} size="lg" category="parent" />
             <span>{parent.name}</span>
           </span>
@@ -169,16 +157,16 @@ export function ParentDetail() {
               ))}
             </div>
           ) : (
-            <p style={{ color: "var(--neutral-500)" }}>No roles assigned</p>
+            <p className="text-muted">No roles assigned</p>
           )}
         </div>
 
         <div className="detail-section">
           <h3>Recent Activity</h3>
-          {!aLoading && activity.length === 0 && (
+          {!aLoading && activity?.length === 0 && (
             <EmptyState title="No recent activity" body="No activity recorded for this parent." icon={<IconActivity />} />
           )}
-          {!aLoading && activity.length > 0 && (
+          {!aLoading && activity && activity.length > 0 && (
             <div className="timeline">
               {activity.slice(0, 10).map((evt) => (
                 <div key={evt.id} className="tl-item">
@@ -200,7 +188,7 @@ export function ParentDetail() {
               ))}
             </div>
           )}
-          {aLoading && <div className="skeleton" style={{ height: "100px", borderRadius: "var(--radius-md)" }} />}
+          {aLoading && <div className="skeleton skel-activity" />}
         </div>
       </div>
 
